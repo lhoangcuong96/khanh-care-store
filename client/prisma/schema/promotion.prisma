@@ -1,0 +1,19 @@
+model Promotion {
+    id            String       @id @default(auto()) @map("_id") @db.ObjectId
+    title         String
+    description   String?
+    discountType  DiscountType
+    discountValue Float // giá trị tính bằng % hoặc số tiền
+    startDate     DateTime
+    endDate       DateTime
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+
+    productIDs String[]  @db.ObjectId
+    products   Product[] @relation(fields: [productIDs], references: [id])
+}
+
+enum DiscountType {
+    PERCENTAGE
+    FIXED
+}

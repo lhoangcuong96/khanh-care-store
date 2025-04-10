@@ -1,0 +1,39 @@
+enum GenderType {
+    MALE
+    FEMALE
+    OTHER
+}
+
+enum RoleType {
+    ADMIN
+    USER
+}
+
+enum SocialEnum {
+    FACEBOOK
+    GOOGLE
+    X
+}
+
+type SocialAccount {
+    provider   SocialEnum
+    providerId String
+}
+
+model Account {
+    id          String      @id @default(auto()) @map("_id") @db.ObjectId
+    email       String      @unique
+    fullname    String
+    phoneNumber String?     @unique
+    password    String?
+    address     String?
+    gender      GenderType? @default(OTHER)
+    dateOfBirth DateTime?
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    Session     Session[]
+    avatar      String?
+    role        RoleType    @default(USER)
+
+    providers SocialAccount[]
+}

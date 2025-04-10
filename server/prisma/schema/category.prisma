@@ -1,0 +1,22 @@
+type CategoryImage {
+    thumbnail String
+    banner    String?
+    featured  String?
+    sample    String[]
+}
+
+model Category {
+    id            String        @id @default(auto()) @map("_id") @db.ObjectId
+    name          String        @unique
+    slug          String        @unique
+    description   String? // Mô tả danh mục
+    parentId      String?       @db.ObjectId // ID của danh mục cha (nếu có)
+    parent        Category?     @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    subCategories Category[]    @relation("CategoryHierarchy")
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    image         CategoryImage
+
+    // 1 category có nhiều product
+    products Product[]
+}

@@ -1,0 +1,42 @@
+type ProductImage {
+    thumbnail String
+    banner    String?
+    featured  String?
+    other     String?
+    gallery   String[]
+}
+
+model Product {
+    id          String       @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    title       String? // Chứa nội dung mô tả ngắn gọn về sản phẩm để SEO
+    description String? // Chứa nội dung mô tả chi tiết về sản phẩm để SEO
+    slug        String       @unique
+    image       ProductImage // Danh sách URL hình ảnh sản phẩm
+    rating      Float? // Đánh giá trung bình
+    reviewCount Int?         @default(0)
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+    tags        String[] // Danh sách tag cho sản phẩm
+
+    attributes Json?
+
+    // product status
+    isPublished Boolean @default(false)
+
+    // 1 product có 1 category
+    categoryId String   @db.ObjectId
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    stock Int   @default(0)
+    price Float @default(0)
+    sold  Int   @default(0)
+
+    isFeatured   Boolean @default(false)
+    isBestSeller Boolean @default(false)
+
+    isPromotion      Boolean   @default(false)
+    promotionPercent Int?
+    promotionStart   DateTime?
+    promotionEnd     DateTime?
+}

@@ -1,0 +1,99 @@
+enum PartnerType {
+    INDIVIDUAL
+    BUSINESS
+    DISTRIBUTOR
+    SUPPLIER
+}
+
+enum PartnerStatus {
+    ACTIVE
+    INACTIVE
+    BLOCKED
+    DELETED
+}
+
+model Partner {
+    id            String        @id @default(auto()) @map("_id") @db.ObjectId
+    name          String        @unique
+    phone         String        @unique
+    email         String?       @unique
+    address       String        @unique
+    type          PartnerType
+    notes         String?
+    totalDebt     Float?        @default(0.0)
+    paidAmount    Float?        @default(0.0)
+    remainingDebt Float?        @default(0.0)
+    status        PartnerStatus @default(ACTIVE)
+
+    contactPerson   String?
+    contactPosition String?
+    contactPhone    String?
+
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    transactions Transaction[]
+    debtHistory  DeptHistory[]
+}
+
+enum TransactionType {
+    SALE
+    PURCHASE
+    PAYMENT
+    REFUND
+}
+
+enum PaymentMethod {
+    CASH
+    BANK_TRANSFER
+    CREDIT_CARD
+    OTHER
+}
+
+type TransactionItem {
+    productName String
+    quantity    Int
+    price       Float
+    total       Float
+    notes       String?
+}
+
+enum TransactionStatus {
+    PAID
+    UNPAID
+    PARTIAL
+}
+
+model Transaction {
+    id              String            @id @default(auto()) @map("_id") @db.ObjectId
+    transactionCode String            @unique
+    partnerId       String            @db.ObjectId
+    partner         Partner           @relation(fields: [partnerId], references: [id])
+    type            TransactionType
+    amount          Float
+    date            DateTime          @default(now())
+    paymentMethod   PaymentMethod?
+    referenceCode   String?
+    notes           String?
+    items           TransactionItem[]
+    DeptHistory     DeptHistory[]
+
+    status     TransactionStatus @default(UNPAID)
+    paidAmount Float?            @default(0.0)
+}
+
+model DeptHistory {
+    id            String       @id @default(auto()) @map("_id") @db.ObjectId
+    partnerId     String       @db.ObjectId
+    partner       Partner      @relation(fields: [partnerId], references: [id])
+    transactionId String?      @db.ObjectId
+    transaction   Transaction? @relation(fields: [transactionId], references: [id])
+
+    previousDebt Float
+    debtChange   Float
+    currentDebt  Float
+
+    date      DateTime @default(now())
+    notes     String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

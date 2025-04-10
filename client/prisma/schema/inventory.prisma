@@ -1,0 +1,18 @@
+type Reservation {
+    cartId   String
+    stock    Int
+    createAt DateTime @default(now())
+}
+
+model Inventory {
+    id           String        @id @default(auto()) @map("_id") @db.ObjectId
+    location     String        @default("Unknown")
+    stock        Int           @default(0)
+    // shopId      String  @db.ObjectId     làm sau
+    reservations Reservation[] // Khi user đặt hàng trong giỏ thì sẽ trừ số lượng trong stock và thêm vào reservation
+
+    createAt DateTime @default(now())
+    updateAt DateTime @updatedAt
+
+    product Product?
+}
