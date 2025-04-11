@@ -6,7 +6,6 @@ import { Quicksand } from "next/font/google";
 import { accountApiRequest } from "@/api-request/account";
 import { cartRequestApis } from "@/api-request/cart";
 import { categoryApiRequests } from "@/api-request/category";
-import FacebookMessengerChat from "@/components/ui/facebook-message-chat";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ReactQueryProvider from "@/provider/react-query-provider";
 import { AccountType } from "@/validation-schema/account";
@@ -14,18 +13,20 @@ import { CartType } from "@/validation-schema/cart";
 import { cookies } from "next/headers";
 import "swiper/css";
 import "./globals.css";
+import ScrollToTop from "@/components/ui/scroll-to-top";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  // display swap để font không load được sẽ load 1 phông dự phòng
   display: "swap",
   adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | KCS - Khánh Care Store",
-    default: "KCS - Khánh Care Store",
+    template: "%s | Heo sạch nhà Thoa", // luôn luôn thêm suffix " | Dolar Organic" vào title
+    default: "Heo sạch nhà Thoa", // Mặc định nếu trang không có title
   },
 };
 
@@ -96,8 +97,8 @@ export default async function RootLayout({
               <AntdRegistry>{children}</AntdRegistry>
             </TooltipProvider>
           </ReactQueryProvider>
+          <ScrollToTop />
         </AppProvider>
-        <FacebookMessengerChat />
       </body>
     </html>
   );

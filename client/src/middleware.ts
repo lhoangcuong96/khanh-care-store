@@ -1,10 +1,6 @@
 // Middleware phải nằm cùng cấp với /app và trong /src
 
-// Define RoleType manually if not exported by @prisma/client
-enum RoleType {
-  ADMIN = "ADMIN",
-  USER = "USER",
-}
+import { RoleType } from "@prisma/client";
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";

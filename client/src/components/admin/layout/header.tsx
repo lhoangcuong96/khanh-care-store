@@ -10,14 +10,14 @@ import { useAppContext } from "@/provider/app-provider";
 export function Header() {
   const { account } = useAppContext();
   return (
-    <header className="container border-b sticky top-0 z-50 bg-white">
+    <header className="border-b sticky top-0 z-50 bg-white">
       <div className="flex h-16 items-center px-4">
         <div className="w-64 px-2">
           <Link href={routePath.admin.statistic}>
             <Image
-              src="/images/icons/logo-header.png"
-              width="125"
-              height="39"
+              src="/images/logo-3.jpeg"
+              width="56"
+              height="56"
               alt="logo"
             ></Image>
           </Link>

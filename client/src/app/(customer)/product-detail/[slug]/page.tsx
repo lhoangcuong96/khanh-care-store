@@ -1,6 +1,6 @@
 import productRequestApi from "@/api-request/product";
 import AppBreadcrumb from "@/components/customer/layout/breadcrumb";
-import { ErrorMessage } from "@/components/customer/UI/error-massage";
+import { ErrorMessage } from "@/components/customer/UI/error-message";
 import { routePath } from "@/constants/routes";
 import { HttpError } from "@/lib/http";
 import { ProductDetailType } from "@/validation-schema/product";
