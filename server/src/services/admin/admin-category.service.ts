@@ -1,21 +1,35 @@
 import prisma from '@/database'
-import { CreateCategoryBodyType } from '@/schemaValidations/admin/admin-category-schema'
-import { StatusError } from '@/utils/errors'
+import { AdminCategoryInListType, AdminCreateCategoryBodyType } from '@/schemaValidations/admin/admin-category-schema'
 
 export default class AdminCategoryService {
-  static async list() {
+  static async list(): Promise<AdminCategoryInListType[]> {
     const data = await prisma.category.findMany({
       select: {
         id: true,
         name: true,
         slug: true,
-        image: {
+        description: true,
+        image: true,
+        children: true,
+        attributes: {
           select: {
-            featured: true,
-            thumbnail: true
+            id: true,
+            filterable: true,
+            filterType: true,
+            required: true,
+            displayOrder: true,
+            attribute: {
+              select: {
+                id: true,
+                name: true,
+                code: true,
+                description: true,
+                type: true,
+                options: true
+              }
+            }
           }
-        },
-        subCategories: true
+        }
       },
       where: {
         parent: {
@@ -26,48 +40,65 @@ export default class AdminCategoryService {
     return data
   }
 
-  static async create(data: CreateCategoryBodyType) {
-    const existedCategory = await prisma.category.findFirst({
+  static create = async (data: AdminCreateCategoryBodyType) => {
+    const { name, description, slug, image, attributes, parentId } = data
+
+    /* Check category exist or not*/
+    const categoryExist = await prisma.category.findFirst({
       where: {
-        name: {
-          equals: data.name,
-          mode: 'insensitive'
-        }
+        OR: [{ name: name }, { slug: slug }]
       }
     })
-    if (existedCategory) {
-      throw new StatusError({
-        message: 'Category existed',
-        status: 400
-      })
+    if (categoryExist) {
+      throw new Error('Category already exists')
     }
-    let parentCategory
-    if (data.parent) {
-      parentCategory = await prisma.category.findUnique({
-        where: {
-          name: data.parent
-        },
-        select: {
-          id: true
-        }
-      })
-    }
-    await prisma.category.create({
+
+    /* Create attributes*/
+    const attributesData = attributes.map((attribute) => {
+      return {
+        name: attribute.name,
+        description: attribute.description,
+        code: attribute.code,
+        type: attribute.type,
+        options: []
+      }
+    })
+
+    /* Create category*/
+    const category = await prisma.category.create({
       data: {
-        ...data,
-        ...(parentCategory
-          ? {
-              parent: {
-                connect: {
-                  id: parentCategory.id
-                }
-              }
-            }
-          : {
-              parent: undefined
-            })
+        name,
+        description,
+        slug,
+        image,
+        ...(parentId ? { parent: { connect: { id: parentId } } } : {})
       }
     })
+
+    if (attributesData.length > 0) {
+      /* Create attributes*/
+      const createdAttributes = await Promise.all(
+        attributesData.map((attribute) => {
+          return prisma.attribute.create({
+            data: attribute
+          })
+        })
+      )
+
+      /* Create category attributes*/
+      const categoryAttribute = await prisma.categoryAttribute.createMany({
+        data: attributes.map((attribute, index) => {
+          return {
+            filterable: attribute.filterable,
+            filterType: attribute.filterType,
+            displayOrder: attribute.displayOrder,
+            required: attribute.required,
+            categoryId: category.id,
+            attributeId: createdAttributes[index]?.id
+          }
+        })
+      })
+    }
   }
 
   static async delete(ids: string[]) {

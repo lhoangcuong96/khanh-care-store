@@ -5,6 +5,11 @@ export class CategoryController {
   static async list() {
     return CategoryService.list()
   }
+
+  static async listLite() {
+    return CategoryService.listLite()
+  }
+
   static async getCategoryBySlug(slug: string) {
     return CategoryService.getCategoryBySlug({ slug })
   }

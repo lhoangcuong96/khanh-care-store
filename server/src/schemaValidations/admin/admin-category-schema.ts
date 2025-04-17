@@ -1,53 +1,66 @@
-import z from 'zod'
+import z, { any } from 'zod'
+import { AttributeSchema, CategoryAttributeSchema, CategorySchema } from '../category.schema'
 
-/*----------------------Create------------------------*/
-
-export const MAX_CATEGORY_SAMPLE_IMAGES = 5
-
-export const CategoryImageSchema = z.object({
-  thumbnail: z.string().url(),
-  banner: z.string().url().nullable().optional(),
-  featured: z.string().url().nullable().optional(),
-  sample: z.array(z.string().url()).max(MAX_CATEGORY_SAMPLE_IMAGES).min(1).nullable().optional()
+/* -------------------- Create ------------------------*/
+export const AdminCreateCategoryBodySchema = CategorySchema.pick({
+  name: true,
+  slug: true,
+  description: true,
+  image: true,
+  parentId: true
+}).extend({
+  attributes: z.array(
+    AttributeSchema.pick({
+      name: true,
+      code: true,
+      description: true,
+      type: true,
+      options: true
+    }).merge(
+      CategoryAttributeSchema.pick({
+        filterable: true,
+        filterType: true,
+        required: true,
+        displayOrder: true
+      })
+    )
+  )
 })
 
-export const CreateCategoryBodySchema = z
-  .object({
-    name: z.string(),
-    description: z.string().optional().nullable(),
-    parent: z.string().optional().nullable(),
-    image: z.object(CategoryImageSchema.shape)
-  })
-  .strict()
-
-export type CreateCategoryBodyType = z.infer<typeof CreateCategoryBodySchema>
+export type AdminCreateCategoryBodyType = z.infer<typeof AdminCreateCategoryBodySchema>
 /*----------------------End Create------------------------*/
 
 /*----------------------List------------------------*/
-export const ListCategorySchema: z.ZodSchema = z.lazy(() =>
-  z.object({
-    id: z.string(),
-    name: z.string(),
-    slug: z.string().optional().nullable(),
-    description: z.string().optional().nullable(),
-    image: CategoryImageSchema,
-    parent: z
-      .object({
-        id: z.string().optional().nullable(),
-        name: z.string().optional().nullable()
-      })
-      .nullable()
-      .optional(),
-    subCategories: z.array(ListCategorySchema)
-  })
-)
+export const AdminCategoryInListSchema = CategorySchema.pick({
+  id: true,
+  name: true,
+  slug: true,
+  description: true,
+  image: true,
+  children: true,
+  attributes: true
+})
 
-export const ListCategoryResponseSchema = z.object({
-  data: z.array(ListCategorySchema),
+export const AdminListCategoryResponseSchema = z.object({
+  data: z.array(AdminCategoryInListSchema),
   message: z.string()
 })
 
-export type ListCategoryResponseType = z.infer<typeof ListCategoryResponseSchema>
+export const AdminLiteCategoryInListSchema = CategorySchema.pick({
+  id: true,
+  name: true
+}).extend({
+  children: z.array(
+    CategorySchema.pick({
+      id: true,
+      name: true
+    })
+  )
+})
+
+export type AdminCategoryInListType = z.infer<typeof AdminCategoryInListSchema>
+export type AdminListCategoryResponseType = z.infer<typeof AdminListCategoryResponseSchema>
+
 /*----------------------End list------------------------*/
 
 /*----------------------Delete-----------------------*/

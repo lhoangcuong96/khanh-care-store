@@ -1,8 +1,12 @@
-import { CreateCategoryBodyType } from '@/schemaValidations/admin/admin-category-schema'
+import {
+  AdminCategoryInListType,
+  AdminCreateCategoryBodyType,
+  AdminListCategoryResponseType
+} from '@/schemaValidations/admin/admin-category-schema'
 import AdminCategoryService from '@/services/admin/admin-category.service'
 
 export default class AdminCategoryController {
-  static async create(data: CreateCategoryBodyType) {
+  static async create(data: AdminCreateCategoryBodyType) {
     return AdminCategoryService.create(data)
   }
 
@@ -10,7 +14,7 @@ export default class AdminCategoryController {
     return AdminCategoryService.delete(ids)
   }
 
-  static async list() {
+  static async list(): Promise<AdminCategoryInListType[]> {
     return AdminCategoryService.list()
   }
 }

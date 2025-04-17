@@ -1,22 +1,115 @@
-type CategoryImage {
-    thumbnail String
-    banner    String?
-    featured  String?
-    sample    String[]
+// Category model with hierarchical structure
+model Category {
+    id          String     @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    slug        String     @unique
+    description String?
+    image       String
+    parentId    String?    @db.ObjectId
+    parent      Category?  @relation("CategoryToSubcategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    children    Category[] @relation("CategoryToSubcategory")
+
+    // Attributes specific to this category
+    attributes CategoryAttribute[]
+
+    // Products in this category
+    products Product[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([name, slug])
 }
 
-model Category {
-    id            String        @id @default(auto()) @map("_id") @db.ObjectId
-    name          String        @unique
-    slug          String        @unique
-    description   String? // Mô tả danh mục
-    parentId      String?       @db.ObjectId // ID của danh mục cha (nếu có)
-    parent        Category?     @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    subCategories Category[]    @relation("CategoryHierarchy")
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
-    image         CategoryImage
+// Attribute definition model
+model Attribute {
+    id          String        @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    code        String        @unique // A unique code like "color", "size", "material"
+    description String?
+    type        AttributeType
+    unit        String? // e.g., "kg", "cm", "MHz"
 
-    // 1 category có nhiều product
-    products Product[]
+    // For enum type attributes, store possible values
+    options Json? // e.g., ["S", "M", "L", "XL"] for size
+
+    // Categories that use this attribute
+    categories CategoryAttribute[]
+
+    // Product attribute values
+    values ProductAttributeValue[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// Enum for attribute types
+enum AttributeType {
+    STRING
+    NUMBER
+    BOOLEAN
+    DATE
+    ENUM
+    RANGE
+}
+
+// Junction model between Category and Attribute with additional properties
+model CategoryAttribute {
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    categoryId  String @db.ObjectId
+    attributeId String @db.ObjectId
+
+    // The category this attribute belongs to
+    category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    // The attribute definition
+    attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+    // Is this attribute filterable?
+    filterable Boolean @default(true)
+
+    // Is this attribute required for products in this category?
+    required Boolean @default(false)
+
+    // Display order in filters
+    displayOrder Int @default(0)
+
+    // Filter UI type (slider, checkbox, radio, etc.)
+    filterType FilterType @default(CHECKBOX)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([categoryId, attributeId])
+}
+
+// Enum for filter UI types
+enum FilterType {
+    CHECKBOX
+    RADIO
+    SLIDER
+    RANGE
+    COLOR_PICKER
+    DROPDOWN
+}
+
+// Product attribute values
+model ProductAttributeValue {
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    productId   String @db.ObjectId
+    attributeId String @db.ObjectId
+
+    // The product this value belongs to
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    // The attribute this value is for
+    attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+    // The actual value, stored as JSON to support different types
+    value Json
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([productId, attributeId])
 }

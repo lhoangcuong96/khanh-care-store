@@ -19,14 +19,16 @@ model Product {
     updatedAt   DateTime     @updatedAt
     tags        String[] // Danh sách tag cho sản phẩm
 
-    attributes Json?
-
     // product status
     isPublished Boolean @default(false)
 
     // 1 product có 1 category
+    // Category of the product
     categoryId String   @db.ObjectId
-    category   Category @relation(fields: [categoryId], references: [id])
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+    // Attribute values for this product
+    attributes ProductAttributeValue[]
 
     stock Int   @default(0)
     price Float @default(0)

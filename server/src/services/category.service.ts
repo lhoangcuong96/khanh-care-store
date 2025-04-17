@@ -1,4 +1,5 @@
 import prisma from '@/database'
+import { LiteCategoryInListType } from '@/schemaValidations/category.schema'
 import { Category } from '@prisma/client/'
 
 export class CategoryService {
@@ -15,6 +16,22 @@ export class CategoryService {
           }
         },
         subCategories: true
+      },
+      where: {
+        parent: {
+          is: null
+        }
+      }
+    })
+    return data
+  }
+
+  static async listLite(): Promise<LiteCategoryInListType[]> {
+    const data = await prisma.category.findMany({
+      select: {
+        id: true,
+        name: true,
+        children: true
       },
       where: {
         parent: {
