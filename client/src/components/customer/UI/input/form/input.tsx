@@ -16,7 +16,7 @@ const FormInput = (
       className={`!ring-inherit h-10 rounded-sm focus:!shadow-none ${
         error
           ? "!border-2 !border-red-500 focus:!border-red-500 focus-visible:!border-red-500 hover:!border-red-500"
-          : " focus-visible:!border-lime-700 hover:!border-lime-700"
+          : " focus-visible:!border-slate-700 hover:!border-slate-700"
       } ${className} `}
     ></Input>
   );
@@ -37,7 +37,7 @@ FormInput.Password = (
       className={`!ring-inherit h-10 rounded-sm focus:!shadow-none  ${
         error
           ? "!border-2 !border-red-500 focus:!border-red-500 focus-visible:!border-red-500 hover:!border-red-500"
-          : " focus-visible:!border-lime-700 hover:!border-lime-700"
+          : " focus-visible:!border-slate-700 hover:!border-slate-700"
       } ${className} `}
     />
   );

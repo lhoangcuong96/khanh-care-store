@@ -48,8 +48,8 @@ export default function NavigationTabs() {
                         key={subIndex}
                         href={subItem.url}
                         className={cn(
-                          "block py-2 rounded-lg mb-1 text-sm text-gray-600 hover:text-lime-600",
-                          isSubActive && "text-lime-600"
+                          "block py-2 rounded-lg mb-1 text-sm text-gray-600 hover:text-slate-600",
+                          isSubActive && "text-slatee-600"
                         )}
                       >
                         {subItem.label}

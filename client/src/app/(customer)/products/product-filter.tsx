@@ -108,12 +108,12 @@ export default function ProductFilter({
   );
   return (
     <>
-      <h2 className="text-2xl font-semibold mb-4 text-lime-600 p-4 border-dashed border-2 border-lime-600">
+      <h2 className="text-2xl font-semibold mb-4 text-slate-600 p-4 border-dashed border-2 border-slate-600">
         Bộ lọc sản phẩm
       </h2>
-      <div className="bg-lime-100 px-3 py-2 rounded-md">
+      <div className="bg-slate-100 px-3 py-2 rounded-md">
         <div className="text-lg font-semibold mb-4 rounded flex flex-row gap-2 items-center justify-between">
-          <h3 className="text-lime-600">Đánh dấu sản phẩm</h3>
+          <h3 className="text-slatee-600">Đánh dấu sản phẩm</h3>
         </div>
         {productTags.map((tag) => {
           let isChecked = false;
@@ -137,9 +137,9 @@ export default function ProductFilter({
           );
         })}
       </div>
-      <div className="bg-lime-100 px-3 py-2 rounded-md">
+      <div className="bg-slate-100 px-3 py-2 rounded-md">
         <div className="text-lg font-semibold mb-4 rounded flex flex-row gap-2 items-center justify-between">
-          <h3 className="text-lime-600">Chọn mức giá</h3>
+          <h3 className="text-slatee-600">Chọn mức giá</h3>
         </div>
 
         {priceRanges.map((range) => {
@@ -173,9 +173,9 @@ export default function ProductFilter({
           );
         })}
       </div>
-      <div className="bg-lime-100 px-3 py-2 rounded-md">
+      <div className="bg-slate-100 px-3 py-2 rounded-md">
         <div className="text-lg font-semibold mb-4 rounded flex flex-row gap-2 items-center justify-between">
-          <h3 className="text-lime-600">Trọng lượng</h3>
+          <h3 className="text-slatee-600">Trọng lượng</h3>
         </div>
         {weights.map((weight) => {
           let isChecked = false;

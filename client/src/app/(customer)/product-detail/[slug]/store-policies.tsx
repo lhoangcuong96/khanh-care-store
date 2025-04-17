@@ -6,26 +6,26 @@ export function StorePolicies() {
     <Card className="bg-[#f3fce8] p-4">
       <h3 className="font-semibold mb-4 flex items-center gap-2">
         Chính sách cửa hàng
-        <span className="text-lime-600">🍃</span>
+        <span className="text-slate-600">🍃</span>
       </h3>
       <div className="space-y-4">
         <PolicyItem
-          icon={<Truck className="w-5 h-5 text-lime-600" />}
+          icon={<Truck className="w-5 h-5 text-slatee-600" />}
           title="Miễn phí vận chuyển"
           description="Cho tất cả đơn hàng trong phường Tân Hiệp thành phố Biên Hòa tỉnh Đồng Nai"
         />
         <PolicyItem
-          icon={<RefreshCw className="w-5 h-5 text-lime-600" />}
+          icon={<RefreshCw className="w-5 h-5 text-slatee-600" />}
           title="Miễn phí đổi - trả"
           description="Đối với sản phẩm lỗi sản xuất hoặc vận chuyển"
         />
         <PolicyItem
-          icon={<HeadphonesIcon className="w-5 h-5 text-lime-600" />}
+          icon={<HeadphonesIcon className="w-5 h-5 text-slatee-600" />}
           title="Hỗ trợ nhanh chóng"
           description="Gọi Hotline: 0975209429 để được hỗ trợ ngay"
         />
         <PolicyItem
-          icon={<Package className="w-5 h-5 text-lime-600" />}
+          icon={<Package className="w-5 h-5 text-slatee-600" />}
           title="Ưu đãi combo"
           description="Mua theo combo,mua càng mua nhiều giá càng rẻ"
         />

@@ -36,11 +36,11 @@ export function PromotionCodes() {
     <Card className="bg-[#f3fce8] p-4 mt-4">
       <h3 className="font-semibold mb-4 flex items-center gap-2">
         Mã khuyến mãi
-        <span className="text-lime-600">🍃</span>
+        <span className="text-slate-600">🍃</span>
       </h3>
       <div className="space-y-3">
         {promotionCodes.map((promo) => (
-          <Card key={promo.code} className="p-3 border-lime-600">
+          <Card key={promo.code} className="p-3 border-slate-600">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export function PromotionCodes() {
               <Button
                 variant="outline"
                 size="sm"
-                className="bg-lime-600 text-white hover:bg-[#6f9e32] border-0"
+                className="bg-slate-600 text-white hover:bg-[#6f9e32] border-0"
               >
                 Sao chép
               </Button>

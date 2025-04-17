@@ -61,7 +61,7 @@ export function ProductTable({ products }: { products: ProductInListType }) {
               {product.stock ? (
                 product.stock.toLocaleString()
               ) : (
-                <Button variant="link" className="text-lime-600">
+                <Button variant="link" className="text-slate-600">
                   Cập nhật
                 </Button>
               )}
@@ -85,7 +85,7 @@ export function ProductTable({ products }: { products: ProductInListType }) {
             </TableCell>
             <TableCell className="flex flex-col gap-2">
               <Link href={routePath.admin.product.update(product.slug)}>
-                <Button variant="link" className="text-lime-600">
+                <Button variant="link" className="text-slatee-600">
                   Sửa sản phẩm
                 </Button>
               </Link>

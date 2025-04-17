@@ -30,17 +30,17 @@ export default function ContactPage() {
       <div className="w-screen p-8 flex items-center justify-center h-full">
         <div className="max-w-7xl flex flex-col min-h-screen">
           <main className="flex-grow">
-            <section className="bg-lime-50 py-16">
+            <section className="bg-slate-50 py-16">
               <div className="container mx-auto px-4 text-center">
-                <h2 className="text-3xl font-bold text-lime-800 mb-4">
+                <h2 className="text-3xl font-bold text-slate-800 mb-4">
                   Thịt Heo Ăn Chay - Vì Sức Khỏe Của Bạn
                 </h2>
-                <p className="text-xl text-lime-700 mb-8">
+                <p className="text-xl text-slate-700 mb-8">
                   Thịt heo chất lượng cao từ những chú heo được nuôi bằng thực
                   phẩm thuần thực vật
                 </p>
                 <Link href={routePath.customer.home}>
-                  <Button className="bg-lime-600 hover:bg-lime-700 text-white font-semibold py-3 px-6 rounded-full text-lg">
+                  <Button className="bg-slate-600 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-full text-lg">
                     Đặt Hàng Ngay
                   </Button>
                 </Link>
@@ -49,12 +49,12 @@ export default function ContactPage() {
 
             <section className="py-16">
               <div className="container mx-auto px-4">
-                <h3 className="text-3xl font-bold text-center text-lime-800 mb-12">
+                <h3 className="text-3xl font-bold text-center text-slate-800 mb-12">
                   Tại Sao Chọn Heo Sạch Nhà Thoa?
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="text-center">
-                    <Leaf className="mx-auto h-16 w-16 text-lime-600 mb-4" />
+                    <Leaf className="mx-auto h-16 w-16 text-slate-600 mb-4" />
                     <h4 className="text-xl font-semibold mb-2">
                       100% Thực Phẩm Thực Vật
                     </h4>
@@ -64,7 +64,7 @@ export default function ContactPage() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <Apple className="mx-auto h-16 w-16 text-lime-600 mb-4" />
+                    <Apple className="mx-auto h-16 w-16 text-slate-600 mb-4" />
                     <h4 className="text-xl font-semibold mb-2">
                       Không Chất Kích Thích
                     </h4>
@@ -74,7 +74,7 @@ export default function ContactPage() {
                     </p>
                   </div>
                   <div className="text-center">
-                    <ShieldCheck className="mx-auto h-16 w-16 text-lime-600 mb-4" />
+                    <ShieldCheck className="mx-auto h-16 w-16 text-slate-600 mb-4" />
                     <h4 className="text-xl font-semibold mb-2">
                       An Toàn Cho Sức Khỏe
                     </h4>
@@ -86,7 +86,7 @@ export default function ContactPage() {
               </div>
             </section>
 
-            <section className="bg-lime-50 py-16">
+            <section className="bg-slate-50 py-16">
               <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/2 mb-8 md:mb-0">
@@ -99,7 +99,7 @@ export default function ContactPage() {
                     />
                   </div>
                   <div className="md:w-1/2 md:pl-8">
-                    <h3 className="text-3xl font-bold text-lime-800 mb-4">
+                    <h3 className="text-3xl font-bold text-slate-800 mb-4">
                       Về Chúng Tôi
                     </h3>
                     <p className="text-lg text-gray-700 mb-6">
@@ -109,7 +109,7 @@ export default function ContactPage() {
                       cho sức khỏe của heo mà còn mang lại lợi ích to lớn cho
                       người tiêu dùng.
                     </p>
-                    <Button className="bg-lime-600 hover:bg-lime-700 text-white py-2 px-4 rounded">
+                    <Button className="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded">
                       Tìm Hiểu Thêm
                     </Button>
                   </div>

@@ -51,7 +51,7 @@ export default function MobileHeader() {
           <div className="flex items-center justify-between h-16">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-lime-600">
+                <Button variant="ghost" size="sm" className="text-slate-600">
                   <Menu className="!h-6 !w-6" />
                 </Button>
               </SheetTrigger>
@@ -74,7 +74,7 @@ export default function MobileHeader() {
                           className="flex items-center py-2"
                           onClick={() => setIsOpen(false)}
                         >
-                          <Button className="w-full bg-lime-600 hover:bg-lime-600/90">
+                          <Button className="w-full bg-slate-600 hover:bg-slate-600/90">
                             Tài khoản
                           </Button>
                         </Link>
@@ -83,7 +83,7 @@ export default function MobileHeader() {
                           className="flex items-center py-2"
                           onClick={() => setIsOpen(false)}
                         >
-                          <Button className="w-full bg-lime-600 hover:bg-lime-600/90">
+                          <Button className="w-full bg-slate-600 hover:bg-slate-600/90">
                             Đăng xuất
                           </Button>
                         </Link>
@@ -91,13 +91,13 @@ export default function MobileHeader() {
                     ) : (
                       <>
                         <Button
-                          className="w-full bg-lime-600 hover:bg-lime-600/90"
+                          className="w-full bg-slate-600 hover:bg-slate-600/90"
                           onClick={() => setIsOpen(false)}
                         >
                           Đăng ký
                         </Button>
                         <Button
-                          className="w-full bg-lime-600 hover:bg-lime-600/90"
+                          className="w-full bg-slate-600 hover:bg-slate-600/90"
                           onClick={() => setIsOpen(false)}
                         >
                           Đăng nhập
@@ -106,7 +106,9 @@ export default function MobileHeader() {
                     )}
                   </div>
                   <div className="p-4 border-b">
-                    <h3 className="font-bold text-lime-600 mb-4">MENU CHÍNH</h3>
+                    <h3 className="font-bold text-slatee-600 mb-4">
+                      MENU CHÍNH
+                    </h3>
                     <nav className="space-y-2">
                       {menuItems.map((item) => (
                         <Link
@@ -154,7 +156,7 @@ export default function MobileHeader() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-lime-600 relative"
+                  className="text-slatee-600 relative"
                 >
                   <ShoppingBag className="!h-6 !w-6" />
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -171,7 +173,7 @@ export default function MobileHeader() {
         <div className="relative">
           <Input
             placeholder="Bạn muốn tìm gì..."
-            className="w-full pl-4 pr-10 border-lime-600"
+            className="w-full pl-4 pr-10 border-slate-600"
             ref={searchRef}
             defaultValue={searchParams.get("search") || ""}
             onKeyDown={(e) => {
@@ -182,7 +184,7 @@ export default function MobileHeader() {
           />
           <Button
             size="icon"
-            className="absolute right-0 top-0 h-full bg-lime-600 hover:bg-lime-600/90 rounded-l-none"
+            className="absolute right-0 top-0 h-full bg-slate-600 hover:bg-slate-600/90 rounded-l-none"
             onClick={handleSearch}
           >
             <Search className="h-4 w-4" />

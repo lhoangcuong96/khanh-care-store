@@ -41,9 +41,9 @@ export default function AppBreadcrumb({
                   <BreadcrumbItem className={`cursor-pointer text-white`}>
                     <BreadcrumbLink
                       href={item.href}
-                      className={`cursor-pointer hover:text-lime-500 ${
+                      className={`cursor-pointer hover:text-slate-500 ${
                         index === breadcrumbItems.length - 1
-                          ? "text-lime-500"
+                          ? "text-slatee-500"
                           : "text-white"
                       }`}
                     >

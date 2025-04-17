@@ -135,7 +135,7 @@ export default function Promotions() {
             <SwiperSlide key={promotion.code} className="p-2 !w-fit !mr-2">
               <div
                 key={promotion.code}
-                className="border rounded-lg p-4 flex flex-col justify-between border-lime-700"
+                className="border rounded-lg p-4 flex flex-col justify-between border-slate-700"
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -161,7 +161,7 @@ export default function Promotions() {
                   </span>
                   <Button
                     variant="default"
-                    className="bg-lime-600 "
+                    className="bg-slate-600 "
                     size="sm"
                     onClick={() => copyToClipboard(promotion.code)}
                   >

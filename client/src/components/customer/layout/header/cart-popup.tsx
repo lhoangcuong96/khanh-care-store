@@ -79,7 +79,7 @@ export function CartPopup() {
 
                   <div className="flex items-center justify-between">
                     <div className="text-sm">Số lượng</div>
-                    <div className="text-right mt-1 font-medium text-lime-600">
+                    <div className="text-right mt-1 font-medium text-slate-600">
                       {item.product.price.toLocaleString()}đ
                     </div>
                   </div>
@@ -108,11 +108,11 @@ export function CartPopup() {
 
       <div className="mt-4 flex items-center justify-between font-medium">
         <span>Tổng tiền:</span>
-        <span className="text-lime-600">{total.toLocaleString()}đ</span>
+        <span className="text-slatee-600">{total.toLocaleString()}đ</span>
       </div>
 
       <Link href={routePath.customer.checkout.deliveryInformation}>
-        <Button className="w-full mt-4 bg-lime-600 hover:bg-lime-700">
+        <Button className="w-full mt-4 bg-slate-600 hover:bg-slate-700">
           Thanh toán
         </Button>
       </Link>

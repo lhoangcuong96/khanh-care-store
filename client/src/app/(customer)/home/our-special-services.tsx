@@ -6,9 +6,9 @@ import Image from "next/image";
 export function OurSpecialServices() {
   return (
     <div className="max-w-full w-screen h-fit mt-5 relative z-50 mb-10">
-      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-lime-600">
+      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
         <div>
-          <h3 className=" text-lime-600 text-2xl font-bold flex flex-row items-center gap-2">
+          <h3 className=" text-slate-600 text-2xl font-bold flex flex-row items-center gap-2">
             Dịch vụ đặc biệt của chúng tôi
             <Image
               src="/images/icons/leaf.webp"
@@ -31,10 +31,10 @@ export function OurSpecialServices() {
               width={235}
               height={178}
             ></Image>
-            <p className="text-lime-600 text-xl font-bold text-center">
+            <p className="text-slatee-600 text-xl font-bold text-center">
               Cung Cấp Thực Phẩm Sạch
             </p>
-            <Separator className="!border-lime-700 border-2 !w-3 !min-w-3 group-hover:!w-8 transition-all my-4" />
+            <Separator className="!border-slate-700 border-2 !w-3 !min-w-3 group-hover:!w-8 transition-all my-4" />
 
             <p className="text-lg text-center font-semibold">
               Chúng tôi cam kết cung cấp thịt heo hoàn toàn sạch, được nuôi
@@ -54,10 +54,10 @@ export function OurSpecialServices() {
               width={235}
               height={178}
             ></Image>
-            <p className="text-lime-600 text-xl font-bold text-center">
+            <p className="text-slatee-600 text-xl font-bold text-center">
               Giao hàng nhanh chóng
             </p>
-            <Separator className="!border-lime-700 border-2 !w-3 !min-w-3 group-hover:!w-8 transition-all my-4" />
+            <Separator className="!border-slate-700 border-2 !w-3 !min-w-3 group-hover:!w-8 transition-all my-4" />
 
             <p className="text-lg text-center font-semibold">
               Để mang đến sự tiện lợi cho khách hàng, chúng tôi cung cấp dịch vụ
@@ -77,10 +77,10 @@ export function OurSpecialServices() {
               width={235}
               height={178}
             ></Image>
-            <p className="text-lime-600 text-xl font-bold text-center">
+            <p className="text-slatee-600 text-xl font-bold text-center">
               Thanh toán dễ dàng
             </p>
-            <Separator className="!border-lime-700 border-2 !w-3 !min-w-3 group-hover:!w-8 transition-all my-4" />
+            <Separator className="!border-slate-700 border-2 !w-3 !min-w-3 group-hover:!w-8 transition-all my-4" />
 
             <p className="text-lg text-center font-semibold">
               Chúng tôi hiểu rằng việc thanh toán tiện lợi là rất quan trọng. Vì

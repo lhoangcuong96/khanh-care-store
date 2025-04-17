@@ -186,7 +186,7 @@ export default function CreateCategoryPopup({
                                 />
                                 <div
                                   className="w-full absolute bottom-0 h-fit group-hover:opacity-100 
-                        flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-lime-50"
+                        flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-slate-50"
                                 >
                                   <Button
                                     type="button"

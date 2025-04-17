@@ -16,7 +16,7 @@ export function ProductCard({ product }: { product: ProductInListType }) {
     ? product.price - (product.price * product.promotionPercent) / 100
     : 0;
   return (
-    <Card className="w-full max-w-40 md:max-w-56 p-3 rounded-lg relative gap-1 m-[2px] shadow hover:outline-2 hover:outline-lime-600 hover:outline">
+    <Card className="w-full max-w-40 md:max-w-56 p-3 rounded-lg relative gap-1 m-[2px] shadow hover:outline-2 hover:outline-slate-600 hover:outline">
       <Link
         className="w-full h-full flex flex-col gap-1"
         href={`${routePath.customer.productDetail}/${product.slug}`}
@@ -35,7 +35,7 @@ export function ProductCard({ product }: { product: ProductInListType }) {
           className="m-auto"
         ></Image>
         <h3
-          className="font-semibold hover:text-lime-600 h-12"
+          className="font-semibold hover:text-slate-600 h-12"
           style={{
             display: "-webkit-box",
             WebkitBoxOrient: "vertical",
@@ -47,7 +47,7 @@ export function ProductCard({ product }: { product: ProductInListType }) {
           {product.name}
         </h3>
         <div className="flex flex-row gap-2 items-center">
-          <p className="text-lime-600 font-semibold">
+          <p className="text-slatee-600 font-semibold">
             {formatCurrency(product.price || 0)}
           </p>
           {product.isPromotion && (
@@ -64,7 +64,7 @@ export function ProductCard({ product }: { product: ProductInListType }) {
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 bg-lime-600 text-white hover:bg-lime-600"
+          className="h-8 w-8 bg-slate-600 text-white hover:bg-slate-600"
           onClick={() => handleAddToCart(product.id!)}
         >
           <ShoppingCart className="h-4 w-4" />
@@ -72,14 +72,14 @@ export function ProductCard({ product }: { product: ProductInListType }) {
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 bg-lime-600 text-white hover:bg-lime-600"
+          className="h-8 w-8 bg-slate-600 text-white hover:bg-slate-600"
         >
           <Search className="h-4 w-4" />
         </Button>
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 bg-lime-600 text-white hover:bg-lime-600"
+          className="h-8 w-8 bg-slate-600 text-white hover:bg-slate-600"
         >
           <Heart className="h-4 w-4" />
         </Button>

@@ -34,7 +34,7 @@ export default function CreateCategoryPage() {
   const [isOpenCategorySelector, setIsOpenCategorySelector] = useState(false);
 
   const { messageApi } = useHandleMessage();
-  const { storeUpload } = useHandleStore();
+  const { uploadFile } = useHandleStore();
   const router = useRouter();
 
   const categorySampleImageRef = useRef<HTMLInputElement>(null);
@@ -88,7 +88,7 @@ export default function CreateCategoryPage() {
   const submit = async (data: CreateCategoryType) => {
     try {
       if (data.image.featured instanceof File) {
-        const featuredImageUrl = await storeUpload(data.image.featured);
+        const featuredImageUrl = await uploadFile(data.image.featured);
         data.image.featured = featuredImageUrl;
       }
       if (
@@ -97,7 +97,7 @@ export default function CreateCategoryPage() {
         const sampleImageUrls = await Promise.all(
           data.image.sample.map(async (item: File | string) => {
             if (item instanceof File) {
-              return await storeUpload(item);
+              return await uploadFile(item);
             }
             return item;
           })
@@ -212,7 +212,7 @@ export default function CreateCategoryPage() {
                               />
                               <div
                                 className="w-full absolute bottom-0 h-fit group-hover:opacity-100 
-                        flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-lime-50"
+                        flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-slate-50"
                               >
                                 <Button
                                   type="button"
@@ -301,7 +301,7 @@ export default function CreateCategoryPage() {
                               />
                               <div
                                 className="w-full absolute bottom-0 h-fit group-hover:opacity-100 
-                        flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-lime-50"
+                        flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-slate-50"
                               >
                                 <Button
                                   type="button"

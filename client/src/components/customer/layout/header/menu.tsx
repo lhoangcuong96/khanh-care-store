@@ -71,7 +71,7 @@ export default function Menu() {
   const path = usePathname();
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   return (
-    <div className="bg-lime-700 flex items-center gap-4 rounded-md overflow-hidden h-12 text-white text-sm font-semibold mt-7">
+    <div className="bg-slate-700 flex items-center gap-4 rounded-md overflow-hidden h-12 text-white text-sm font-semibold mt-7">
       {menuItems.map((item) => {
         if (item.key === "product") {
           return (
@@ -102,10 +102,10 @@ export default function Menu() {
           );
         }
         const isHot = item.isHot ? "bg-red-500 hover:bg-red-500" : "";
-        const isActive = path?.includes(item.path) ? "bg-lime-600" : "";
+        const isActive = path?.includes(item.path) ? "bg-slate-600" : "";
         return (
           <Link
-            className={`flex h-full rounded-sm hover:bg-lime-600 ${isActive} ${isHot}`}
+            className={`flex h-full rounded-sm hover:bg-slate-600 ${isActive} ${isHot}`}
             href={item.path}
             key={item.label}
           >

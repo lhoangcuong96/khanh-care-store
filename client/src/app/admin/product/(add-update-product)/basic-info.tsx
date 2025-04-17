@@ -17,7 +17,7 @@ import envConfig from "@/envConfig";
 import { Editor } from "@tinymce/tinymce-react";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import { ChangeEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   ControllerRenderProps,
   FieldValues,
@@ -74,7 +74,7 @@ export default function BasicInfo() {
           return (
             <FormItem className="grid grid-cols-[max-content_auto] gap-2">
               <FormLabel className="w-36 pt-2">
-                Hình ảnh sản phẩm (thumbnail)
+                Hình ảnh sản phẩm (Hình ảnh hiển thị trong danh sách sản phẩm)
                 <span className="text-destructive">*</span>
               </FormLabel>
               <div className="!m-0 h-auto">
@@ -93,7 +93,7 @@ export default function BasicInfo() {
                         />
                         <div
                           className="w-full absolute bottom-0 h-fit group-hover:opacity-100 
-                    flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-lime-50"
+                    flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-slate-50"
                         >
                           <Button
                             type="button"
@@ -167,40 +167,10 @@ export default function BasicInfo() {
             <div className="!m-0">
               <FormControl>
                 <div className="relative inline-flex items-center w-full gap-6">
-                  <Input
-                    {...field}
-                    placeholder="Tên sản phẩm + Trọng lượng. VD: Ba rọi 300g"
-                  />
+                  <Input {...field} placeholder="Tên sản phẩm" />
                   <span className="absolute right-3 top-2.5 text-sm text-muted-foreground">
                     {field.value?.length}/120
                   </span>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </div>
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="weight"
-        render={({ field }) => (
-          <FormItem className="grid grid-cols-[max-content_auto] gap-2">
-            <FormLabel className="w-36 pt-2">
-              Trọng lượng(g)<span className="text-destructive">*</span>
-            </FormLabel>
-            <div className="!m-0">
-              <FormControl>
-                <div className="relative inline-flex items-center w-full gap-6">
-                  <Input
-                    {...field}
-                    placeholder="Trọng lượng tính bằng gram"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      const value = e.target.value.replace(/[^0-9]/g, "");
-                      field.onChange(+value);
-                    }}
-                    value={field.value ? field.value.toLocaleString() : ""}
-                  />
                 </div>
               </FormControl>
               <FormMessage />

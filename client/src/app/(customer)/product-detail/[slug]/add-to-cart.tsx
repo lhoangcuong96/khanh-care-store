@@ -20,7 +20,7 @@ export default function AddToCart({ id }: { id: string }) {
         className="w-32"
       />
       <Button
-        className="w-full bg-lime-600 hover:bg-lime-600 flex flex-row h-fit"
+        className="w-full bg-slate-600 hover:bg-slate-600 flex flex-row h-fit"
         onClick={() => handleAddToCart(id, quantity)}
       >
         <IoCartOutline className="!w-8 !h-8"></IoCartOutline>

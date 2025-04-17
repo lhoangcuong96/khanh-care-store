@@ -15,7 +15,7 @@ export default function CategoryCard({
         width={100}
         height={100}
       ></Image>
-      <p className="font-semibold mt-2 text-lime-600 text-center">
+      <p className="font-semibold mt-2 text-slate-600 text-center">
         {category.name}
       </p>
     </Card>

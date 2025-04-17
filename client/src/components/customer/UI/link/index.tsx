@@ -8,7 +8,7 @@ export function Link(props: PropsType) {
   return (
     <NextLink
       {...props}
-      className={`text-lime-600 text-sm hover:text-lime-600 underline`}
+      className={`text-slate-600 text-sm hover:text-slate-600 underline`}
     >
       {props.children}
     </NextLink>

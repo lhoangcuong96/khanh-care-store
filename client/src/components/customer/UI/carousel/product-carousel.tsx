@@ -78,9 +78,9 @@ export function ProductCarousel({
   }, [swiperRef]);
   return (
     <div className="max-w-full w-screen h-fit mt-5 relative z-50">
-      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-lime-600">
+      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
         <div>
-          <h3 className=" text-lime-600 text-2xl font-bold flex flex-row items-center gap-2">
+          <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
             {title}
             <Image
               src="/images/icons/leaf.webp"

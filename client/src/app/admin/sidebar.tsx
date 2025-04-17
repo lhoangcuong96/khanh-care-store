@@ -61,16 +61,16 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    label: "Quản lý sản loại sản phẩm",
+    label: "Quản lý danh mục",
     key: "products",
     subItems: [
       {
-        label: "Tất cả loại sản phẩm",
+        label: "Tất cả danh mục",
         url: routePath.admin.category.list,
         key: "category/list",
       },
       {
-        label: "Thêm loại sản phẩm",
+        label: "Thêm danh mục mới",
         url: routePath.admin.category.add,
         key: "category/add-new",
       },
@@ -230,8 +230,8 @@ const SidebarSubItem = ({ item }: { item: MenuSubItem }) => {
       key={item.url}
       href={item.url}
       className={cn(
-        "block px-4 py-2 rounded-lg mb-1 text-sm text-gray-600 hover:text-lime-600",
-        isActive && "text-lime-600"
+        "block px-4 py-2 rounded-lg mb-1 text-sm text-gray-600 hover:text-slate-600",
+        isActive && "text-slatee-600"
       )}
     >
       {item.label}

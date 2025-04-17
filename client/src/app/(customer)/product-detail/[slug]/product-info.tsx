@@ -20,7 +20,7 @@ export function ProductInfo({ product }: { product: ProductDetailType }) {
 function ProductHeader({ productName }: { productName: string }) {
   return (
     <div className="flex items-start justify-between">
-      <h1 className="text-2xl font-semibold text-lime-600">{productName}</h1>
+      <h1 className="text-2xl font-semibold text-slate-600">{productName}</h1>
       <Button variant="ghost" size="icon">
         <Heart className="w-6 h-6" />
       </Button>
@@ -32,7 +32,7 @@ function ProductPrice({ productPrice }: { productPrice: number }) {
   return (
     <div className="bg-[#f3fce8] p-4 rounded-lg">
       <div className="flex items-baseline gap-2">
-        <span className="text-2xl font-bold text-lime-600">
+        <span className="text-2xl font-bold text-slate-600">
           {productPrice.toLocaleString()}₫
         </span>
         {/* <span className="text-sm line-through text-muted-foreground">
@@ -47,7 +47,7 @@ function ProductPrice({ productPrice }: { productPrice: number }) {
 export function ProductPromotions() {
   return (
     <div>
-      <h3 className="font-semibold text-sm flex items-center gap-2 bg-lime-600 w-fit mb-0 text-white py-1 px-4 rounded-md rounded-b-none">
+      <h3 className="font-semibold text-sm flex items-center gap-2 bg-slate-600 w-fit mb-0 text-white py-1 px-4 rounded-md rounded-b-none">
         <Image
           src="/images/icons/giftbox.webp"
           alt="Giftbox"
@@ -56,7 +56,7 @@ export function ProductPromotions() {
         />
         Khuyến mãi đặc biệt !!!
       </h3>
-      <Card2 className="p-4 border-lime-700 rounded-tl-none">
+      <Card2 className="p-4 border-slate-700 rounded-tl-none">
         <ul className="space-y-2 text-sm">
           <li className="flex items-center gap-2">
             <Image

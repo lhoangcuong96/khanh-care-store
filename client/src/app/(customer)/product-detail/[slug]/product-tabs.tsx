@@ -9,14 +9,14 @@ export function ProductTabs({ description }: { description?: string | null }) {
           <TabsTrigger value="guide">HƯỚNG DẪN MUA HÀNG</TabsTrigger>
         </TabsList>
         <TabsContent value="description" className="mt-4">
-          <div className="prose max-w-none leading-loose border border-lime-600 p-3 rounded-lg text-sm">
+          <div className="prose max-w-none leading-loose border border-slate-600 p-3 rounded-lg text-sm">
             {description && (
               <div dangerouslySetInnerHTML={{ __html: description }}></div>
             )}
           </div>
         </TabsContent>
         <TabsContent value="guide">
-          <div className="prose max-w-none leading-loose border border-lime-600 p-3 rounded-lg text-sm">
+          <div className="prose max-w-none leading-loose border border-slate-600 p-3 rounded-lg text-sm">
             <p>
               <strong>Bước 1:</strong> Truy cập website và lựa chọn sản phẩm cần
               mua.

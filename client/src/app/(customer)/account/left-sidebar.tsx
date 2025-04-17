@@ -127,8 +127,8 @@ export function LeftSidebar() {
               <Link href={item.url ? item.url : "#"} className="no-underline">
                 <div
                   className={cn(
-                    "!text-gray-700 no-underline cursor-pointer flex items-center justify-between px-4 py-2 rounded-lg mb-1 hover:text-lime-600",
-                    isActive && "!text-lime-600"
+                    "!text-gray-700 no-underline cursor-pointer flex items-center justify-between px-4 py-2 rounded-lg mb-1 hover:text-slate-600",
+                    isActive && "!text-slatee-600"
                   )}
                   onClick={() => {
                     setExpandedItem((prev) => {
@@ -167,8 +167,8 @@ export function LeftSidebar() {
                           key={subIndex}
                           href={subItem.url}
                           className={cn(
-                            "block px-4 py-2 rounded-lg mb-1 text-sm text-gray-600 hover:text-lime-600",
-                            isSubActive && "text-lime-600"
+                            "block px-4 py-2 rounded-lg mb-1 text-sm text-gray-600 hover:text-slatee-600",
+                            isSubActive && "text-slatee-600"
                           )}
                         >
                           {subItem.label}

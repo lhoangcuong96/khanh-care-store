@@ -1,4 +1,4 @@
-import { categoryAdminRequestApis } from "@/api-request/admin/category";
+import { adminCategoryRequestApis } from "@/api-request/admin/category";
 import { useAppContext } from "@/provider/app-provider";
 import { useEffect, useState } from "react";
 import { useHandleMessage } from "../use-handle-message";
@@ -11,7 +11,7 @@ const useCategory = () => {
   const getListCategory = async () => {
     try {
       setIsLoading(true);
-      const res = await categoryAdminRequestApis.getCategoryList();
+      const res = await adminCategoryRequestApis.getCategoryList();
       if (!res.payload?.data)
         throw new Error("Không thể lấy danh sách danh mục");
       setCategories(res.payload.data);

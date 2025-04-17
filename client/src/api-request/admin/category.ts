@@ -1,11 +1,12 @@
 import { http } from "@/lib/http";
 import {
-  CreateCategoryType,
-  ListCategoryResponseType,
-} from "@/validation-schema/category";
+  AdminListCategoryResponseType,
+  CreateCategoryBodyType,
+} from "@/validation-schema/admin/category";
+
 import { MessageResponseType } from "@/validation-schema/common";
 
-function createCategory(data: CreateCategoryType) {
+function createCategory(data: CreateCategoryBodyType) {
   return http.post<MessageResponseType>("/admin/category", data, {
     isPrivate: true,
     isAdminRequest: true,
@@ -13,7 +14,7 @@ function createCategory(data: CreateCategoryType) {
 }
 
 function getCategoryList() {
-  return http.get<ListCategoryResponseType>("/admin/category", {
+  return http.get<AdminListCategoryResponseType>("/admin/category", {
     isPrivate: true,
     isAdminRequest: true,
   });
@@ -32,7 +33,7 @@ function deleteCategory(id: string) {
   );
 }
 
-export const categoryAdminRequestApis = {
+export const adminCategoryRequestApis = {
   createCategory,
   getCategoryList,
   deleteCategory,

@@ -15,7 +15,7 @@ export default function DefaultInput(
       <Input
         {...rest}
         ref={ref as Ref<HTMLInputElement>}
-        className={`!border-lime-600 !border-2 !ring-inherit h-12 rounded-sm ${className} relative`}
+        className={`!border-slate-600 !border-2 !ring-inherit h-12 rounded-sm ${className} relative`}
       ></Input>
       {suffix && (
         <span

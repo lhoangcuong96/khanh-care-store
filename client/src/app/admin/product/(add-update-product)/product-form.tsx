@@ -2,22 +2,23 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
+import { useState } from "react";
+import Link from "next/link";
 
 import { adminProductApiRequest } from "@/api-request/admin/product";
 import { storageRequestApis } from "@/api-request/storage";
 import { Button } from "@/components/ui/button";
 import { useHandleMessage } from "@/hooks/use-handle-message";
 import {
-  CreateProductBodyType,
+  type CreateProductBodyType,
   ProductCreationFormSchema,
-  ProductCreationFormValues,
-  ProductDetailType,
+  type ProductCreationFormValues,
+  type ProductDetailType,
 } from "@/validation-schema/admin/product";
 import BasicInfo from "./basic-info";
 import SaleInfo from "./sale-info";
-import Link from "next/link";
+import VariantInfo from "./variant-info";
 import { routePath } from "@/constants/routes";
-import { useState } from "react";
 
 export function ProductForm({
   productDetail,
@@ -39,6 +40,17 @@ export function ProductForm({
       stock: productDetail?.stock || 0,
       thumbnail: productDetail?.image.thumbnail || "",
       weight: productDetail?.attributes.weight || 0,
+      variants:
+        productDetail?.variants?.map((variant) => ({
+          name: variant.name || "",
+          sku: variant.sku || "",
+          price: variant.price || 0,
+          stock: variant.stock || 0,
+          attributes: {
+            volume: variant.attributes?.volume || "",
+            type: variant.attributes?.type || "",
+          },
+        })) || [],
     },
     mode: "all",
   });
@@ -58,6 +70,7 @@ export function ProductForm({
       await storageRequestApis.upload(presignedUrl, thumbnail);
       thumbnail = fileUrl;
     }
+
     const requestData: CreateProductBodyType = {
       name: data.name,
       price: data.price,
@@ -77,7 +90,19 @@ export function ProductForm({
       },
       isFeatured: data.isFeatured,
       isBestSeller: data.isBestSeller,
+      variants:
+        data.variants?.map((variant) => ({
+          name: variant.name,
+          sku: variant.sku,
+          price: variant.price,
+          stock: variant.stock,
+          attributes: {
+            volume: variant.attributes.volume,
+            type: variant.attributes.type,
+          },
+        })) || [],
     };
+
     try {
       setIsSubmitting(true);
       if (productDetail) {
@@ -114,17 +139,20 @@ export function ProductForm({
           >
             <BasicInfo />
             <SaleInfo />
+            <VariantInfo />
             <div className="flex justify-end gap-4 py-7 px-3 sticky bottom-0 bg-white shadow-xl col-span-2">
               <Link href={routePath.admin.product.list}>
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" disabled={isSubmitting}>
                   Hủy
                 </Button>
               </Link>
 
-              <Button type="submit" variant="secondary">
-                Lưu & Ẩn
+              <Button type="submit" variant="secondary" disabled={isSubmitting}>
+                {isSubmitting ? "Đang lưu..." : "Lưu & Ẩn"}
               </Button>
-              <Button type="submit">Lưu & Hiển thị</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Đang lưu..." : "Lưu & Hiển thị"}
+              </Button>
             </div>
           </form>
         </div>

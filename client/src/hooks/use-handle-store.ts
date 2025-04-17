@@ -1,7 +1,7 @@
 import { storageRequestApis } from "@/api-request/storage";
 
 export default function useHandleStore() {
-  async function storeUpload(file: File): Promise<string> {
+  async function uploadFile(file: File): Promise<string> {
     const getPresignedUrlRes = await storageRequestApis.generatePresignedUrl(
       file.name,
       file.type
@@ -14,5 +14,5 @@ export default function useHandleStore() {
     return fileUrl;
   }
 
-  return { storeUpload };
+  return { uploadFile };
 }

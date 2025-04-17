@@ -88,7 +88,7 @@ export default function CartSection() {
                         <AlertDialogTrigger>
                           <Button
                             variant="link"
-                            className="p-0 text-lime-600 underline"
+                            className="p-0 text-slate-600 underline"
                           >
                             Xóa
                           </Button>
@@ -159,7 +159,10 @@ export default function CartSection() {
         }
         className="justify-self-end"
       >
-        <Button className="w-40 mt-4 bg-lime-600" disabled={isDisabledCheckout}>
+        <Button
+          className="w-40 mt-4 bg-slate-600"
+          disabled={isDisabledCheckout}
+        >
           Thanh toán
         </Button>
       </Link>

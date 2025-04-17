@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import * as React from "react";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 
-import { categoryAdminRequestApis } from "@/api-request/admin/category";
+import { adminCategoryRequestApis } from "@/api-request/admin/category";
 import {
   Dialog,
   DialogContent,
@@ -79,9 +79,10 @@ export function CategorySelector({
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await categoryAdminRequestApis.getCategoryList();
+      const response = await adminCategoryRequestApis.getCategoryList();
       return response.payload?.data;
     },
+    retry: 1,
   });
 
   React.useEffect(() => {
@@ -130,7 +131,7 @@ export function CategorySelector({
                     key={category.id}
                     variant={isActive ? "secondary" : "ghost"}
                     className={`w-full justify-start ${
-                      isActive ? "text-lime-600" : ""
+                      isActive ? "text-slate-600" : ""
                     }`}
                     onClick={() => handleSelect(category, 0)}
                     title={category.name}
@@ -156,7 +157,7 @@ export function CategorySelector({
                       key={category.id}
                       variant={isActive ? "secondary" : "ghost"}
                       className={`w-full justify-start ${
-                        isActive ? "text-lime-600" : ""
+                        isActive ? "text-slatee-600" : ""
                       }`}
                       onClick={() => handleSelect(category, index + 1)}
                       title={category.name}

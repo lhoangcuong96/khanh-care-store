@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronsUpDown } from "lucide-react";
+import { ChevronRight, ChevronsUpDown } from "lucide-react";
 
+import { categoryApiRequests } from "@/api-request/category";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,24 +13,132 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useCategory from "@/hooks/modules/use-category";
-
-interface Category {
-  id: string;
-  name: string;
-  count: number;
-}
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { LiteCategoryInListType } from "@/validation-schema/category";
 
 export default function CategoryDropdown({
   onSelect,
   value,
+  placeholder,
 }: {
-  onSelect: (category: Category) => void;
+  onSelect: (category: LiteCategoryInListType) => void;
   value?: string;
+  placeholder?: string;
 }) {
-  const { categories } = useCategory();
+  const { data: categories } = useQuery({
+    queryKey: ["category"],
+    queryFn: async () => {
+      const resp = await categoryApiRequests.getListCategoryLite();
+      if (!resp.payload?.data) {
+        throw new Error("Lấy danh mục thất bại");
+      }
 
-  const selectedCategory = categories.find((category) => category.id === value);
+      return resp.payload.data;
+    },
+    retry: 1,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 60, // 1 hour
+  });
+
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  // Find the selected category (could be a parent or child)
+  const findSelectedCategory = (
+    cats: LiteCategoryInListType[]
+  ): LiteCategoryInListType | undefined => {
+    for (const cat of cats) {
+      if (cat.id === value) return cat;
+      if (cat.children) {
+        const found = cat.children.find((child) => child.id === value);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  };
+
+  const selectedCategory = categories
+    ? findSelectedCategory(categories)
+    : undefined;
+
+  const toggleCategory = (categoryId: string) => {
+    setOpenCategories((prev) => ({
+      ...prev,
+      [categoryId]: !prev[categoryId],
+    }));
+  };
+
+  const renderCategoryItem = (category: LiteCategoryInListType) => {
+    const hasChildren = category.children && category.children.length > 0;
+    const isOpen = openCategories[category.id];
+
+    if (!hasChildren) {
+      return (
+        <DropdownMenuItem
+          key={category.id}
+          onSelect={(e) => {
+            e.preventDefault();
+            onSelect(category);
+          }}
+          className={`${
+            selectedCategory?.id === category.id ? "bg-gray-100" : ""
+          }`}
+        >
+          <span>{category.name}</span>
+        </DropdownMenuItem>
+      );
+    }
+
+    return (
+      <div key={category.id} className="relative">
+        <div
+          className={`flex items-center justify-between px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground ${
+            selectedCategory?.id === category.id ? "bg-gray-100" : ""
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleCategory(category.id);
+          }}
+        >
+          <div
+            className="flex items-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(category);
+            }}
+          >
+            <span>{category.name}</span>
+          </div>
+          <ChevronRight
+            className={`h-4 w-4 transition-transform ${
+              isOpen ? "rotate-90" : ""
+            }`}
+          />
+        </div>
+
+        {isOpen && (
+          <div className="pl-4 border-l border-l-gray-200 ml-3 mt-1">
+            {category.children?.map((child) => (
+              <DropdownMenuItem
+                key={child.id}
+                onSelect={(e) => {
+                  e.preventDefault();
+                  onSelect(child);
+                }}
+                className={`${
+                  selectedCategory?.id === child.id ? "bg-gray-100" : ""
+                }`}
+              >
+                <span>{child.name}</span>
+              </DropdownMenuItem>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <DropdownMenu>
@@ -38,28 +147,18 @@ export default function CategoryDropdown({
           variant="outline"
           className="w-[240px] justify-between font-semibold text-gray-700 text-sm"
         >
-          <span> {selectedCategory?.name || "Chọn loại sản phẩm"}</span>
+          <span>
+            {" "}
+            {selectedCategory?.name || placeholder || "Chọn loại sản phẩm"}
+          </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[240px]">
         <DropdownMenuLabel>Loại</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          {categories.map((category) => (
-            <DropdownMenuItem
-              key={category.id}
-              onSelect={() => onSelect(category)}
-              className={`${
-                selectedCategory?.id === category.id ? "bg-gray-100" : ""
-              }`}
-            >
-              <span>{category.name}</span>
-              <span className="ml-auto text-xs text-muted-foreground">
-                {category.count}
-              </span>
-            </DropdownMenuItem>
-          ))}
+        <DropdownMenuGroup className="max-h-[300px] overflow-y-auto">
+          {categories?.map((category) => renderCategoryItem(category))}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

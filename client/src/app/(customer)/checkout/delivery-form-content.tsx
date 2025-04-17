@@ -233,7 +233,7 @@ export default function DeliveryFormContent() {
           </div>
           <Button
             variant="link"
-            className="p-0 m-0 !w-fit underline text-lime-600 hover:text-lime-700"
+            className="p-0 m-0 !w-fit underline text-slate-600 hover:text-slate-700"
             onClick={() => saveShippingAddress()}
             type="button"
           >

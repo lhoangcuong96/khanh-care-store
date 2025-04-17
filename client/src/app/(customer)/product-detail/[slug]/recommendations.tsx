@@ -34,7 +34,7 @@ export function Recommendations() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           Có thể bạn thích
-          <span className="text-lime-600">🍃</span>
+          <span className="text-slate-600">🍃</span>
         </h2>
         <div className="flex gap-2">
           <Button variant="outline" size="icon" className="h-8 w-8">
@@ -61,7 +61,7 @@ export function Recommendations() {
                   {product.name}
                 </h3>
                 <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-lime-600">
+                  <span className="text-lg font-bold text-slatee-600">
                     {product.price.toLocaleString()}₫
                   </span>
                   {product.originalPrice && (

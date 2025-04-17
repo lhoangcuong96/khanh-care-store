@@ -18,12 +18,12 @@ const QuantitySelector = ({
 }) => {
   return (
     <div
-      className={`grid grid-cols-[max-content_auto_max-content] items-center ${className} border border-lime-700 p-[2px] rounded-sm`}
+      className={`grid grid-cols-[max-content_auto_max-content] items-center ${className} border border-slate-700 p-[2px] rounded-sm`}
     >
       <Button
         variant="outline"
         size="icon"
-        className="h-7 w-7 text-white bg-lime-600 hover:bg-lime-700 hover:text-white"
+        className="h-7 w-7 text-white bg-slate-600 hover:bg-slate-700 hover:text-white"
         onClick={() => {
           onUpdateQuantity(id, Math.max(1, quantity - 1));
         }}
@@ -41,7 +41,7 @@ const QuantitySelector = ({
       <Button
         variant="outline"
         size="icon"
-        className="h-7 w-7 text-white bg-lime-600 hover:bg-lime-700 hover:text-white"
+        className="h-7 w-7 text-white bg-slate-600 hover:bg-slate-700 hover:text-white"
         onClick={() => onUpdateQuantity(id, quantity + 1)}
       >
         <Plus className="h-4 w-4" />
