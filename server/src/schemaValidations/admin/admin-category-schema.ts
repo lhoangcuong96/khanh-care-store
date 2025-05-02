@@ -15,7 +15,8 @@ export const AdminCreateCategoryBodySchema = CategorySchema.pick({
       code: true,
       description: true,
       type: true,
-      options: true
+      options: true,
+      unit: true
     }).merge(
       CategoryAttributeSchema.pick({
         filterable: true,
@@ -70,3 +71,12 @@ export const DeleteCategoryBodySchema = z.object({
 
 export type DeleteCategoryBodyType = z.infer<typeof DeleteCategoryBodySchema>
 /*----------------------End Delete------------------------*/
+
+/*----------------------Get Category Attributes-----------------------*/
+export const GetCategoryAttributesParamsSchema = z.object({
+  id: z.string()
+})
+export const GetCategoryAttributesResponseSchema = z.object({
+  data: z.array(CategoryAttributeSchema),
+  message: z.string()
+})

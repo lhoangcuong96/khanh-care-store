@@ -121,7 +121,7 @@ export function LeftSidebar() {
       <nav>
         {AccountItems.map((item, index) => {
           const isActive = pathname.includes(item.key);
-          console.log(item.label, isActive);
+          item.label, isActive;
           return (
             <div key={index}>
               <Link href={item.url ? item.url : "#"} className="no-underline">

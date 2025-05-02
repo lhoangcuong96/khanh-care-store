@@ -8,7 +8,6 @@ import Link from "next/link";
 
 export function ProductMenu() {
   const { categories } = useAppContext();
-  console.log(categories);
   return (
     <Card className="rounded-sm p-4">
       <div className="grid grid-cols-[auto_max-content] gap-2">

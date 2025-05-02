@@ -30,6 +30,9 @@ model Product {
     // Attribute values for this product
     attributes ProductAttributeValue[]
 
+    // Product variants (e.g., different sizes, colors)
+    variants ProductVariant[]
+
     stock Int   @default(0)
     price Float @default(0)
     sold  Int   @default(0)
@@ -41,4 +44,28 @@ model Product {
     promotionPercent Int?
     promotionStart   DateTime?
     promotionEnd     DateTime?
+}
+
+model ProductVariant {
+    id        String  @id @default(auto()) @map("_id") @db.ObjectId
+    productId String  @db.ObjectId
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    sku        String                  @unique
+    name       String // e.g., "500g - Red"
+    attributes ProductAttributeValue[] // Giá trị các thuộc tính biến thể
+
+    price Float
+    stock Int   @default(0)
+    sold  Int   @default(0)
+
+    image ProductImage?
+
+    isPromotion      Boolean   @default(false)
+    promotionPercent Int?
+    promotionStart   DateTime?
+    promotionEnd     DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

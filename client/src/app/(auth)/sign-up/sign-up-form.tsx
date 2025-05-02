@@ -79,8 +79,6 @@ export function SignUpForm() {
     }
   };
 
-  console.log(formState.errors);
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}

@@ -9,13 +9,11 @@ export default async function OrderPage() {
     const response = await adminOrderRequestApi.list();
     if (response.payload?.data) {
       orders = response.payload.data;
-      console.log("orders", orders);
     } else {
       errorMessage = "Không tìm thấy dữ liệu";
     }
   } catch (error) {
     errorMessage = "Có lỗi xảy ra";
-    console.log("error", error);
   }
   return (
     <div className="p-4">

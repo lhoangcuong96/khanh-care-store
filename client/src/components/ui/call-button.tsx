@@ -20,12 +20,11 @@ export default function CallButton() {
   // Handle clicks outside to close the popover
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      console.log("Clicked outside the popover", event.target);
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
-        console.log("Clicked outside the popover");
+        ("Clicked outside the popover");
         setIsOpen(false);
       }
     };

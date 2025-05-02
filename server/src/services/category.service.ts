@@ -42,6 +42,35 @@ export class CategoryService {
     return data
   }
 
+  static async getCategoryAttributes(id: string) {
+    const data = await prisma.categoryAttribute.findMany({
+      where: {
+        categoryId: id
+      },
+      select: {
+        id: true,
+        filterable: true,
+        filterType: true,
+        required: true,
+        displayOrder: true,
+        attribute: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            description: true,
+            type: true,
+            options: true
+          }
+        }
+      },
+      orderBy: {
+        displayOrder: 'asc'
+      }
+    })
+    return data
+  }
+
   static getCategoryBySlug = ({ slug, select }: { slug: string; select?: Array<keyof Category> }) => {
     const defaultFields: Array<keyof Category> = ['id', 'name', 'description', 'slug', 'image']
     const selectObject: Partial<Record<keyof Category, boolean>> = (select || defaultFields).reduce(

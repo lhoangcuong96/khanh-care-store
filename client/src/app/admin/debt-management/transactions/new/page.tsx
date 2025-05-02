@@ -150,10 +150,6 @@ export default function NewTransactionPage() {
     name: "items",
   });
 
-  console.log(form.getValues());
-
-  // Cập nhật công nợ khi chọn đối tác
-
   // Cập nhật loại giao dịch
   const handleTransactionTypeChange = (value: string) => {
     setIsPaymentType(value === "payment");

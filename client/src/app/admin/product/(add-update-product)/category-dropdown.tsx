@@ -44,6 +44,7 @@ export default function CategoryDropdown({
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     {}
   );
+  const [isOpen, setIsOpen] = useState(false);
 
   // Find the selected category (could be a parent or child)
   const findSelectedCategory = (
@@ -81,6 +82,7 @@ export default function CategoryDropdown({
           onSelect={(e) => {
             e.preventDefault();
             onSelect(category);
+            setIsOpen(false);
           }}
           className={`${
             selectedCategory?.id === category.id ? "bg-gray-100" : ""
@@ -107,6 +109,7 @@ export default function CategoryDropdown({
             onClick={(e) => {
               e.stopPropagation();
               onSelect(category);
+              setIsOpen(false);
             }}
           >
             <span>{category.name}</span>
@@ -126,6 +129,7 @@ export default function CategoryDropdown({
                 onSelect={(e) => {
                   e.preventDefault();
                   onSelect(child);
+                  setIsOpen(false);
                 }}
                 className={`${
                   selectedCategory?.id === child.id ? "bg-gray-100" : ""
@@ -141,7 +145,7 @@ export default function CategoryDropdown({
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"

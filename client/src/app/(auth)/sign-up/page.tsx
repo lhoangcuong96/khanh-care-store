@@ -11,7 +11,6 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 export default function SignIn() {
-  console.log("Sign up page");
   return (
     <div className="flex flex-col w-full items-center justify-center">
       <AppBreadcrumb

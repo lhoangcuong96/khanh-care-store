@@ -80,3 +80,20 @@ export type CategoryInListType = z.infer<typeof CategoryInListSchema>
 export type ListCategoryResponseType = z.infer<typeof ListCategoryResponseSchema>
 export type LiteCategoryInListType = z.infer<typeof LiteCategoryInListSchema>
 export type ListCategoryResponseLiteType = z.infer<typeof ListCategoryResponseLiteSchema>
+
+/* Get category attributes*/
+export const GetCategoryAttributesDataSchema = z.object({
+  id: z.string(),
+  filterable: z.boolean(),
+  filterType: z.enum(Object.values(FilterType) as [FilterType, ...FilterType[]]),
+  required: z.boolean(),
+  displayOrder: z.number(),
+  attribute: AttributeSchema
+})
+export const GetCategoryAttributesResponseSchema = z.object({
+  data: z.array(GetCategoryAttributesDataSchema),
+  message: z.string()
+})
+export type GetCategoryAttributesDataType = z.infer<typeof GetCategoryAttributesDataSchema>
+export type GetCategoryAttributesResponseType = z.infer<typeof GetCategoryAttributesResponseSchema>
+/* Get category attributes*/

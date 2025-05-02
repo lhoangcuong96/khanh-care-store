@@ -19,7 +19,6 @@ export default function ReactQueryProvider({
       new QueryClient({
         queryCache: new QueryCache({
           onError: (error, query) => {
-            console.log("Error: ", error);
             if (query.meta?.isShowError === false) {
               return;
             }

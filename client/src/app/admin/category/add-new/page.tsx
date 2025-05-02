@@ -187,9 +187,6 @@ export default function AddCategoryPage() {
         }),
       };
 
-      // In a real application, you would send this data to your API
-      console.log("Form data:", processedData);
-
       // Upload image
       const imageUrl = await uploadFile(image!);
       if (imageUrl) {

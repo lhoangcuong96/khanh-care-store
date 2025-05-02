@@ -2,6 +2,7 @@ import { http } from "@/lib/http";
 import {
   AdminListCategoryResponseType,
   CreateCategoryBodyType,
+  GetCategoryAttributesResponseType,
 } from "@/validation-schema/admin/category";
 
 import { MessageResponseType } from "@/validation-schema/common";
@@ -33,8 +34,19 @@ function deleteCategory(id: string) {
   );
 }
 
+function getCategoryAttributes(id: string) {
+  return http.get<GetCategoryAttributesResponseType>(
+    `/admin/category/${id}/attributes`,
+    {
+      isPrivate: true,
+      isAdminRequest: true,
+    }
+  );
+}
+
 export const adminCategoryRequestApis = {
   createCategory,
   getCategoryList,
   deleteCategory,
+  getCategoryAttributes,
 };

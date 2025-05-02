@@ -1,5 +1,6 @@
 import prisma from '@/database'
 import { AdminCategoryInListType, AdminCreateCategoryBodyType } from '@/schemaValidations/admin/admin-category-schema'
+import { CategoryAttributeSchemaType } from '@/schemaValidations/category.schema'
 
 export default class AdminCategoryService {
   static async list(): Promise<AdminCategoryInListType[]> {
@@ -60,6 +61,7 @@ export default class AdminCategoryService {
         description: attribute.description,
         code: attribute.code,
         type: attribute.type,
+        unit: attribute.unit,
         options: []
       }
     })
@@ -109,5 +111,32 @@ export default class AdminCategoryService {
         }
       }
     })
+  }
+
+  static async getCategoryAttributes(id: string): Promise<CategoryAttributeSchemaType[]> {
+    const data = await prisma.categoryAttribute.findMany({
+      where: {
+        categoryId: id
+      },
+      select: {
+        id: true,
+        filterable: true,
+        filterType: true,
+        required: true,
+        displayOrder: true,
+        attribute: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            description: true,
+            type: true,
+            options: true,
+            unit: true
+          }
+        }
+      }
+    })
+    return data
   }
 }

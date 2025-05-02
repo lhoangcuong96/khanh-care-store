@@ -19,7 +19,6 @@ export default async function ProductList() {
       sort: "name",
       order: Order.Desc,
     });
-    console.log(response);
     if (response.payload?.data) {
       products = response.payload.data as ProductInListType;
     }

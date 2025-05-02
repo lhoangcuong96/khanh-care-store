@@ -17,4 +17,8 @@ export default class AdminCategoryController {
   static async list(): Promise<AdminCategoryInListType[]> {
     return AdminCategoryService.list()
   }
+
+  static async getCategoryAttributes(id: string) {
+    return AdminCategoryService.getCategoryAttributes(id)
+  }
 }

@@ -20,8 +20,6 @@ export default async function UpdateProduct({
       if (!productDetail) {
         throw new Error("Lỗi không tìm thấy sản phẩm");
       }
-      // console.log(response);
-      console.log(productDetail);
     } catch (error) {
       errorMessage = (error as Error).message;
     }

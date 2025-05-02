@@ -1,24 +1,22 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
+import { FormProvider } from "react-hook-form";
 
 import { adminProductApiRequest } from "@/api-request/admin/product";
 import { storageRequestApis } from "@/api-request/storage";
 import { Button } from "@/components/ui/button";
+import { routePath } from "@/constants/routes";
 import { useHandleMessage } from "@/hooks/use-handle-message";
 import {
   type CreateProductBodyType,
-  ProductCreationFormSchema,
-  type ProductCreationFormValues,
   type ProductDetailType,
 } from "@/validation-schema/admin/product";
-import BasicInfo from "./basic-info";
-import SaleInfo from "./sale-info";
-import VariantInfo from "./variant-info";
-import { routePath } from "@/constants/routes";
+import ProductAttributes from "./product-attributes";
+import ProductBasicInfo from "./product-basic-info";
+import ProductVariantInfo from "./product-variant-info";
+import { ProductCreationFormValues, useHandleForm } from "./useHandleForm";
 
 export function ProductForm({
   productDetail,
@@ -28,32 +26,8 @@ export function ProductForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { messageApi } = useHandleMessage();
 
-  const form = useForm<ProductCreationFormValues>({
-    resolver: zodResolver(ProductCreationFormSchema),
-    defaultValues: {
-      name: productDetail?.name || "",
-      category: productDetail?.category?.id || "",
-      description: productDetail?.description || "",
-      isBestSeller: productDetail?.isBestSeller || false,
-      isFeatured: productDetail?.isFeatured || false,
-      price: productDetail?.price || 0,
-      stock: productDetail?.stock || 0,
-      thumbnail: productDetail?.image.thumbnail || "",
-      weight: productDetail?.attributes.weight || 0,
-      variants:
-        productDetail?.variants?.map((variant) => ({
-          name: variant.name || "",
-          sku: variant.sku || "",
-          price: variant.price || 0,
-          stock: variant.stock || 0,
-          attributes: {
-            volume: variant.attributes?.volume || "",
-            type: variant.attributes?.type || "",
-          },
-        })) || [],
-    },
-    mode: "all",
-  });
+  const { isLoading, error, categoryAttributes, form, selectedCategory } =
+    useHandleForm();
 
   const onSubmit = async (data: ProductCreationFormValues) => {
     let thumbnail = data.thumbnail;
@@ -88,19 +62,19 @@ export function ProductForm({
         weight: data.weight,
         origin: "Việt Nam",
       },
-      isFeatured: data.isFeatured,
-      isBestSeller: data.isBestSeller,
-      variants:
-        data.variants?.map((variant) => ({
-          name: variant.name,
-          sku: variant.sku,
-          price: variant.price,
-          stock: variant.stock,
-          attributes: {
-            volume: variant.attributes.volume,
-            type: variant.attributes.type,
-          },
-        })) || [],
+      isFeatured: data.isFeatured || false,
+      isBestSeller: data.isBestSeller || false,
+      // variants:
+      //   data.variants?.map((variant) => ({
+      //     name: variant.name,
+      //     sku: variant.sku,
+      //     price: variant.price,
+      //     stock: variant.stock,
+      //     attributes: {
+      //       volume: variant.attributes.volume,
+      //       type: variant.attributes.type,
+      //     },
+      //   })) || [],
     };
 
     try {
@@ -135,11 +109,21 @@ export function ProductForm({
         <div className="flex-1 p-6">
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="grid grid-cols-[2fr_1fr] gap-5"
+            className="flex flex-col gap-4"
           >
-            <BasicInfo />
-            <SaleInfo />
-            <VariantInfo />
+            <ProductBasicInfo productDetail={undefined} />
+            <ProductAttributes
+              isLoading={isLoading}
+              error={error}
+              categoryAttributes={categoryAttributes}
+              selectedCategory={selectedCategory}
+            />
+            <ProductVariantInfo
+              isLoading={isLoading}
+              error={error}
+              categoryAttributes={categoryAttributes}
+              selectedCategory={selectedCategory}
+            />
             <div className="flex justify-end gap-4 py-7 px-3 sticky bottom-0 bg-white shadow-xl col-span-2">
               <Link href={routePath.admin.product.list}>
                 <Button type="button" variant="outline" disabled={isSubmitting}>

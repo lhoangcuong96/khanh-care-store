@@ -44,8 +44,6 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
   const { messageApi } = useHandleMessage();
   const router = useRouter();
 
-  console.log("account", account);
-
   const methods = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {

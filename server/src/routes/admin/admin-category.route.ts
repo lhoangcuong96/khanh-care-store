@@ -2,8 +2,10 @@ import AdminCategoryController from '@/controllers/admin/admin-category.controll
 import {
   AdminCreateCategoryBodySchema,
   AdminCreateCategoryBodyType,
-  AdminListCategoryResponseSchema
+  AdminListCategoryResponseSchema,
+  GetCategoryAttributesParamsSchema
 } from '@/schemaValidations/admin/admin-category-schema'
+import { GetCategoryAttributesResponseSchema } from '@/schemaValidations/category.schema'
 import { MessageResponseSchema } from '@/schemaValidations/common.schema'
 import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from 'fastify'
 
@@ -41,6 +43,26 @@ export function AdminCategoryRoutes(fastify: FastifyInstance, options: FastifyPl
       await AdminCategoryController.create(body)
       rely.send({
         message: 'Tạo danh mục thành công!'
+      })
+    }
+  )
+
+  fastify.get(
+    '/:id/attributes',
+    {
+      schema: {
+        params: GetCategoryAttributesParamsSchema,
+        response: {
+          200: GetCategoryAttributesResponseSchema
+        }
+      }
+    },
+    async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+      const { id } = request.params
+      const attributes = await AdminCategoryController.getCategoryAttributes(id)
+      reply.send({
+        data: attributes,
+        message: 'Lấy danh sách thuộc tính thành công!'
       })
     }
   )
