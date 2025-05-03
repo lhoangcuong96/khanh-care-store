@@ -22,6 +22,7 @@ export default async function ProductList() {
     if (response.payload?.data) {
       products = response.payload.data as ProductInListType;
     }
+    console.log(products);
   } catch (e) {
     console.log(e);
   }

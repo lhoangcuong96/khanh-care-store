@@ -20,7 +20,7 @@ export default class AdminProductController {
     return this.service.getDetailBySlug(slug)
   }
 
-  createProduct = (data: CreateProductBodyType): Promise<Partial<ProductType>> => {
+  createProduct = (data: CreateProductBodyType): Promise<void> => {
     return this.service.create(data)
   }
   updateProduct = (id: string, data: UpdateProductBodyType) => {

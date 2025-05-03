@@ -11,26 +11,79 @@ import { Order } from '@/schemaValidations/common.schema'
 import { slugify } from '@/utils/helpers'
 
 export class AdminProductService {
-  async create(data: CreateProductBodyType): Promise<Partial<ProductType>> {
-    const { categoryId, ...rest } = data
+  async create(data: CreateProductBodyType): Promise<void> {
+    const { categoryId, attributes, variants, ...rest } = data
     const slug = slugify(rest.name)
-    const product = await prisma.product.create({
-      data: {
-        ...rest,
-        slug,
-        image: {
-          ...data.image,
-          gallery: data.image.gallery || []
-        },
-        category: {
-          connect: {
-            id: categoryId
-          }
-        }
+
+    const productAttributes = Object.keys(data.attributes || {}).map((key) => {
+      return {
+        key,
+        value: data.attributes?.[key]
       }
     })
 
-    return product as Partial<ProductType>
+    prisma.$transaction(async (tx) => {
+      const createdProduct = await prisma.product.create({
+        data: {
+          ...rest,
+          slug,
+          image: {
+            ...rest.image,
+            gallery: rest.image.gallery || []
+          },
+          category: {
+            connect: {
+              id: categoryId
+            }
+          }
+        }
+      })
+
+      /* Create product attributes*/
+      if (productAttributes.length > 0) {
+        await prisma.productAttributeValue.createMany({
+          data: productAttributes.map((attribute) => {
+            return {
+              productId: createdProduct.id,
+              attributeId: attribute.key,
+              value: attribute.value || ''
+            }
+          })
+        })
+      }
+
+      /* Create product variants and their attributes*/
+      variants?.forEach(async (variant) => {
+        const createdVariant = await prisma.productVariant.create({
+          data: {
+            productId: createdProduct.id,
+            name: variant.name,
+            sku: variant.sku,
+            price: variant.price,
+            stock: variant.stock
+          }
+        })
+        const variantAttributes = Object.keys(variant.attributes || {}).map((key) => {
+          return {
+            key,
+            value: data.attributes?.[key]
+          }
+        })
+        if (variantAttributes.length > 0) {
+          await prisma.productAttributeValue.createMany({
+            data:
+              variantAttributes?.map((attribute) => {
+                return {
+                  productId: '',
+                  attributeId: attribute.key,
+                  value: attribute.value || ''
+                }
+              }) || []
+          })
+        }
+      })
+    })
+    /* Create product*/
   }
 
   async list(queryParams: ProductListQueryType): Promise<ProductInListType> {

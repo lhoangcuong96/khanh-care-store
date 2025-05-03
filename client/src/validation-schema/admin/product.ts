@@ -20,6 +20,18 @@ export const CreateProductBodySchema = ProductSchema.omit({
   .merge(
     z.object({
       categoryId: z.string(),
+      attributes: z.record(z.string(), z.string()).optional(),
+      variants: z
+        .array(
+          z.object({
+            name: z.string().min(1, "Tên là bắt buộc"),
+            sku: z.string().min(1, "SKU là bắt buộc"),
+            price: z.number().min(0, "Giá là bắt buộc"),
+            stock: z.number().min(0, "Số lượng là bắt buộc"),
+            attributes: z.record(z.string(), z.string()).optional(),
+          })
+        )
+        .optional(),
     })
   )
   .strip();

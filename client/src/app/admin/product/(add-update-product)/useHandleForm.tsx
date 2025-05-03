@@ -1,9 +1,20 @@
+import { useState } from "react";
+
 import { adminCategoryRequestApis } from "@/api-request/admin/category";
+import { adminProductApiRequest } from "@/api-request/admin/product";
+import { storageRequestApis } from "@/api-request/storage";
+import { useHandleMessage } from "@/hooks/use-handle-message";
 import { GetCategoryAttributesDataType as CategoryAttribute } from "@/validation-schema/admin/category";
+import {
+  ProductDetailType,
+  type CreateProductBodyType,
+} from "@/validation-schema/admin/product";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { routePath } from "@/constants/routes";
 
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 export const MAX_FILE_SIZE = 300 * 1024 * 1024; // 300MB
@@ -15,7 +26,7 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/png",
   "image/webp",
 ];
-const ProductCreationFormSchema = z.object({
+const ProductCreationBaseFormSchema = z.object({
   thumbnail: z
     .union([
       z.instanceof(File, {
@@ -39,13 +50,6 @@ const ProductCreationFormSchema = z.object({
     })
     .min(10, "Tên sản phẩm phải có ít nhất 10 ký tự")
     .max(120, "Tên sản phẩm không được vượt quá 120 ký tự"),
-  weight: z
-    .number({
-      required_error: "Vui lòng nhập khối lượng sản phẩm",
-    })
-    .min(0, "Khối lượng sản phẩm phải lớn hơn hoặc bằng 0")
-    .max(1000000, "Khối lượng sản phẩm không được vượt quá 1000kg"),
-
   category: z
     .string({
       required_error: "Vui lòng chọn danh mục sản phẩm",
@@ -71,8 +75,8 @@ const ProductCreationFormSchema = z.object({
   tags: z.array(z.any()).optional(),
 });
 
-export type ProductCreationFormValues = z.infer<
-  typeof ProductCreationFormSchema
+export type ProductCreationBaseFormValues = z.infer<
+  typeof ProductCreationBaseFormSchema
 >;
 
 const createAttributesSchema = (categoryAttributes: CategoryAttribute[]) => {
@@ -159,13 +163,20 @@ const createAttributesSchema = (categoryAttributes: CategoryAttribute[]) => {
   return z.object(schemaMap);
 };
 
-export function useHandleForm() {
-  const [formSchema, setFormSchema] = useState(ProductCreationFormSchema);
+export function useHandleForm({
+  productDetail,
+}: {
+  productDetail?: ProductDetailType;
+}) {
+  const [formSchema, setFormSchema] = useState(ProductCreationBaseFormSchema);
   const [categoryAttributes, setCategoryAttributes] = useState<
     CategoryAttribute[]
   >([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { messageApi } = useHandleMessage();
+  const router = useRouter();
 
-  const form = useForm<ProductCreationFormValues>({
+  const form = useForm<ProductCreationBaseFormValues>({
     resolver: zodResolver(formSchema),
     mode: "all",
   });
@@ -180,38 +191,105 @@ export function useHandleForm() {
     setCategoryAttributes(res.payload?.data || []);
     form.clearErrors();
     const attributesSchema = createAttributesSchema(res.payload?.data || []);
-    const newFormSchema = ProductCreationFormSchema.extend({
+    const newFormSchema = ProductCreationBaseFormSchema.extend({
       attributes: attributesSchema.optional(),
-      variants: z.array(
-        z.object({
-          name: z
-            .string({
-              required_error: `Tên là bắt buộc`,
-            })
-            .min(1, "Tên là bắt buộc"),
-          sku: z
-            .string({
-              required_error: `SKU là bắt buộc`,
-            })
-            .min(1, "SKU là bắt buộc"),
-          price: z.number().min(1, "Giá là bắt buộc"),
-          stock: z.number().min(1, "Số lượng là bắt buộc"),
-          attributes: attributesSchema.optional(),
-        })
-      ),
+      variants: z
+        .array(
+          z.object({
+            name: z
+              .string({
+                required_error: `Tên là bắt buộc`,
+              })
+              .min(1, "Tên là bắt buộc"),
+            sku: z
+              .string({
+                required_error: `SKU là bắt buộc`,
+              })
+              .min(1, "SKU là bắt buộc"),
+            price: z.number().min(1, "Giá là bắt buộc"),
+            stock: z.number().min(1, "Số lượng là bắt buộc"),
+            attributes: attributesSchema.optional(),
+          })
+        )
+        .optional(),
     });
     setFormSchema(newFormSchema);
   };
+
+  const onSubmit = async (data: Record<string, any>) => {
+    let thumbnail = data.thumbnail;
+    if (thumbnail instanceof File) {
+      const generatePresignedUrlRes =
+        await storageRequestApis.generatePresignedUrl(
+          thumbnail.name,
+          thumbnail.type
+        );
+      if (!generatePresignedUrlRes.payload?.data) {
+        throw new Error("Lỗi upload avatar");
+      }
+      const { fileUrl, presignedUrl } = generatePresignedUrlRes.payload.data;
+      await storageRequestApis.upload(presignedUrl, thumbnail);
+      thumbnail = fileUrl;
+    }
+
+    const requestData: CreateProductBodyType = {
+      name: data.name,
+      price: data.price,
+      description: data.description,
+      stock: data.stock,
+      image: {
+        thumbnail,
+        gallery: [],
+        banner: "",
+        featured: "",
+      },
+      categoryId: data.category,
+      tags: [],
+      attributes: data.attributes,
+      isFeatured: data.isFeatured || false,
+      isBestSeller: data.isBestSeller || false,
+      variants: data.variants,
+    };
+
+    try {
+      setIsSubmitting(true);
+      if (productDetail) {
+        await adminProductApiRequest.updateProduct(
+          productDetail.id,
+          requestData
+        );
+        messageApi.success({
+          description: "Sửa sản phẩm thành công",
+        });
+      } else {
+        await adminProductApiRequest.createProduct(requestData);
+        messageApi.success({
+          description: "Tạo sản phẩm thành công",
+        });
+      }
+      router.push(routePath.admin.product.list);
+    } catch (e) {
+      messageApi.error({
+        error: (e as Error).message,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     if (!selectedCategory) return;
     loadAttributes(selectedCategory);
   }, [selectedCategory, form]);
 
   return {
+    formSchema,
     form,
     categoryAttributes,
     isLoading: false,
     error: "",
     selectedCategory,
+    isSubmitting,
+    onSubmit,
   };
 }

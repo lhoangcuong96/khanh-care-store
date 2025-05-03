@@ -20,7 +20,19 @@ export const CreateProductBodySchema = ProductSchema.omit({
 })
   .merge(
     z.object({
-      categoryId: z.string()
+      categoryId: z.string(),
+      attributes: z.record(z.string(), z.any()).optional(),
+      variants: z
+        .array(
+          z.object({
+            name: z.string().min(1),
+            sku: z.string().min(1),
+            price: z.number().min(0),
+            stock: z.number().min(0),
+            attributes: z.record(z.string(), z.any()).optional()
+          })
+        )
+        .optional()
     })
   )
   .strip()

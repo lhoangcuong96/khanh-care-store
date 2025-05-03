@@ -42,7 +42,7 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/webp",
 ];
 
-export const ProductCreationFormSchema = z.object({
+export const ProductCreationBaseFormSchema = z.object({
   thumbnail: z
     .union([
       z.instanceof(File, {
@@ -90,14 +90,14 @@ export const ProductCreationFormSchema = z.object({
   isBestSeller: z.boolean(),
   tags: z.array(z.any()).optional(),
 });
-export type ProductCreationFormValues = z.infer<
-  typeof ProductCreationFormSchema
+export type ProductCreationBaseFormValues = z.infer<
+  typeof ProductCreationBaseFormSchema
 >;
 
 export default function ProductBasicInfo({
   productDetail,
 }: {
-  productDetail?: ProductCreationFormValues | null;
+  productDetail?: ProductCreationBaseFormValues | null;
 }) {
   const form = useFormContext();
 
