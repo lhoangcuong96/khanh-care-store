@@ -29,7 +29,6 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 import CategoryDropdown from "./category-dropdown";
-import { useHandleForm } from "./useHandleForm";
 
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 export const MAX_FILE_SIZE = 300 * 1024 * 1024; // 300MB
@@ -94,17 +93,36 @@ export type ProductCreationBaseFormValues = z.infer<
   typeof ProductCreationBaseFormSchema
 >;
 
-export default function ProductBasicInfo({
-  productDetail,
-}: {
-  productDetail?: ProductCreationBaseFormValues | null;
-}) {
+export default function ProductBasicInfo() {
   const form = useFormContext();
 
   const [editedImage, setEditedImage] = useState<string | null>(null);
   const [isEditorLoading, setIsEditorLoading] = useState(true);
 
   const productImageRef = useRef<HTMLInputElement>(null);
+
+  const productGalleryRef = useRef<HTMLInputElement>(null);
+
+  const handleMultipleImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: ControllerRenderProps<FieldValues, "productGallery">
+  ) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const currentImages = field.value || [];
+    const newImages = [...currentImages];
+
+    // Add new files to the array
+    for (let i = 0; i < files.length; i++) {
+      if (newImages.length < MAX_PRODUCT_IMAGES) {
+        newImages.push(files[i]);
+      }
+    }
+
+    field.onChange(newImages);
+    e.target.value = "";
+  };
 
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -116,9 +134,9 @@ export default function ProductBasicInfo({
     e.target.value = "";
   };
 
-  const deleteProductImage = (
+  const deleteProductSlideImages = (
     index: number,
-    field: ControllerRenderProps<FieldValues, "productImages">
+    field: ControllerRenderProps<FieldValues, "productGallery">
   ) => {
     const images = field.value || [];
     if (images[index]) {
@@ -158,7 +176,7 @@ export default function ProductBasicInfo({
                           <Image
                             src={url}
                             alt={`Product image`}
-                            className="rounded-lg object-contain"
+                            className="rounded-lg object-cover h-[112px]"
                             width={150}
                             height={112}
                             placeholder="blur"
@@ -228,6 +246,105 @@ export default function ProductBasicInfo({
             );
           }}
         />
+        <FormField
+          control={form.control}
+          name="productGallery"
+          render={({ field }) => {
+            const images = field.value || [];
+            return (
+              <FormItem className="grid grid-cols-[max-content_auto] gap-2">
+                <FormLabel className="w-36 pt-2">
+                  Hình ảnh slide sản phẩm
+                </FormLabel>
+                <div className="!m-0 h-auto">
+                  <FormControl>
+                    <div className="flex flex-wrap gap-2">
+                      {images.map((image: any, index: number) => {
+                        let url = "";
+                        if (typeof image === "string") {
+                          url = image;
+                        } else {
+                          url = URL.createObjectURL(image);
+                        }
+                        return (
+                          <div key={index} className="relative group">
+                            <Image
+                              src={url || "/placeholder.svg"}
+                              alt={`Product slide image ${index + 1}`}
+                              className="rounded-lg object-cover h-[112px]"
+                              width={150}
+                              height={112}
+                              placeholder="blur"
+                              blurDataURL="/images/blur-image.png"
+                            />
+                            <div
+                              className="w-full absolute bottom-0 h-fit group-hover:opacity-100 
+                                flex items-center justify-center gap-2 opacity-0 transition-opacity duration-200 bg-slate-50"
+                            >
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="bg-transparent text-gray-700 shadow-none hover:bg-transparent hover:text-gray-700"
+                                onClick={() => setEditedImage(url)}
+                              >
+                                <CiEdit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="bg-transparent text-gray-700 shadow-none hover:bg-transparent hover:text-gray-700"
+                                onClick={() =>
+                                  deleteProductSlideImages(index, field)
+                                }
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {images.length < MAX_PRODUCT_IMAGES && (
+                        <>
+                          <div className="relative">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              className="absolute inset-0 cursor-pointer opacity-0"
+                              onChange={(e) => {
+                                handleMultipleImageUpload(e, field);
+                              }}
+                              ref={productGalleryRef}
+                            />
+                          </div>
+                          <div
+                            className="w-[150px] h-28 flex flex-col items-center justify-center rounded-lg border-2 border-dashed cursor-pointer"
+                            onClick={() => {
+                              if (productGalleryRef?.current) {
+                                productGalleryRef.current.click();
+                              }
+                            }}
+                          >
+                            <ImagePlus className="h-6 w-6 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground mx mt-2">
+                              Thêm hình ảnh slide
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {images.length}/{MAX_PRODUCT_IMAGES}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            );
+          }}
+        />
 
         <FormField
           control={form.control}
@@ -268,6 +385,8 @@ export default function ProductBasicInfo({
                         field.onChange(category.id);
                       }}
                       value={field.value}
+                      required={true}
+                      placeholder="Chọn loại sản phẩm"
                     ></CategoryDropdown>
                   </div>
                 </FormControl>

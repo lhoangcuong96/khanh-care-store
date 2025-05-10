@@ -4,8 +4,8 @@ import DefaultButton from "@/components/customer/UI/button/default-button";
 import CategoryCard from "@/components/customer/UI/card/category-card";
 import { ErrorMessage } from "@/components/customer/UI/error-message";
 import { Category } from "@prisma/client";
-import Image from "next/image";
 import { useEffect, useReducer, useRef } from "react";
+import { FaTools } from "react-icons/fa";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
@@ -75,13 +75,7 @@ export function NewsSection({
     <div className="max-w-full w-screen h-fit mt-5 relative z-50">
       <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
         <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
-          Danh mục nổi bật{" "}
-          <Image
-            src="/images/icons/leaf.webp"
-            alt="icon"
-            width={25}
-            height={25}
-          ></Image>
+          Danh mục nổi bật <FaTools className="text-slate-600"></FaTools>
         </h3>
         <div className="flex flex-row items-center justify-center">
           <DefaultButton

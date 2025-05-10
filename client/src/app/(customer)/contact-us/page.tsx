@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import AppBreadcrumb from "@/components/customer/layout/breadcrumb";
 import { routePath } from "@/constants/routes";
+import { shopInfo } from "@/constants/shop-info";
 
 export async function generateMetadata() {
   return {
@@ -67,7 +68,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Hotline</h3>
-                    <p className="text-gray-600">0975209429</p>
+                    <p className="text-gray-600">{shopInfo.phone.label}</p>
                   </div>
                 </div>
 
@@ -77,7 +78,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <p className="text-gray-600">lhoangcuong1996@gmail.com</p>
+                    <p className="text-gray-600">{shopInfo.email.label}</p>
                   </div>
                 </div>
               </div>

@@ -29,6 +29,7 @@ import { useRef } from "react";
 import ProfileDropdown from "../profile-dropdown";
 import { CartPopup } from "./cart-popup";
 import Menu from "./menu";
+import { shopInfo } from "@/constants/shop-info";
 
 export default function DesktopHeader() {
   const { cart, account } = useAppContext();
@@ -38,24 +39,10 @@ export default function DesktopHeader() {
 
   const handleSearch = () => {
     if (searchRef.current) {
-      const paramsObject: Record<string, string | string[]> = {};
-
-      // Process search params to support multiple values per key
-      searchParams.forEach((value, key) => {
-        if (paramsObject[key]) {
-          paramsObject[key] = Array.isArray(paramsObject[key])
-            ? [...paramsObject[key], value] // Append new values to existing array
-            : [paramsObject[key], value]; // Convert single value to array
-        } else {
-          paramsObject[key] = value; // Store as string initially
-        }
-      });
-      paramsObject["search"] = searchRef.current.value;
-      router.push(
-        routePath.customer.products({
-          ...paramsObject,
-        })
-      );
+      const searchQuery = searchRef.current.value.trim();
+      if (searchQuery) {
+        router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      }
     }
   };
 
@@ -64,9 +51,9 @@ export default function DesktopHeader() {
       <div className="grid grid-cols-[max-content_auto_max-content] items-center gap-4">
         <Link href={routePath.customer.home}>
           <Image
-            src="/images/logo-3.jpeg"
-            width="128"
-            height="128"
+            src="/images/logo.png"
+            width="124"
+            height="39"
             alt="logo"
             className="pointer"
           ></Image>
@@ -94,12 +81,17 @@ export default function DesktopHeader() {
           }
         ></DefaultInput>
         <div className="flex flex-1 gap-3">
-          <DefaultButton
-            suffix={<BiSolidPhoneCall className="!w-6 !h-6"></BiSolidPhoneCall>}
-            className="!font-semibold"
-          >
-            0975209429
-          </DefaultButton>
+          <Link href={shopInfo.phone.href}>
+            <DefaultButton
+              suffix={
+                <BiSolidPhoneCall className="!w-6 !h-6"></BiSolidPhoneCall>
+              }
+              className="!font-semibold"
+            >
+              {shopInfo.phone.label}
+            </DefaultButton>
+          </Link>
+
           <ProfileDropdown account={account}></ProfileDropdown>
           <Link href={routePath.customer.storeLocations}>
             <DefaultButton

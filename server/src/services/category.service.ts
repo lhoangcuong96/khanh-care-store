@@ -1,6 +1,6 @@
 import prisma from '@/database'
 import { LiteCategoryInListType } from '@/schemaValidations/category.schema'
-import { Category } from '@prisma/client/'
+import { Category, CategoryStatus } from '@prisma/client/'
 
 export class CategoryService {
   static async list() {
@@ -20,9 +20,13 @@ export class CategoryService {
       where: {
         parent: {
           is: null
+        },
+        status: {
+          not: CategoryStatus.DELETED
         }
       }
     })
+    console.log(data)
     return data
   }
 
@@ -36,7 +40,8 @@ export class CategoryService {
       where: {
         parent: {
           is: null
-        }
+        },
+        status: CategoryStatus.ACTIVE
       }
     })
     return data
@@ -83,7 +88,8 @@ export class CategoryService {
 
     return prisma.category.findUniqueOrThrow({
       where: {
-        slug
+        slug,
+        status: CategoryStatus.ACTIVE
       },
       select: selectObject
     })
@@ -101,7 +107,8 @@ export class CategoryService {
 
     return prisma.category.findUniqueOrThrow({
       where: {
-        id
+        id,
+        status: CategoryStatus.ACTIVE
       },
       select: selectObject
     })
@@ -109,20 +116,16 @@ export class CategoryService {
 
   static getFeaturedCategories = () => {
     return prisma.category.findMany({
-      where: {
-        products: {
-          some: {}
-        }
-      },
       select: {
         id: true,
         name: true,
         slug: true,
-        image: {
-          select: {
-            thumbnail: true
-          }
-        }
+        image: true,
+        isFeatured: true
+      },
+      where: {
+        isFeatured: true,
+        status: CategoryStatus.ACTIVE
       }
     })
   }

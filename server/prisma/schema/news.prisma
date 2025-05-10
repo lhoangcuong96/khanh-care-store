@@ -1,0 +1,27 @@
+type NewsImage {
+    thumbnail String
+    banner    String?
+    gallery   String[]
+}
+
+model News {
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    title       String
+    slug        String    @unique
+    summary     String    @db.String
+    content     String    @db.String
+    image       NewsImage
+    author      String
+    tags        String[]
+    isPublished Boolean   @default(false)
+    isFeatured  Boolean   @default(false)
+    viewCount   Int       @default(0)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    publishedAt DateTime?
+
+    // SEO fields
+    metaTitle       String?
+    metaDescription String?
+    metaKeywords    String[]
+}

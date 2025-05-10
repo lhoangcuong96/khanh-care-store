@@ -48,6 +48,8 @@ export const CategorySchema = z.object({
   description: z.string().optional().nullable(),
   image: z.string(),
   parentId: z.string().optional().nullable(),
+  isFeatured: z.boolean().optional().default(false),
+  isShowOnHomePage: z.boolean().optional().default(false),
   parent: z
     .object({
       id: z.string(),
@@ -62,11 +64,19 @@ export const CategorySchema = z.object({
   attributes: z.array(CategoryAttributeSchema).optional().nullable(),
 });
 
+export const FeaturedCategorySchema = CategorySchema.pick({
+  id: true,
+  name: true,
+  image: true,
+  slug: true,
+});
+
 export type AttributeSchemaType = z.infer<typeof AttributeSchema>;
 export type CategoryAttributeSchemaType = z.infer<
   typeof CategoryAttributeSchema
 >;
 export type CategorySchemaType = z.infer<typeof CategorySchema>;
+export type FeaturedCategoryType = z.infer<typeof FeaturedCategorySchema>;
 
 /*----------------------List------------------------*/
 export const CategoryInListSchema = CategorySchema.pick({
@@ -82,9 +92,9 @@ export const ListCategoryResponseSchema = z.object({
 });
 
 export const LiteCategoryInListSchema = CategorySchema.pick({
-  id: true,
   name: true,
 }).extend({
+  id: z.string().optional(),
   children: z
     .array(
       CategorySchema.pick({

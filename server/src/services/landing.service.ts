@@ -5,6 +5,8 @@ import { ProductService } from './product.service'
 export default class LandingService {
   static async getLandingData() {
     const productService = new ProductService()
+
+    const getFeaturedCategories = CategoryService.getFeaturedCategories()
     const getFeaturedProducts = productService.list({
       page: 1,
       limit: 8,
@@ -23,12 +25,14 @@ export default class LandingService {
       isBestSeller: true
     })
 
-    const [featuredProducts, promotionalProducts, bestSellerProducts] = await Promise.all([
+    const [featuredCategories, featuredProducts, promotionalProducts, bestSellerProducts] = await Promise.all([
+      getFeaturedCategories,
       getFeaturedProducts,
       getPromotionalProducts,
       getBestSellerProducts
     ])
     return {
+      featuredCategories,
       featuredProducts,
       promotionalProducts,
       bestSellerProducts

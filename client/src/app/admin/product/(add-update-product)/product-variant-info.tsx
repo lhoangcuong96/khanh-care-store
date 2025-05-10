@@ -53,7 +53,7 @@ export default function VariantInfo({
     <Card className="col-span-2">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Biến thể sản phẩm</CardTitle>
-        {categoryAttributes.length > 0 && (
+        {selectedCategory && (
           <Button
             type="button"
             onClick={() =>

@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { shopInfo } from "@/constants/shop-info";
 import { Truck, RefreshCw, HeadphonesIcon, Package } from "lucide-react";
 
 export function StorePolicies() {
@@ -22,7 +23,7 @@ export function StorePolicies() {
         <PolicyItem
           icon={<HeadphonesIcon className="w-5 h-5 text-slatee-600" />}
           title="Hỗ trợ nhanh chóng"
-          description="Gọi Hotline: 0975209429 để được hỗ trợ ngay"
+          description={`Gọi Hotline: ${shopInfo.phone.label} để được hỗ trợ ngay`}
         />
         <PolicyItem
           icon={<Package className="w-5 h-5 text-slatee-600" />}

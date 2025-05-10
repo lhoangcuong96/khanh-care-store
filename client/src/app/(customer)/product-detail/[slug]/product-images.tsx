@@ -22,7 +22,7 @@ export function ProductImages({ images }: { images: string[] }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="w-full ax-w-2xl mx-auto p-4">
       {/* Main Image */}
       <div className="relative aspect-square mb-4">
         <Image
@@ -30,7 +30,7 @@ export function ProductImages({ images }: { images: string[] }) {
           alt="Product Image"
           width={400}
           height={300}
-          className="object-contain"
+          className="object-cover rounded-lg max-w-[400px] max-h-[300px] w-full h-full"
           priority
         />
       </div>

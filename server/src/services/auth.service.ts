@@ -94,11 +94,11 @@ export default class AuthService {
       }
     })
     if (!account) {
-      throw new EntityError([{ field: 'email', message: 'Email không tồn tại' }])
+      throw new EntityError([{ field: 'phoneNumber', message: 'Số điện thoại không tồn tại' }])
     }
     const isPasswordMatch = await comparePassword(data.password, account.password || '')
     if (!isPasswordMatch) {
-      throw new EntityError([{ field: 'password', message: 'Email hoặc mật khẩu không đúng' }])
+      throw new EntityError([{ field: 'password', message: 'Mật khẩu không đúng' }])
     }
     const session = await this.createSession(account)
     return {

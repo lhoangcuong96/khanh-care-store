@@ -25,8 +25,8 @@ const quicksand = Quicksand({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Heo sạch nhà Thoa", // luôn luôn thêm suffix " | Dolar Organic" vào title
-    default: "Heo sạch nhà Thoa", // Mặc định nếu trang không có title
+    template: "%s | KCS", // luôn luôn thêm suffix " | Dolar Organic" vào title
+    default: "KCS", // Mặc định nếu trang không có title
   },
 };
 

@@ -75,6 +75,9 @@ export const routePath = {
     category: {
       list: "/admin/category/list",
       add: "/admin/category/add-new",
+      edit: (id: string) => {
+        return `/admin/category/${id}`;
+      },
     },
     order: {
       list: "/admin/order/list",
@@ -91,6 +94,11 @@ export const routePath = {
       transactionAdd: "/admin/debt-management/transactions/new",
       transactionUpdate: (id: string) =>
         `/admin/debt-management/transactions/${id}/update`,
+    },
+    news: {
+      list: "/admin/news",
+      create: "/admin/news/create",
+      edit: (id: string) => `/admin/news/${id}/edit`,
     },
   },
   error: "/error",

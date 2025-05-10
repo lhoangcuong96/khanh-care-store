@@ -9,6 +9,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
+import { FaTools } from "react-icons/fa";
+
 import {
   A11y,
   Autoplay,
@@ -18,9 +20,13 @@ import {
   Virtual,
 } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
+import { FeaturedCategoryType } from "@/validation-schema/category";
 
-export function FeaturedCategories() {
-  const { categories } = useCategory();
+export function FeaturedCategories({
+  categories,
+}: {
+  categories: FeaturedCategoryType[];
+}) {
   const swiperRef = useRef<SwiperClass>(null);
 
   return (
@@ -28,12 +34,7 @@ export function FeaturedCategories() {
       <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
         <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
           Danh mục nổi bật
-          <Image
-            src="/images/icons/leaf.webp"
-            alt="icon"
-            width={25}
-            height={25}
-          ></Image>
+          <FaTools className="text-slate-600"></FaTools>
         </h3>
         <div className="flex flex-row items-center justify-center">
           <DefaultButton
@@ -56,7 +57,7 @@ export function FeaturedCategories() {
       </div>
 
       {!categories || !categories.length ? (
-        <ErrorMessage>Lỗi khi lấy dữ liệu dang mục</ErrorMessage>
+        <ErrorMessage>Lỗi khi lấy dữ liệu danh mục</ErrorMessage>
       ) : (
         <div>
           <Swiper

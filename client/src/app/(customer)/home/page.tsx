@@ -9,10 +9,11 @@ import { Suspense } from "react";
 import { FeaturedCategories } from "./featured-categories";
 import { OurSpecialServices } from "./our-special-services";
 import { ProductSection } from "./product-section";
+import { shopInfo } from "@/constants/shop-info";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Tìm kiếm những sản phẩm nổi bật tại Heo sạch nhà Thoa",
+    title: `Tìm kiếm những sản phẩm nổi bật tại ${shopInfo.name}`,
     description: "",
   };
 }
@@ -24,9 +25,7 @@ export default async function CustomerHomePage() {
   try {
     const response = await landingApiRequest.getLandingData();
     landingPageData = response.payload?.data;
-    if (!landingPageData) {
-      throw new Error("Có lỗi xảy ra khi lấy dữ liệu sản phẩm!");
-    }
+    console.log("landingPageData", landingPageData);
   } catch (err) {
     console.error("Có lỗi xảy ra khi lấy dữ liệu sản phẩm!", err);
     getProductError = "Có lỗi xảy ra khi lấy dữ liệu sản phẩm!";
@@ -34,10 +33,12 @@ export default async function CustomerHomePage() {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <HeroImage src="/images/banner.webp"></HeroImage>
+      <HeroImage src="/images/breadcrumb.jpg"></HeroImage>
       <div className="flex flex-col items-center gap-8 px-5 w-full max-w-screen-xl">
         <Suspense fallback={<Spinner />}>
-          <FeaturedCategories></FeaturedCategories>
+          <FeaturedCategories
+            categories={landingPageData?.featuredCategories || []}
+          ></FeaturedCategories>
         </Suspense>
         <Suspense fallback={<Spinner />}>
           <ProductSection
@@ -56,7 +57,7 @@ export default async function CustomerHomePage() {
             }
             error={getProductError}
             title="Sản phẩm bán chạy"
-            banner="/images/product_section_banner_1.jpg"
+            banner="/images/best-seller-banner.jpg"
             viewAllUrl={routePath.customer.products({
               isBestSeller: true,
             })}
@@ -67,7 +68,7 @@ export default async function CustomerHomePage() {
             }
             error={getProductError}
             title="Sản phẩm nổi bật"
-            banner="/images/product_section_banner_2.jpg"
+            banner="/images/featured-products-banner.jpg"
             viewAllUrl={routePath.customer.products({
               isFeatured: true,
             })}

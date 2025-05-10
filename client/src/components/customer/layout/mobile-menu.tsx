@@ -11,6 +11,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
 import { useState } from "react";
 import { ProductMenu } from "./product-menu";
+import { shopInfo } from "@/constants/shop-info";
 
 const profileItems: MenuProps["items"] = [
   {
@@ -82,7 +83,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             suffix={<BiSolidPhoneCall className="text-2xl" />}
             className="!font-semibold"
           >
-            0975209429
+            {shopInfo.phone.label}
           </DefaultButton>
           <Dropdown menu={{ items: profileItems }} trigger={["click"]}>
             <DefaultButton

@@ -1,3 +1,4 @@
+import { shopInfo } from "@/constants/shop-info";
 import { OrderType } from "@/validation-schema/order";
 import Image from "next/image";
 
@@ -30,7 +31,7 @@ export default function PrintLayout({
       {/* Header */}
       <div className="flex justify-between text-sm mb-4">
         <div>{getCurrentDateTime()}</div>
-        <div>Heo sạch nhà Thoa - Cảm ơn</div>
+        <div>{shopInfo.name} - Cảm ơn</div>
       </div>
 
       {/* Logo */}

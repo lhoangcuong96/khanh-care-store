@@ -11,6 +11,7 @@ import React, { useEffect, useReducer, useRef } from "react";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import { FaTools } from "react-icons/fa";
 
 interface ProductSectionProps {
   banner?: string;
@@ -95,7 +96,7 @@ export function ProductSection({
             alt={`${title} banner`}
             width="287"
             height="410"
-            className="rounded-sm hidden lg:block"
+            className="rounded-sm hidden lg:block w-[287px] h-[410px] object-cover"
           ></Image>
         </Link>
       )}
@@ -104,12 +105,7 @@ export function ProductSection({
           <div>
             <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
               <Link href={viewAllUrl || "#"}>{title}</Link>
-              <Image
-                src="/images/icons/leaf.webp"
-                alt="icon"
-                width={25}
-                height={25}
-              ></Image>
+              <FaTools className="text-slate-600"></FaTools>
             </h3>
             {subtitle && <p className="font-semibold">{subtitle}</p>}
           </div>

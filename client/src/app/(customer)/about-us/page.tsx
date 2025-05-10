@@ -1,6 +1,7 @@
 import AppBreadcrumb from "@/components/customer/layout/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { routePath } from "@/constants/routes";
+import { shopInfo } from "@/constants/shop-info";
 import { Apple, Leaf, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/Link";
@@ -8,7 +9,7 @@ import Link from "next/Link";
 export async function generateMetadata() {
   return {
     title: "Liên hệ với chung tôi",
-    description: "Liên hệ với Heo sạch nhà Thoa để được hỗ trợ tốt nhất.",
+    description: `Liên hệ với ${shopInfo.name} để được hỗ trợ tốt nhất.`,
   };
 }
 
@@ -50,7 +51,7 @@ export default function ContactPage() {
             <section className="py-16">
               <div className="container mx-auto px-4">
                 <h3 className="text-3xl font-bold text-center text-slate-800 mb-12">
-                  Tại Sao Chọn Heo Sạch Nhà Thoa?
+                  Tại Sao chọn {shopInfo.name}?
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="text-center">

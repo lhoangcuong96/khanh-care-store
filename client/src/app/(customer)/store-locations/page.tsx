@@ -7,12 +7,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { routePath } from "@/constants/routes";
+import { shopInfo } from "@/constants/shop-info";
 import { Clock, MapPin, Phone, Store, Users } from "lucide-react";
 
 export async function generateMetadata() {
   return {
     title: "Hệ thống cửa hàng",
-    description: "Hệ thống cửa hàng của Heo sạch nhà Thoa",
+    description: `Hệ thống cửa hàng của ${shopInfo.name}`,
   };
 }
 
@@ -102,9 +103,9 @@ export default function StoreLocations() {
                   {/* Store Cards */}
                   <div className="space-y-4">
                     <StoreCard
-                      name="Heo nhà Thoa - Đồng Nai"
-                      address="152 A7/1 Phạm Văn Khoai P.Tân Hiệp Biên Hoà Đồng Nai - Đối diên cổng A sân banh Đồng Nai"
-                      hotline="0975209429"
+                      name={shopInfo.name}
+                      address={shopInfo.address}
+                      hotline={shopInfo.phone.label}
                     />
                   </div>
                 </div>

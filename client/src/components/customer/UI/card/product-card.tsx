@@ -12,27 +12,27 @@ import Link from "next/link";
 export function ProductCard({ product }: { product: ProductInListType }) {
   const { handleAddToCart } = useCart();
 
-  const promotionalPrice = product.promotionPercent
-    ? product.price - (product.price * product.promotionPercent) / 100
+  const promotionalPrice = product?.promotionPercent
+    ? product?.price - (product?.price * product?.promotionPercent) / 100
     : 0;
   return (
     <Card className="w-full max-w-40 md:max-w-56 p-3 rounded-lg relative gap-1 m-[2px] shadow hover:outline-2 hover:outline-slate-600 hover:outline">
       <Link
         className="w-full h-full flex flex-col gap-1"
-        href={`${routePath.customer.productDetail}/${product.slug}`}
+        href={`${routePath.customer.productDetail}/${product?.slug}`}
       >
-        {product.isPromotion && (
+        {product?.isPromotion && (
           <div className="absolute -left-[1px] -top-[1px] bg-red-500 text-white px-3 py-1 text-sm rounded-br-lg rounded-tl-lg z-50">
-            <p>Giảm {product.promotionPercent}%</p>
+            <p>Giảm {product?.promotionPercent}%</p>
           </div>
         )}
 
         <Image
           src={product?.image?.thumbnail || ""}
-          alt={product.name || ""}
+          alt={product?.name || ""}
           height={148}
           width={198}
-          className="m-auto"
+          className="m-auto h-[148px] w-[198px] object-cover rounded-lg"
         ></Image>
         <h3
           className="font-semibold hover:text-slate-600 h-12"
@@ -44,13 +44,13 @@ export function ProductCard({ product }: { product: ProductInListType }) {
             overflow: "hidden",
           }}
         >
-          {product.name}
+          {product?.name}
         </h3>
         <div className="flex flex-row gap-2 items-center">
           <p className="text-slatee-600 font-semibold">
-            {formatCurrency(product.price || 0)}
+            {formatCurrency(product?.price || 0)}
           </p>
-          {product.isPromotion && (
+          {product?.isPromotion && (
             <p className="line-through text-xs">
               {formatCurrency(promotionalPrice)}
             </p>

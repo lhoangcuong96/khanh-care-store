@@ -3,7 +3,9 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 export interface StorageService {
   generatePresignedUrl(fileName: string, fileType: string): Promise<{ presignedUrl: string; fileUrl: string }>
-
+  generatePresignedUrls(
+    files: { fileName: string; fileType: string }[]
+  ): Promise<{ presignedUrl: string; fileUrl: string }[]>
   delete(): void
 }
 
@@ -34,6 +36,36 @@ export class S3StorageService implements StorageService {
       throw new Error('Error generating presigned URL')
     }
   }
+
+  async generatePresignedUrls(
+    files: {
+      fileName: string
+      fileType: string
+    }[]
+  ): Promise<{ presignedUrl: string; fileUrl: string }[]> {
+    const presignedUrls = await Promise.all(
+      files.map(async ({ fileName, fileType }) => {
+        const key = fileName
+        const command = new PutObjectCommand({
+          Bucket: process.env.AWS_BUCKET,
+          Key: key,
+          ContentType: encodeURI(fileType)
+        })
+        try {
+          const presignedUrl = await getSignedUrl(s3Client, command, {
+            expiresIn: 3600
+          })
+          // Encode key nếu như key có ký tự đặc biệt sẽ bị sai so với s3
+          const fileUrl = `https://${process.env.AWS_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`
+          return { presignedUrl, fileUrl }
+        } catch (error) {
+          console.error(error)
+          throw new Error('Error generating presigned URL')
+        }
+      })
+    )
+    return presignedUrls
+  }
   delete() {}
 }
 
@@ -50,6 +82,10 @@ export class StorageContext {
 
   async generatePresignedUrl(fileName: string, fileType: string) {
     return this.service.generatePresignedUrl(fileName, fileType)
+  }
+
+  async generatePresignedUrls(files: { fileName: string; fileType: string }[]) {
+    return this.service.generatePresignedUrls(files)
   }
 
   async deleteFile() {}

@@ -1,14 +1,23 @@
 import { http } from "@/lib/http";
 import {
   AdminListCategoryResponseType,
-  CreateCategoryBodyType,
+  AdminCreateCategoryBodyType,
   GetCategoryAttributesResponseType,
+  GetCategoryDetailResponseType,
+  AdminUpdateCategoryBodyType,
 } from "@/validation-schema/admin/category";
 
 import { MessageResponseType } from "@/validation-schema/common";
 
-function createCategory(data: CreateCategoryBodyType) {
+function createCategory(data: AdminCreateCategoryBodyType) {
   return http.post<MessageResponseType>("/admin/category", data, {
+    isPrivate: true,
+    isAdminRequest: true,
+  });
+}
+
+function updateCategory(id: string, data: AdminUpdateCategoryBodyType) {
+  return http.put<MessageResponseType>(`/admin/category/${id}`, data, {
     isPrivate: true,
     isAdminRequest: true,
   });
@@ -23,10 +32,8 @@ function getCategoryList() {
 
 function deleteCategory(id: string) {
   return http.post<MessageResponseType>(
-    `/admin/category/delete/`,
-    {
-      ids: [id],
-    },
+    `/admin/category/${id}/delete`,
+    {},
     {
       isPrivate: true,
       isAdminRequest: true,
@@ -44,9 +51,18 @@ function getCategoryAttributes(id: string) {
   );
 }
 
+function getCategoryDetail(id: string) {
+  return http.get<GetCategoryDetailResponseType>(`/admin/category/${id}`, {
+    isPrivate: true,
+    isAdminRequest: true,
+  });
+}
+
 export const adminCategoryRequestApis = {
   createCategory,
+  updateCategory,
   getCategoryList,
   deleteCategory,
   getCategoryAttributes,
+  getCategoryDetail,
 };

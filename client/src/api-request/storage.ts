@@ -1,5 +1,9 @@
 import { http } from "@/lib/http";
-import { GeneratePresignedUrlResponseType } from "@/validation-schema/storage";
+import {
+  GeneratePresignedUrlResponseType,
+  GeneratePresignedUrlsBodyType,
+  GeneratePresignedUrlsResponseType,
+} from "@/validation-schema/storage";
 
 export const storageRequestApis = {
   generatePresignedUrl: async (fileName: string, fileType: string) => {
@@ -9,6 +13,16 @@ export const storageRequestApis = {
         fileName,
         fileType,
       },
+      {
+        isPrivate: true,
+      }
+    );
+  },
+
+  generatePresignedUrls: async (files: GeneratePresignedUrlsBodyType) => {
+    return http.post<GeneratePresignedUrlsResponseType>(
+      "/storage/generate-presigned-urls",
+      files,
       {
         isPrivate: true,
       }

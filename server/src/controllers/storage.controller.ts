@@ -8,4 +8,8 @@ export default class StorageController {
   generatePresignedUrl(fileName: string, fileType: string) {
     return this.service.generatePresignedUrl(fileName, fileType)
   }
+
+  generatePresignedUrls(files: { fileName: string; fileType: string }[]) {
+    return this.service.generatePresignedUrls(files)
+  }
 }

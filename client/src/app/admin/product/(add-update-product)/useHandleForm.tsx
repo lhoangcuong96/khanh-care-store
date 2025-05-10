@@ -44,6 +44,22 @@ const ProductCreationBaseFormSchema = z.object({
     .refine((file) => {
       return file instanceof File ? file.size <= MAX_IMAGE_SIZE : true;
     }, `Hình ảnh không được vượt quá ${MAX_IMAGE_SIZE / 1024 / 1024}MB`),
+  productGallery: z
+    .array(
+      z.union([
+        z.instanceof(File, {
+          message: "Hình ảnh không hợp lệ",
+        }),
+        z.string().url({
+          message: "Hình ảnh không hợp lệ",
+        }),
+      ])
+    )
+    .optional()
+    .refine((files) => {
+      if (!files) return true;
+      return files.length <= MAX_PRODUCT_IMAGES;
+    }, `Không được vượt quá ${MAX_PRODUCT_IMAGES} hình ảnh`),
   name: z
     .string({
       required_error: "Vui lòng nhập tên sản phẩm",
@@ -218,18 +234,51 @@ export function useHandleForm({
 
   const onSubmit = async (data: Record<string, any>) => {
     let thumbnail = data.thumbnail;
+    let gallery = data.productGallery || [];
+    const files: File[] = [];
     if (thumbnail instanceof File) {
-      const generatePresignedUrlRes =
-        await storageRequestApis.generatePresignedUrl(
-          thumbnail.name,
-          thumbnail.type
-        );
-      if (!generatePresignedUrlRes.payload?.data) {
-        throw new Error("Lỗi upload avatar");
+      files.push(thumbnail);
+    }
+
+    if (gallery && gallery.some((item: any) => item instanceof File)) {
+      gallery.forEach((item: any) => {
+        if (item instanceof File) {
+          files.push(item);
+        }
+      });
+    }
+    if (files.length > 0) {
+      const presignedUrls = await storageRequestApis.generatePresignedUrls({
+        files: files.map((file) => ({
+          fileName: file.name,
+          fileType: file.type,
+        })),
+      });
+      if (!presignedUrls?.payload?.data) {
+        messageApi.error({
+          error: presignedUrls.payload?.message || "Lỗi khi tạo URL",
+        });
+        return;
       }
-      const { fileUrl, presignedUrl } = generatePresignedUrlRes.payload.data;
-      await storageRequestApis.upload(presignedUrl, thumbnail);
-      thumbnail = fileUrl;
+      const uploadPromises = presignedUrls.payload.data.map(
+        (presignedUrl, index) => {
+          const file = files[index];
+          return storageRequestApis.upload(presignedUrl.presignedUrl, file);
+        }
+      );
+      const response = await Promise.all(uploadPromises);
+      if (!response.every((res) => res.ok)) {
+        messageApi.error({
+          error: "Lỗi khi tải lên hình ảnh",
+        });
+        return;
+      }
+      thumbnail = presignedUrls.payload.data[0].fileUrl;
+      gallery = gallery
+        .filter((item: any) => !(item instanceof File))
+        .concat(
+          presignedUrls.payload.data.slice(1).map((item) => item.fileUrl)
+        );
     }
 
     const requestData: CreateProductBodyType = {
@@ -239,7 +288,7 @@ export function useHandleForm({
       stock: data.stock,
       image: {
         thumbnail,
-        gallery: [],
+        gallery,
         banner: "",
         featured: "",
       },

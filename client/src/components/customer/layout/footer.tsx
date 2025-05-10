@@ -1,4 +1,5 @@
 import { Separator } from "@/components/ui/separator";
+import { shopInfo } from "@/constants/shop-info";
 import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram } from "react-icons/fa6";
@@ -9,15 +10,15 @@ export function Footer() {
       <div className="max-w-7xl p-4 grid md:grid-cols-2 lg:grid-cols-[5fr_3fr_4fr_4fr] items-start m-auto gap-7">
         <div className="flex flex-col gap-5">
           <Image
-            src="/images/logo-3.jpeg"
-            width="128"
-            height="128"
+            src="/images/logo.png"
+            width="124"
+            height="39"
             alt="logo"
           ></Image>
           <p className="text-sm font-semibold">
-            Chúng tôi hi vọng tất cả người tiêu dùng Việt nam sẽ được sử dụng
-            những thụ phẩm sạch tươi ngon, bổ dưỡng và an toàn nhất tại cửa hàng
-            cung cấp thực phẩm Heo sạch nhà THoa.
+            Chúng tôi hi vọng tất cả người tiêu dùng Việt nam sẽ được cung cấp
+            các dịch vụ, giải pháp toàn diện cho chăm sóc xe — an toàn, hiệu
+            quả, và chuyên nghiệp tại KCS.
           </p>
           <h3 className="text-slate-600 font-semibold text-xl">
             Hình thức thanh toán
@@ -70,27 +71,26 @@ export function Footer() {
             </h3>
             <div className="font-semibold">
               <p className="inline-block">
-                <span className="text-slatee-600 mr-2">Địa chỉ:</span>
-                152 A7/1 Phạm Văn Khoai P.Tân Hiệp Biên Hoà Đồng Nai - Đối diên
-                cổng A sân banh Đồng Nai
+                <span className="text-slate-600 mr-2">Địa chỉ:</span>
+                {shopInfo.address}
               </p>
             </div>
             <div className="font-semibold">
               <p className="inline-block">
-                <span className="text-slatee-600 mr-2">Điện thoại</span>
-                <Link href="tel:0975209429" className="underline">
-                  0975209429
+                <span className="text-slate-600 mr-2">Điện thoại:</span>
+                <Link
+                  href={shopInfo.phone.href}
+                  className="underline text-base"
+                >
+                  {shopInfo.phone.label}
                 </Link>
               </p>
             </div>
             <div className="font-semibold">
               <p className="inline-block">
-                <span className="text-slatee-600 mr-2">Email</span>
-                <a
-                  href="mailto:lhoangcuong1996@gmail.com"
-                  className="underline"
-                >
-                  lhoangcuong1996@gmail.com
+                <span className="text-slate-600 mr-2">Email:</span>
+                <a href={shopInfo.email.href} className="underline text-base">
+                  {shopInfo.email.label}
                 </a>
               </p>
             </div>
@@ -99,7 +99,11 @@ export function Footer() {
                 Liên kết sàn
               </h3>
               <div className="flex flex-row gap-4 mt-3">
-                <Link href="#" target="_blank" rel="noopener noreferrer">
+                <Link
+                  href={shopInfo.zalo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Image
                     src="/images/icons/zalo.webp"
                     width="32"
@@ -109,7 +113,7 @@ export function Footer() {
                   ></Image>
                 </Link>
                 <Link
-                  href="https://www.facebook.com/profile.php?id=100081602436561"
+                  href={shopInfo.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -121,7 +125,11 @@ export function Footer() {
                     title="Theo dõi chúng tôi trên Facebook để cập nhật tin tức mới nhất và các sự kiện hấp dẫn"
                   ></Image>
                 </Link>
-                <Link href="#" target="_blank" rel="noopener noreferrer">
+                <Link
+                  href={shopInfo.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Image
                     src="/images/icons/youtube.webp"
                     width="32"
@@ -130,7 +138,11 @@ export function Footer() {
                     title="Khám phá video độc đáo của chúng tôi trên Youtube."
                   ></Image>
                 </Link>
-                <Link href="#" target="_blank" rel="noopener noreferrer">
+                <Link
+                  href={shopInfo.email}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Image
                     src="/images/icons/google.webp"
                     width="32"

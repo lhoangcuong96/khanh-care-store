@@ -26,6 +26,8 @@ export const CategorySchema = z.object({
   slug: z.string(),
   description: z.string().optional().nullable(),
   image: z.string(),
+  isFeatured: z.boolean().optional().default(false),
+  isShowOnHomePage: z.boolean().optional().default(false),
   parentId: z.string().optional().nullable(),
   parent: z
     .object({

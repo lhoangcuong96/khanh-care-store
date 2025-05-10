@@ -62,7 +62,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: "Quản lý danh mục",
-    key: "products",
+    key: "categories",
     subItems: [
       {
         label: "Tất cả danh mục",
@@ -73,6 +73,22 @@ const menuItems: MenuItem[] = [
         label: "Thêm danh mục mới",
         url: routePath.admin.category.add,
         key: "category/add-new",
+      },
+    ],
+  },
+  {
+    label: "Quản lý tin tức",
+    key: "content",
+    subItems: [
+      {
+        label: "Tất cả bài viết",
+        url: routePath.admin.news.list,
+        key: "news/list",
+      },
+      {
+        label: "Tạo bài viết mới",
+        url: routePath.admin.news.create,
+        key: "news/create",
       },
     ],
   },

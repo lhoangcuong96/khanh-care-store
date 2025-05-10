@@ -29,7 +29,6 @@ import {
 import { routePath } from "@/constants/routes";
 import { useToast } from "@/hooks/use-toast";
 import type { AdminCategoryInListType } from "@/validation-schema/admin/category";
-import { CategoryInListType } from "@/validation-schema/category";
 import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDown,
@@ -39,7 +38,6 @@ import {
   Plus,
   Trash,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -75,16 +73,28 @@ export default function CategoriesPage() {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (categoryToDelete) {
+      try {
+        await adminCategoryRequestApis.deleteCategory(categoryToDelete);
+        toast({
+          title: "Đã xóa danh mục",
+          description: "Danh mục đã được xóa thành công",
+          variant: "success",
+        });
+        await refetchCategories(); // Refetch categories after deletion
+      } catch (error: Error | any) {
+        console.error("Error deleting category:", error);
+        toast({
+          title: "Lỗi",
+          description: error.message || "Không thể xóa danh mục",
+          variant: "destructive",
+        });
+      } finally {
+        setDeleteDialogOpen(false);
+        setCategoryToDelete(null);
+      }
       // In a real app, you would call your API to delete the category
-      toast({
-        title: "Đã xóa danh mục",
-        description: "Danh mục đã được xóa thành công",
-      });
-
-      setDeleteDialogOpen(false);
-      setCategoryToDelete(null);
     }
   };
 
@@ -92,6 +102,7 @@ export default function CategoriesPage() {
     data: categories = [],
     isLoading,
     error,
+    refetch: refetchCategories,
   } = useQuery<AdminCategoryInListType[]>({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -121,22 +132,6 @@ export default function CategoriesPage() {
         : [...prev, categoryId]
     );
   };
-
-  // Toggle showing all children
-  const toggleShowAllChildren = () => {
-    if (showAllChildren) {
-      // If already showing all, collapse everything
-      setExpandedCategories([]);
-    } else {
-      // If not showing all, expand all categories that have children
-      const categoriesWithChildren = categories
-        .filter((cat) => getChildCategories(cat.id).length > 0)
-        .map((cat) => cat.id);
-      setExpandedCategories(categoriesWithChildren);
-    }
-    setShowAllChildren(!showAllChildren);
-  };
-
   // Filter categories based on search term
   const filteredCategories = searchTerm
     ? categories.filter((cat) =>
@@ -146,11 +141,6 @@ export default function CategoriesPage() {
 
   // Get root categories (those without a parent)
   const rootCategories = filteredCategories.filter((cat) => !cat.parentId);
-
-  // Get child categories for a parent
-  const getChildCategories = (parentId: string) => {
-    return filteredCategories.filter((cat) => cat.parentId === parentId);
-  };
 
   const renderCategoryRow = (category: AdminCategoryInListType, level = 0) => {
     const isExpanded = expandedCategories.includes(category.id);
@@ -218,7 +208,7 @@ export default function CategoriesPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() =>
-                  router.push(`/admin/categories/edit/${category.id}`)
+                  router.push(routePath.admin.category.edit(category.id))
                 }
               >
                 <Edit className="h-4 w-4" />
@@ -231,12 +221,6 @@ export default function CategoriesPage() {
               >
                 <Trash className="h-4 w-4" />
                 <span className="sr-only">Delete</span>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <Link href={`/admin/categories/${category.id}`}>
-                  <ChevronRight className="h-4 w-4" />
-                  <span className="sr-only">View</span>
-                </Link>
               </Button>
             </div>
           </TableCell>
@@ -312,15 +296,6 @@ export default function CategoriesPage() {
                 </CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={toggleShowAllChildren}
-                  className="mr-2"
-                >
-                  {showAllChildren
-                    ? "Ẩn tất cả danh mục con"
-                    : "Hiển thị tất cả danh mục con"}
-                </Button>
                 <Input
                   placeholder="Tìm kiếm danh mục..."
                   className="w-[300px]"
@@ -331,33 +306,44 @@ export default function CategoriesPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tên danh mục</TableHead>
-                  <TableHead>Số thuộc tính</TableHead>
-                  <TableHead>Số danh mục con</TableHead>
-                  <TableHead>Số sản phẩm</TableHead>
-                  <TableHead className="text-right">Thao tác</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rootCategories.length === 0 ? (
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Đang tải danh mục...
+                </p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
-                      <div className="flex flex-col items-center justify-center">
-                        <FolderTree className="h-12 w-12 text-muted-foreground mb-2" />
-                        <p className="text-muted-foreground">
-                          Không tìm thấy danh mục nào
-                        </p>
-                      </div>
-                    </TableCell>
+                    <TableHead>Tên danh mục</TableHead>
+                    <TableHead>Số thuộc tính</TableHead>
+                    <TableHead>Số danh mục con</TableHead>
+                    <TableHead>Số sản phẩm</TableHead>
+                    <TableHead className="text-right">Thao tác</TableHead>
                   </TableRow>
-                ) : (
-                  rootCategories.map((category) => renderCategoryRow(category))
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {rootCategories.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8">
+                        <div className="flex flex-col items-center justify-center">
+                          <FolderTree className="h-12 w-12 text-muted-foreground mb-2" />
+                          <p className="text-muted-foreground">
+                            Không tìm thấy danh mục nào
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    rootCategories.map((category) =>
+                      renderCategoryRow(category)
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
 

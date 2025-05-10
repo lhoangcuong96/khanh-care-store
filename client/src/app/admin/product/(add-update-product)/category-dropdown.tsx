@@ -21,10 +21,12 @@ export default function CategoryDropdown({
   onSelect,
   value,
   placeholder,
+  required = true,
 }: {
   onSelect: (category: LiteCategoryInListType) => void;
   value?: string;
   placeholder?: string;
+  required?: boolean;
 }) {
   const { data: categories } = useQuery({
     queryKey: ["category"],
@@ -73,7 +75,8 @@ export default function CategoryDropdown({
 
   const renderCategoryItem = (category: LiteCategoryInListType) => {
     const hasChildren = category.children && category.children.length > 0;
-    const isOpen = openCategories[category.id];
+
+    const isOpen = !category?.id ? false : openCategories[category?.id];
 
     if (!hasChildren) {
       return (
@@ -144,6 +147,21 @@ export default function CategoryDropdown({
     );
   };
 
+  const placeholderText = placeholder || "Chọn loại sản phẩm";
+
+  const dropdownItems = [
+    ...(required
+      ? []
+      : [
+          {
+            id: undefined,
+            name: placeholderText,
+            children: [],
+          },
+        ]),
+    ...(categories || []),
+  ];
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -151,10 +169,7 @@ export default function CategoryDropdown({
           variant="outline"
           className="w-[240px] justify-between font-semibold text-gray-700 text-sm"
         >
-          <span>
-            {" "}
-            {selectedCategory?.name || placeholder || "Chọn loại sản phẩm"}
-          </span>
+          <span>{selectedCategory?.name || placeholderText}</span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
@@ -162,7 +177,7 @@ export default function CategoryDropdown({
         <DropdownMenuLabel>Loại</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup className="max-h-[300px] overflow-y-auto">
-          {categories?.map((category) => renderCategoryItem(category))}
+          {dropdownItems.map((category) => renderCategoryItem(category))}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

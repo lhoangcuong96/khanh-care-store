@@ -74,7 +74,7 @@ export class AdminProductService {
             data:
               variantAttributes?.map((attribute) => {
                 return {
-                  productId: '',
+                  productId: createdProduct.id,
                   attributeId: attribute.key,
                   value: attribute.value || ''
                 }
@@ -191,22 +191,32 @@ export class AdminProductService {
         slug: true,
         stock: true,
         isPublished: true,
-        image: {
-          select: {
-            thumbnail: true
-          }
-        },
+        image: true,
         isFeatured: true,
         isBestSeller: true,
         category: true,
-        attributes: true,
+        attributes: {
+          select: {
+            id: true,
+            value: true
+          }
+        },
         tags: true,
-        isPromotion: true,
-        promotionPercent: true,
-        promotionStart: true,
-        promotionEnd: true,
-        createdAt: true,
-        updatedAt: true
+        variants: {
+          select: {
+            id: true,
+            name: true,
+            sku: true,
+            price: true,
+            stock: true,
+            attributes: {
+              select: {
+                id: true,
+                value: true
+              }
+            }
+          }
+        }
       }
     })
     console.log(product)

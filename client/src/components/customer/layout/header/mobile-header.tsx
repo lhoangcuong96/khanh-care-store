@@ -22,25 +22,10 @@ export default function MobileHeader() {
 
   const handleSearch = () => {
     if (searchRef.current) {
-      const paramsObject: Record<string, string | string[]> = {};
-
-      // Process search params to support multiple values per key
-      searchParams.forEach((value, key) => {
-        if (paramsObject[key]) {
-          paramsObject[key] = Array.isArray(paramsObject[key])
-            ? [...paramsObject[key], value] // Append new values to existing array
-            : [paramsObject[key], value]; // Convert single value to array
-        } else {
-          paramsObject[key] = value; // Store as string initially
-        }
-      });
-      paramsObject["search"] = searchRef.current.value;
-      console.log(paramsObject);
-      router.push(
-        routePath.customer.products({
-          ...paramsObject,
-        })
-      );
+      const searchQuery = searchRef.current.value.trim();
+      if (searchQuery) {
+        router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      }
     }
   };
 
@@ -59,10 +44,10 @@ export default function MobileHeader() {
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b">
                     <Image
-                      src="/images/logo-3.jpeg"
-                      alt="Heo sạch nhà Thoa"
-                      width={120}
-                      height={120}
+                      src="/images/logo.png"
+                      width="124"
+                      height="39"
+                      alt="logo"
                       className="mx-auto"
                     />
                   </div>
@@ -144,11 +129,12 @@ export default function MobileHeader() {
 
             <Link href={routePath.customer.home} className="flex items-center">
               <Image
-                src="/images/logo-3.jpeg"
-                alt="Heo sạch nhà Thoa"
-                width={96}
-                height={96}
-              />
+                src="/images/logo.png"
+                width="124"
+                height="39"
+                alt="logo"
+                className="pointer"
+              ></Image>
             </Link>
 
             <div className="flex items-center gap-2">

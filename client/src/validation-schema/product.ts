@@ -42,7 +42,21 @@ export const productDetailSchema = ProductSchema.pick({
   description: true,
   stock: true,
   image: true,
-});
+}).merge(
+  z.object({
+    variants: z
+      .array(
+        z.object({
+          name: z.string(),
+          sku: z.string(),
+          price: z.number(),
+          stock: z.number(),
+          attributes: z.record(z.string(), z.string()).optional(),
+        })
+      )
+      .optional(),
+  })
+);
 
 export const productResponseSchema = z.object({
   data: productDetailSchema,
