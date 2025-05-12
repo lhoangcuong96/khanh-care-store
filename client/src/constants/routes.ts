@@ -96,7 +96,7 @@ export const routePath = {
         `/admin/debt-management/transactions/${id}/update`,
     },
     news: {
-      list: "/admin/news",
+      list: "/admin/news/list",
       create: "/admin/news/create",
       edit: (id: string) => `/admin/news/${id}/edit`,
     },

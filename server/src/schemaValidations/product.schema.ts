@@ -8,6 +8,24 @@ export const ProductImageSchema = z.object({
   gallery: z.array(z.string()).nullable().optional()
 })
 
+export const ProductAttributeValueSchema = z.object({
+  id: z.string(),
+  value: z.any()
+})
+
+export const ProductVariantSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  sku: z.string(),
+  price: z.number(),
+  stock: z.number(),
+  attributes: ProductAttributeValueSchema.optional().nullable(),
+  image: ProductImageSchema.optional().nullable(),
+  isPromotion: z.boolean(),
+  promotionPercent: z.number().optional().nullable(),
+  promotionStart: z.union([z.string(), z.date()]).optional().nullable(),
+  promotionEnd: z.union([z.string(), z.date()]).optional().nullable()
+})
 export const ProductSchema = z.object({
   id: z.string(),
   name: z.string().min(1).max(256),
@@ -25,8 +43,10 @@ export const ProductSchema = z.object({
   promotionEnd: z.union([z.string(), z.date()]).optional().nullable(),
   isPublished: z.boolean(),
   image: ProductImageSchema,
+  categoryId: z.string(),
   category: z.any(),
   tags: z.array(z.string()),
+  variants: z.array(ProductVariantSchema).optional().nullable(),
   attributes: z.any(),
   createdAt: z.union([z.string(), z.date()]),
   updatedAt: z.union([z.string(), z.date()])
@@ -75,15 +95,17 @@ export type ProductInListType = z.TypeOf<typeof ProductInListSchema>[]
 export const ProductDetailParamsSchema = z.object({
   slug: z.coerce.string()
 })
-export const ProductDetailSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  price: z.number(),
-  slug: z.string(),
-  description: z.string().optional().nullable(),
-  title: z.string().optional().nullable(),
-  stock: z.number(),
-  image: ProductImageSchema
+export const ProductDetailSchema = ProductSchema.pick({
+  id: true,
+  name: true,
+  price: true,
+  slug: true,
+  description: true,
+  title: true,
+  stock: true,
+  image: true,
+  categoryId: true,
+  variants: true
 })
 export const ProductDetailResponseSchema = z.object({
   data: ProductDetailSchema,

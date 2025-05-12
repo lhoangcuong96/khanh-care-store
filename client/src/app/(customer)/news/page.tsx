@@ -64,14 +64,14 @@ export default function NewsPage() {
   return (
     <div className="flex flex-col w-full items-center justify-center h-full text-sm font-medium">
       <AppBreadcrumb
-        pageTitle={"Liên hệ với chúng tôi"}
+        pageTitle={"Tin tức"}
         breadcrumbItems={[
           {
             title: "Trang chủ",
             href: routePath.customer.home,
           },
           {
-            title: "Liên hệ",
+            title: "Tin tức",
           },
         ]}
       ></AppBreadcrumb>

@@ -97,7 +97,8 @@ export const ProductDetailSchema = ProductSchema.omit({
   promotionPercent: true,
   promotionStart: true,
   promotionEnd: true,
-  isPublished: true
+  isPublished: true,
+  variants: true
 }).merge(
   z.object({
     category: z

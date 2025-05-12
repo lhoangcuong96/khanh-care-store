@@ -1,17 +1,47 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card as Card2 } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 
-import { ProductDetailType } from "@/validation-schema/product";
+import type { ProductDetailType } from "@/validation-schema/product";
 import Image from "next/image";
 import AddToCart from "./add-to-cart";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
 
 export function ProductInfo({ product }: { product: ProductDetailType }) {
+  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number>(product.price);
+
+  console.log(product); // Set the first variant as default if variants exist
+  useEffect(() => {
+    if (product.variants && product.variants.length > 0) {
+      setSelectedVariant(product.variants[0].sku);
+      setCurrentPrice(product.variants[0].price);
+    }
+  }, [product.variants]);
+
   return (
     <div className="space-y-6">
       <ProductHeader productName={product.name} />
-      <ProductPrice productPrice={product.price} />
-      <AddToCart id={product.id}></AddToCart>
+      <ProductPrice productPrice={currentPrice} />
+      {product.variants && product.variants.length > 0 && (
+        <ProductVariant
+          product={product}
+          selectedVariant={selectedVariant}
+          onVariantChange={(sku, price) => {
+            setSelectedVariant(sku);
+            setCurrentPrice(price);
+          }}
+        />
+      )}
+      <AddToCart
+        id={product.id}
+        variantSku={selectedVariant}
+        quantity={1}
+      ></AddToCart>
       <ProductPromotions />
     </div>
   );
@@ -24,6 +54,79 @@ function ProductHeader({ productName }: { productName: string }) {
       <Button variant="ghost" size="icon">
         <Heart className="w-6 h-6" />
       </Button>
+    </div>
+  );
+}
+
+function ProductVariant({
+  product,
+  selectedVariant,
+  onVariantChange,
+}: {
+  product: ProductDetailType;
+  selectedVariant: string | null;
+  onVariantChange: (sku: string, price: number) => void;
+}) {
+  // Format attributes for display if they exist
+  const formatVariantName = (variant: ProductDetailType["variants"][0]) => {
+    if (!variant.attributes || Object.keys(variant.attributes).length === 0) {
+      return variant.name;
+    }
+
+    // If there are attributes, we can show them in a more readable format
+    const attributeText = Object.entries(variant.attributes)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(", ");
+
+    return variant.name || attributeText;
+  };
+
+  return (
+    <div className="space-y-2">
+      <h3 className="font-medium">Loại</h3>
+      <RadioGroup
+        value={selectedVariant || ""}
+        onValueChange={(value) => {
+          const variant = product.variants?.find((v) => v.sku === value);
+          if (variant) {
+            onVariantChange(variant.sku, variant.price);
+          }
+        }}
+        className="flex flex-wrap gap-2"
+      >
+        {product.variants?.map((variant) => (
+          <div key={variant.sku} className="flex items-center">
+            <RadioGroupItem
+              value={variant.sku}
+              id={variant.sku}
+              className="peer sr-only"
+            />
+            <Label
+              htmlFor={variant.sku}
+              className="flex items-center justify-between px-3 py-2 border rounded-md cursor-pointer peer-data-[state=checked]:bg-slate-600 peer-data-[state=checked]:text-white peer-data-[sta`te=checked]:border-primary"
+            >
+              <span>{formatVariantName(variant)}</span>
+              {variant.price !== product.price && (
+                <span className="ml-2 text-sm peer-data-[state=checked]:text-white">
+                  {variant.price.toLocaleString()}₫
+                </span>
+              )}
+            </Label>
+          </div>
+        ))}
+      </RadioGroup>
+
+      {/* Show stock information for selected variant */}
+      {selectedVariant && product.variants && (
+        <div className="text-sm mt-2">
+          <span className="text-muted-foreground">
+            Còn lại:{" "}
+            {product.variants.find((v) => v.sku === selectedVariant)?.stock ||
+              0}{" "}
+            sản phẩm
+          </span>
+        </div>
+      )}
     </div>
   );
 }

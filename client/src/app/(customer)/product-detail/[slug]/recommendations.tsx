@@ -1,34 +1,44 @@
+"use client";
+
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import productRequestApi from "@/api-request/product";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
-interface RecommendedProduct {
-  id: string;
-  name: string;
-  image: string;
-  price: number;
-  originalPrice?: number;
-}
+export function Recommendations({ categoryId }: { categoryId: string }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 4;
 
-const recommendedProducts: RecommendedProduct[] = [
-  {
-    id: "1",
-    name: "Kim chi cải thảo cắt lát Bibigo Ông Kim's...",
-    image: "/placeholder.svg?height=100&width=100",
-    price: 12000,
-    originalPrice: 15000,
-  },
-  {
-    id: "2",
-    name: "Cháo khoai môn Mikiri hũ 180g",
-    image: "/placeholder.svg?height=100&width=100",
-    price: 16700,
-    originalPrice: 21000,
-  },
-];
+  const { data: recommendedProducts, isLoading } = useQuery({
+    queryKey: ["recommendations", categoryId],
+    queryFn: async () => {
+      const resp = await productRequestApi.getProducts({
+        page: 1,
+        limit: 16,
+        category: categoryId,
+      });
+      return resp.payload?.data;
+    },
+  });
 
-export function Recommendations() {
+  const totalPages = recommendedProducts
+    ? Math.ceil(recommendedProducts.length / productsPerPage)
+    : 0;
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const currentProducts = recommendedProducts?.slice(startIndex, endIndex);
+
+  const handlePrevious = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
   return (
     <div className="mt-8">
       <div className="flex items-center justify-between mb-4">
@@ -37,44 +47,65 @@ export function Recommendations() {
           <span className="text-slate-600">🍃</span>
         </h2>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon" className="h-8 w-8">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      <div className="space-y-4">
-        {recommendedProducts.map((product) => (
-          <Card key={product.id} className="p-4">
-            <div className="flex gap-4">
-              <Image
-                src={product.image}
-                alt={product.name}
-                width={80}
-                height={80}
-                className="rounded-lg object-cover"
-              />
-              <div className="flex-1">
-                <h3 className="text-sm font-medium line-clamp-2">
-                  {product.name}
-                </h3>
-                <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-slatee-600">
-                    {product.price.toLocaleString()}₫
-                  </span>
-                  {product.originalPrice && (
-                    <span className="text-sm line-through text-muted-foreground">
-                      {product.originalPrice.toLocaleString()}₫
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {currentProducts?.map((product) => (
+            <Card key={product.id} className="p-4">
+              <div className="flex gap-4">
+                <Image
+                  src={product.image.thumbnail}
+                  alt={product.name}
+                  width={80}
+                  height={80}
+                  className="rounded-lg object-cover"
+                />
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <div className="mt-2 flex items-baseline gap-2">
+                    <span className="text-lg font-bold text-slatee-600">
+                      {product.price.toLocaleString()}₫
                     </span>
-                  )}
+                    {product.isPromotion && product.promotionPercent && (
+                      <span className="text-sm line-through text-muted-foreground">
+                        {(
+                          product.price * product.promotionPercent
+                        ).toLocaleString()}
+                        ₫
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

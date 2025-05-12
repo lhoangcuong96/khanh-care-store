@@ -120,7 +120,7 @@ export default async function ProductDetail({
                   <div className="lg:col-span-1">
                     <StorePolicies />
                     <PromotionCodes />
-                    <Recommendations />
+                    <Recommendations categoryId={productDetail.categoryId} />
                   </div>
                   <div className="space-y-8"></div>
                 </div>

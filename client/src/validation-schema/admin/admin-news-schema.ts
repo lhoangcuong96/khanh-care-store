@@ -1,5 +1,6 @@
 import z from "zod";
 import { NewsSchema } from "../news.schema";
+import { Order } from "../common";
 
 /*----------------------List------------------------*/
 export const NewsInListSchema = NewsSchema.pick({
@@ -19,6 +20,34 @@ export const NewsInListSchema = NewsSchema.pick({
 
 export type NewsInListType = z.infer<typeof NewsInListSchema>;
 
+export const NewsListQuerySchema = z.object({
+  page: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
+  sort: z.string().optional(),
+  order: z.nativeEnum(Order).optional(),
+  search: z.string().optional(),
+  isPublished: z
+    .union([z.boolean(), z.string().transform((val) => val === "true")])
+    .optional(),
+  isFeatured: z
+    .union([z.boolean(), z.string().transform((val) => val === "true")])
+    .optional(),
+});
+
+export type NewsListQueryType = z.infer<typeof NewsListQuerySchema>;
+
+export const AdminGetNewsListResponseSchema = z.object({
+  data: z.array(NewsInListSchema),
+  total: z.number(),
+  totalPages: z.number(),
+  limit: z.number(),
+  currentPage: z.number(),
+  message: z.string(),
+});
+
+export type AdminGetNewsListResponseType = z.infer<
+  typeof AdminGetNewsListResponseSchema
+>;
 /*----------------------Create------------------------*/
 export const CreateNewsBodySchema = NewsSchema.omit({
   id: true,

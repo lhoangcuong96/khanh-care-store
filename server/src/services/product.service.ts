@@ -1,8 +1,6 @@
 import prisma from '@/database'
 import { Order } from '@/schemaValidations/common.schema'
-import { ProductListQueryType, ProductInListType } from '@/schemaValidations/product.schema'
-import { CategoryService } from './category.service'
-import { equal } from 'assert'
+import { ProductInListType, ProductListQueryType } from '@/schemaValidations/product.schema'
 
 export class ProductService {
   async checkProductAvailability(productId: string, quantity: number) {
@@ -132,10 +130,30 @@ export class ProductService {
   }
 
   async getDetailBySlug(slug: string) {
-    return prisma.product.findFirstOrThrow({
+    const data = await prisma.product.findFirstOrThrow({
       where: {
         slug
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        slug: true,
+        description: true,
+        title: true,
+        stock: true,
+        isBestSeller: true,
+        isFeatured: true,
+        isPromotion: true,
+        promotionPercent: true,
+        promotionStart: true,
+        promotionEnd: true,
+        categoryId: true,
+        image: true,
+        attributes: true,
+        variants: true
       }
     })
+    return data
   }
 }
