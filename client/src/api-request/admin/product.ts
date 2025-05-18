@@ -2,20 +2,42 @@ import { http } from "@/lib/http";
 import {
   CreateProductBodyType,
   ProductDetailResponseType,
-  ProductListQueryType,
+  ProductListQueryParamsType,
   ProductListResponseType,
   UpdateProductBodyType,
 } from "@/validation-schema/admin/product";
 import { MessageResponseType } from "@/validation-schema/common";
 
 export const adminProductApiRequest = {
-  getProducts: (params: ProductListQueryType) => {
-    const url = `/admin/products?page=${params.page || 1}&limit=${
-      params.limit | 20
-    }&
-       search=${params.search}&sort=${params.sort || "name"}&order=${
-      params.order || "asc"
-    }`;
+  getProducts: (params: ProductListQueryParamsType) => {
+    const queryParams = new URLSearchParams();
+    console.log(params);
+
+    // Add common query params
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.search) queryParams.append("search", params.search);
+    if (params.sort) queryParams.append("sort", params.sort);
+    if (params.order) queryParams.append("order", params.order);
+
+    // Add product-specific params
+    if (params.category) queryParams.append("category", params.category);
+    if (params.priceFrom)
+      queryParams.append("priceFrom", params.priceFrom.toString());
+    if (params.priceTo)
+      queryParams.append("priceTo", params.priceTo.toString());
+    if (params.stockStatus)
+      queryParams.append("stockStatus", params.stockStatus);
+    if (params.createdFrom)
+      queryParams.append("createdFrom", params.createdFrom.toISOString());
+    if (params.createdTo)
+      queryParams.append("createdTo", params.createdTo.toISOString());
+    if (params.isPublished)
+      queryParams.append("isPublished", params.isPublished);
+
+    console.log(queryParams.toString());
+
+    const url = `/admin/products?${queryParams.toString()}`;
     return http.get<ProductListResponseType>(url, {
       isAdminRequest: true,
     });
@@ -40,5 +62,27 @@ export const adminProductApiRequest = {
       isAdminRequest: true,
       isPrivate: true,
     });
+  },
+
+  publishProduct: (id: string) => {
+    return http.post<MessageResponseType>(
+      `/admin/products/${id}/publish`,
+      {},
+      {
+        isAdminRequest: true,
+        isPrivate: true,
+      }
+    );
+  },
+
+  unpublishProduct: (id: string) => {
+    return http.post<MessageResponseType>(
+      `/admin/products/${id}/unpublish`,
+      {},
+      {
+        isAdminRequest: true,
+        isPrivate: true,
+      }
+    );
   },
 };

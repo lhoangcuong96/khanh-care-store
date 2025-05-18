@@ -31,7 +31,7 @@ export const ProductSchema = z.object({
   name: z.string().min(1).max(256),
   title: z.string().min(1).max(256).optional().nullable(),
   price: z.number().positive(),
-  description: z.string().max(10000).optional().nullable(),
+  description: z.string().max(100000).optional().nullable(),
   slug: z.string().min(1).max(256),
   stock: z.number().positive(),
   sold: z.number().optional().nullable(),
@@ -61,7 +61,8 @@ export const ProductListQueryParamsSchema = z
     isBestSeller: z.union([z.string(), z.boolean()]).optional(),
     isPromotion: z.union([z.string(), z.boolean()]).optional(),
     price: z.string().optional(),
-    weight: z.string().optional()
+    weight: z.string().optional(),
+    isPublished: z.boolean().optional()
   })
   .strip()
 
@@ -87,7 +88,7 @@ export const ProductListResSchema = z.object({
 })
 export type ProductListQueryType = z.TypeOf<typeof ProductListQueryParamsSchema>
 export type ProductListResType = z.TypeOf<typeof ProductListResSchema>
-export type ProductInListType = z.TypeOf<typeof ProductInListSchema>[]
+export type ProductInListType = z.TypeOf<typeof ProductInListSchema>
 
 /*----------------End List---------------------*/
 

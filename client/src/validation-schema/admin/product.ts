@@ -15,7 +15,6 @@ export const CreateProductBodySchema = ProductSchema.omit({
   promotionPercent: true,
   promotionStart: true,
   promotionEnd: true,
-  isPublished: true,
 })
   .merge(
     z.object({
@@ -52,9 +51,17 @@ export type UpdateProductBodyType = CreateProductBodyType;
 /*----------------End Update---------------------*/
 
 /*----------------List---------------------*/
-export const ProductListQuerySchema = z.object({
+export const ProductListQueryParamsSchema = z.object({
   ...CommonQuery.shape,
   category: z.string().optional(),
+  priceFrom: z.coerce.number().optional(),
+  priceTo: z.coerce.number().optional(),
+  stockStatus: z
+    .enum(["all", "in_stock", "low_stock", "out_of_stock"])
+    .optional(),
+  createdFrom: z.coerce.date().optional(),
+  createdTo: z.coerce.date().optional(),
+  isPublished: z.string().optional(),
 });
 
 export const ProductInListSchema = ProductSchema.pick({
@@ -79,7 +86,9 @@ export const ProductListResSchema = z.object({
   data: z.array(ProductInListSchema),
   message: z.string(),
 });
-export type ProductListQueryType = z.TypeOf<typeof ProductListQuerySchema>;
+export type ProductListQueryParamsType = z.TypeOf<
+  typeof ProductListQueryParamsSchema
+>;
 export type ProductListResponseType = z.TypeOf<typeof ProductListResSchema>;
 export type ProductInListType = z.TypeOf<typeof ProductInListSchema>[];
 

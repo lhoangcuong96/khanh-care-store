@@ -9,13 +9,8 @@ export class CategoryService {
         id: true,
         name: true,
         slug: true,
-        image: {
-          select: {
-            featured: true,
-            thumbnail: true
-          }
-        },
-        subCategories: true
+        image: true,
+        children: true
       },
       where: {
         parent: {
@@ -26,7 +21,6 @@ export class CategoryService {
         }
       }
     })
-    console.log(data)
     return data
   }
 

@@ -1,12 +1,29 @@
 import z from "zod";
 import { ProductInListSchema } from "./product";
-import { FeaturedCategoriesSchema } from "./category";
+import { CategorySchema } from "./category";
+
+export const FeaturedCategoriesSchema = CategorySchema.pick({
+  id: true,
+  name: true,
+  image: true,
+  slug: true,
+});
+
+export const CategoryWithProductsSchema = CategorySchema.pick({
+  id: true,
+  name: true,
+  image: true,
+  slug: true,
+}).extend({
+  products: z.array(ProductInListSchema),
+});
 
 export const GetLandingDataSchema = z.object({
   featuredCategories: z.array(FeaturedCategoriesSchema),
   featuredProducts: z.array(ProductInListSchema),
   promotionalProducts: z.array(ProductInListSchema),
   bestSellerProducts: z.array(ProductInListSchema),
+  categoriesWithProducts: z.array(CategoryWithProductsSchema),
 });
 
 export const GetLandingResponseSchema = z.object({

@@ -2,14 +2,15 @@ import landingApiRequest from "@/api-request/landing";
 import { HeroImage } from "@/components/customer/layout/hero-image";
 import Spinner from "@/components/ui/spinner";
 import { routePath } from "@/constants/routes";
+import { shopInfo } from "@/constants/shop-info";
 import { GetLandingDataType } from "@/validation-schema/landing";
 import { ProductInListType } from "@/validation-schema/product";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { BestSellingProducts } from "./best-selling-products";
 import { FeaturedCategories } from "./featured-categories";
+import { FeaturedProducts } from "./featured-products";
 import { OurSpecialServices } from "./our-special-services";
-import { ProductSection } from "./product-section";
-import { shopInfo } from "@/constants/shop-info";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -25,7 +26,6 @@ export default async function CustomerHomePage() {
   try {
     const response = await landingApiRequest.getLandingData();
     landingPageData = response.payload?.data;
-    console.log("landingPageData", landingPageData);
   } catch (err) {
     console.error("Có lỗi xảy ra khi lấy dữ liệu sản phẩm!", err);
     getProductError = "Có lỗi xảy ra khi lấy dữ liệu sản phẩm!";
@@ -41,38 +41,18 @@ export default async function CustomerHomePage() {
           ></FeaturedCategories>
         </Suspense>
         <Suspense fallback={<Spinner />}>
-          <ProductSection
-            products={
-              landingPageData?.promotionalProducts as ProductInListType[]
-            }
-            error={getProductError}
-            title="Sản phẩm khuyến mãi"
-            viewAllUrl={routePath.customer.products({
-              isPromotion: true,
-            })}
-          ></ProductSection>
-          <ProductSection
+          <FeaturedProducts
             products={
               landingPageData?.bestSellerProducts as ProductInListType[]
             }
             error={getProductError}
-            title="Sản phẩm bán chạy"
-            banner="/images/best-seller-banner.jpg"
-            viewAllUrl={routePath.customer.products({
-              isBestSeller: true,
-            })}
-          ></ProductSection>
-          <ProductSection
+          ></FeaturedProducts>
+          <BestSellingProducts
             products={
               landingPageData?.bestSellerProducts as ProductInListType[]
             }
             error={getProductError}
-            title="Sản phẩm nổi bật"
-            banner="/images/featured-products-banner.jpg"
-            viewAllUrl={routePath.customer.products({
-              isFeatured: true,
-            })}
-          ></ProductSection>
+          ></BestSellingProducts>
         </Suspense>
 
         <OurSpecialServices></OurSpecialServices>

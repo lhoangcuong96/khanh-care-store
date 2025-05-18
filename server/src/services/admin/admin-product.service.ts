@@ -9,6 +9,7 @@ import {
 } from '@/schemaValidations/admin/admin-product-schema'
 import { Order } from '@/schemaValidations/common.schema'
 import { slugify } from '@/utils/helpers'
+import { Prisma } from '@prisma/client'
 
 export class AdminProductService {
   async create(data: CreateProductBodyType): Promise<void> {
@@ -87,23 +88,59 @@ export class AdminProductService {
   }
 
   async list(queryParams: ProductListQueryType): Promise<ProductInListType> {
-    const { page = 1, limit = 20, category, sort = 'createdAt', order = Order.Desc, search } = queryParams
+    const {
+      page = 1,
+      limit = 20,
+      category,
+      sort = 'createdAt',
+      order = Order.Desc,
+      search,
+      priceFrom,
+      priceTo,
+      stockStatus = 'all',
+      createdFrom,
+      createdTo,
+      isPublished
+    } = queryParams
     const skip = (page - 1) * limit
     const take = limit
-    const where = {
+    const where: Prisma.ProductWhereInput = {
       AND: [
         category
           ? {
-              categories: {
-                some: {
-                  name: {
-                    equals: category
-                  }
-                }
+              category: {
+                id: category
               }
             }
           : {},
-        search ? { name: { contains: search }, mode: 'insensitive' } : {}
+        search
+          ? {
+              OR: [
+                { name: { contains: search, mode: 'insensitive' } },
+                { slug: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } },
+                {
+                  variants: {
+                    some: {
+                      name: { contains: search, mode: 'insensitive' }
+                    }
+                  }
+                }
+              ]
+            }
+          : {},
+        priceFrom !== undefined ? { price: { gte: priceFrom } } : {},
+        priceTo !== undefined ? { price: { lte: priceTo } } : {},
+        createdFrom ? { createdAt: { gte: createdFrom } } : {},
+        createdTo ? { createdAt: { lte: createdTo } } : {},
+        stockStatus === 'in_stock'
+          ? { stock: { gt: 0 } }
+          : stockStatus === 'low_stock'
+            ? { stock: { gt: 0, lte: 10 } } // You can adjust the threshold for low stock
+            : stockStatus === 'out_of_stock'
+              ? { stock: { lte: 0 } }
+              : {},
+        isPublished !== undefined ? { isPublished: isPublished === 'true' } : {}
       ]
     }
     const select = {
@@ -130,19 +167,39 @@ export class AdminProductService {
     let orderBy: { [x: string]: string } = {
       createdAt: 'desc'
     }
-    if (sort) {
-      orderBy = {
-        [sort]: order === Order.Asc ? 'asc' : 'desc'
-      }
+    // Map UI sort values to Prisma orderBy
+    switch (sort) {
+      case 'newest':
+        orderBy = { createdAt: 'desc' }
+        break
+      case 'oldest':
+        orderBy = { createdAt: 'asc' }
+        break
+      case 'name_asc':
+        orderBy = { name: 'asc' }
+        break
+      case 'name_desc':
+        orderBy = { name: 'desc' }
+        break
+      case 'price_high':
+        orderBy = { price: 'desc' }
+        break
+      case 'price_low':
+        orderBy = { price: 'asc' }
+        break
+      default:
+        orderBy = { createdAt: order === Order.Asc ? 'asc' : 'desc' }
+        break
     }
-
-    return prisma.product.findMany({
+    const data = await prisma.product.findMany({
       where,
       skip,
       take,
       orderBy,
       select
     })
+
+    return data
   }
 
   async update(id: string, data: UpdateProductBodyType): Promise<Partial<ProductType>> {
@@ -219,7 +276,28 @@ export class AdminProductService {
         }
       }
     })
-    console.log(product)
     return product
+  }
+
+  async publish(id: string) {
+    await prisma.product.update({
+      where: {
+        id
+      },
+      data: {
+        isPublished: true
+      }
+    })
+  }
+
+  async unpublish(id: string) {
+    await prisma.product.update({
+      where: {
+        id
+      },
+      data: {
+        isPublished: false
+      }
+    })
   }
 }

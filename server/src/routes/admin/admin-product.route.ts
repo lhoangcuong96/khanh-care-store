@@ -8,11 +8,14 @@ import {
   ProductDetailParamsType,
   ProductDetailResponseSchema,
   ProductDetailResponseType,
-  ProductDetailSchema,
   ProductListQueryParamsSchema,
   ProductListQueryType,
   ProductListResSchema,
   ProductListResType,
+  PublishProductParamsSchema,
+  PublishProductParamsType,
+  UnpublishProductParamsSchema,
+  UnpublishProductParamsType,
   UpdateProductBodySchema,
   UpdateProductBodyType,
   UpdateProductParamsSchema,
@@ -40,6 +43,7 @@ export default async function AdminProductRoutes(fastify: FastifyInstance, optio
     },
     async (request, reply) => {
       const queryParams = request.query as ProductListQueryType
+      console.log(queryParams)
       const products = await controller.getProductList({
         ...queryParams
       })
@@ -133,6 +137,48 @@ export default async function AdminProductRoutes(fastify: FastifyInstance, optio
       await controller.deleteProduct(request.params.id)
       reply.send({
         message: 'Xóa sản phẩm thành công!'
+      })
+    }
+  )
+
+  fastify.post<{
+    Params: PublishProductParamsType
+    Reply: MessageResponseType
+  }>(
+    '/:id/publish',
+    {
+      schema: {
+        params: PublishProductParamsSchema,
+        response: {
+          200: MessageResponseSchema
+        }
+      }
+    },
+    async (request, reply) => {
+      await controller.publishProduct(request.params.id)
+      reply.send({
+        message: 'Xuất bản sản phẩm thành công!'
+      })
+    }
+  )
+
+  fastify.post<{
+    Params: UnpublishProductParamsType
+    Reply: MessageResponseType
+  }>(
+    '/:id/unpublish',
+    {
+      schema: {
+        params: UnpublishProductParamsSchema,
+        response: {
+          200: MessageResponseSchema
+        }
+      }
+    },
+    async (request, reply) => {
+      await controller.unpublishProduct(request.params.id)
+      reply.send({
+        message: 'Hủy xuất bản sản phẩm thành công!'
       })
     }
   )

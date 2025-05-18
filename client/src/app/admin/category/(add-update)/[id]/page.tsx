@@ -18,7 +18,6 @@ export default async function UpdateCategoryPage({
       errorMessage = "Không tìm thấy danh mục";
     }
     category = resp.payload?.data;
-    console.log(category);
   } catch (error) {
     errorMessage = (error as Error).message;
   }

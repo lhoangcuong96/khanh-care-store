@@ -1,7 +1,7 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { ProductListQueryType } from "@/validation-schema/product";
+import { ProductListQueryParamsType } from "@/validation-schema/product";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
@@ -49,7 +49,7 @@ const productTags = [
 export default function ProductFilter({
   params,
 }: {
-  params?: ProductListQueryType;
+  params?: ProductListQueryParamsType;
 }) {
   const router = useRouter();
 
@@ -117,9 +117,10 @@ export default function ProductFilter({
         </div>
         {productTags.map((tag) => {
           let isChecked = false;
-          if (params?.[tag.value as keyof ProductListQueryType]) {
+          if (params?.[tag.value as keyof ProductListQueryParamsType]) {
             isChecked =
-              params?.[tag.value as keyof ProductListQueryType] === "true";
+              params?.[tag.value as keyof ProductListQueryParamsType] ===
+              "true";
           }
           return (
             <div key={tag.value} className="flex items-center space-x-2 mb-2">

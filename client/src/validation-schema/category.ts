@@ -62,6 +62,7 @@ export const CategorySchema = z.object({
     .optional()
     .nullable(),
   attributes: z.array(CategoryAttributeSchema).optional().nullable(),
+  products: z.array(z.any()).optional().nullable(),
 });
 
 export const FeaturedCategorySchema = CategorySchema.pick({
@@ -85,6 +86,7 @@ export const CategoryInListSchema = CategorySchema.pick({
   slug: true,
   description: true,
   parentId: true,
+  children: true,
 });
 export const ListCategoryResponseSchema = z.object({
   data: z.array(CategoryInListSchema),

@@ -1,6 +1,7 @@
 import prisma from '@/database'
 import { Order } from '@/schemaValidations/common.schema'
 import { ProductInListType, ProductListQueryType } from '@/schemaValidations/product.schema'
+import { Prisma } from '@prisma/client'
 
 export class ProductService {
   async checkProductAvailability(productId: string, quantity: number) {
@@ -18,7 +19,7 @@ export class ProductService {
     return product
   }
 
-  async list(queryParams: ProductListQueryType): Promise<ProductInListType[]> {
+  async list(queryParams: ProductListQueryType): Promise<{ data: ProductInListType[] }> {
     const {
       page = 1,
       limit = 20,
@@ -38,7 +39,7 @@ export class ProductService {
     const priceRanges = price ? decodeURIComponent(price).split(',') : []
     const priceFilters = priceRanges.map((range) => {
       const [min, max] = range.split('-').map(Number)
-      return { price: { gte: min, lte: max } } // Prisma expects `gte` and `lte`
+      return { price: { gte: min, lte: max } }
     })
 
     const listWeight = weight ? decodeURIComponent(weight).split(',') : []
@@ -47,7 +48,7 @@ export class ProductService {
         attributes: {
           some: {
             key: 'weight',
-            value: weight
+            value: { equals: weight }
           }
         }
       }
@@ -64,7 +65,7 @@ export class ProductService {
         })
       : undefined
     const categoryId = categoryObj?.id
-    const where = {
+    const where: Prisma.ProductWhereInput = {
       AND: [
         categoryId
           ? {
@@ -73,23 +74,20 @@ export class ProductService {
               }
             }
           : {},
-        search ? { name: { contains: search, mode: 'insensitive' } } : {},
+        search ? { name: { contains: search, mode: Prisma.QueryMode.insensitive } } : {},
         isPromotion ? { isPromotion: true } : {},
         isBestSeller ? { isBestSeller: true } : {},
-        isFeatured ? { isFeatured: true } : {}
+        isFeatured ? { isFeatured: true } : {},
+        {
+          isPublished: true
+        }
       ],
       OR:
         priceFilters.length || weightFilters.length
-          ? [
-              ...(priceFilters.length ? priceFilters : []),
-              {
-                attributes: {
-                  equals: { weight: 500, origin: 'Việt Nam' }
-                }
-              }
-            ]
+          ? [...(priceFilters.length ? priceFilters : []), ...(weightFilters.length ? weightFilters : [])]
           : undefined
     }
+
     const select = {
       id: true,
       name: true,
@@ -104,12 +102,9 @@ export class ProductService {
       promotionPercent: true,
       promotionStart: true,
       promotionEnd: true,
-      image: {
-        select: {
-          thumbnail: true
-        }
-      }
+      image: true
     }
+
     let orderBy: { [x: string]: string } = {
       createdAt: 'desc'
     }
@@ -126,7 +121,7 @@ export class ProductService {
       orderBy,
       select
     })
-    return data
+    return { data }
   }
 
   async getDetailBySlug(slug: string) {
@@ -142,6 +137,7 @@ export class ProductService {
         description: true,
         title: true,
         stock: true,
+        sold: true,
         isBestSeller: true,
         isFeatured: true,
         isPromotion: true,

@@ -31,11 +31,11 @@ export default async function ProductRoutes(fastify: FastifyInstance, options: F
     },
     async (request, reply) => {
       const queryParams = request.query as ProductListQueryType
-      const products = await controller.getProductList({
+      const { data } = await controller.getProductList({
         ...queryParams
       })
       reply.send({
-        data: products,
+        data,
         message: 'Lấy danh sách sản phẩm thành công!'
       })
     }

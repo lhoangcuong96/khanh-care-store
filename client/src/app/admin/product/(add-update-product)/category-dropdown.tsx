@@ -104,7 +104,7 @@ export default function CategoryDropdown({
           }`}
           onClick={(e) => {
             e.stopPropagation();
-            toggleCategory(category.id);
+            toggleCategory(category.id || "");
           }}
         >
           <div
@@ -167,13 +167,15 @@ export default function CategoryDropdown({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="w-[240px] justify-between font-semibold text-gray-700 text-sm"
+          className="justify-between font-semibold bg-inherit text-gray-700 text-sm w-full"
         >
-          <span>{selectedCategory?.name || placeholderText}</span>
+          <span className="truncate">
+            {selectedCategory?.name || placeholderText}
+          </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[240px]">
+      <DropdownMenuContent className="w-full">
         <DropdownMenuLabel>Loại</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup className="max-h-[300px] overflow-y-auto">

@@ -31,13 +31,14 @@ export const ProductSchema = z.object({
   name: z.string().min(1).max(256),
   title: z.string().min(1).max(256).optional().nullable(),
   price: z.number().positive(),
-  description: z.string().max(10000).optional().nullable(),
+  description: z.string().max(100000).optional().nullable(),
   slug: z.string().min(1).max(256),
   stock: z.number().positive(),
   sold: z.number().optional().nullable(),
   isFeatured: z.boolean(),
   isBestSeller: z.boolean(),
   isPromotion: z.boolean(),
+  promotionPrice: z.number().optional().nullable(),
   promotionPercent: z.number().optional().nullable(),
   promotionStart: z.union([z.string(), z.date()]).optional().nullable(),
   promotionEnd: z.union([z.string(), z.date()]).optional().nullable(),
@@ -82,7 +83,7 @@ export type ProductDetailResponseType = z.TypeOf<
 /*----------------End Detail---------------------*/
 
 /*----------------List---------------------*/
-export const ProductListQuerySchema = z.object({
+export const ProductListQueryParamsSchema = z.object({
   ...CommonQuery.shape,
   category: z.string().optional(),
   slug: z.string().optional().nullable(),
@@ -114,7 +115,9 @@ export const ProductListResSchema = z.object({
   data: z.array(ProductInListSchema),
   message: z.string(),
 });
-export type ProductListQueryType = z.TypeOf<typeof ProductListQuerySchema>;
+export type ProductListQueryParamsType = z.TypeOf<
+  typeof ProductListQueryParamsSchema
+>;
 export type ProductListResponseType = z.TypeOf<typeof ProductListResSchema>;
 export type ProductInListType = z.TypeOf<typeof ProductInListSchema>;
 

@@ -15,7 +15,6 @@ export function ProductInfo({ product }: { product: ProductDetailType }) {
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [currentPrice, setCurrentPrice] = useState<number>(product.price);
 
-  console.log(product); // Set the first variant as default if variants exist
   useEffect(() => {
     if (product.variants && product.variants.length > 0) {
       setSelectedVariant(product.variants[0].sku);

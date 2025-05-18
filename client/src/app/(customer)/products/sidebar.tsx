@@ -10,14 +10,14 @@ import {
   DrawerHeader,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import type { ProductListQueryType } from "@/validation-schema/product";
+import type { ProductListQueryParamsType } from "@/validation-schema/product";
 
 import useCategory from "@/hooks/modules/use-category";
 import { IoClose } from "react-icons/io5";
 import CategoryList from "./category-list";
 import ProductFilter from "./product-filter";
 
-export function Sidebar({ params }: { params?: ProductListQueryType }) {
+export function Sidebar({ params }: { params?: ProductListQueryParamsType }) {
   const { categories } = useCategory();
 
   const SidebarContent = () => {

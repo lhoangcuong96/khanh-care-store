@@ -30,4 +30,12 @@ export default class AdminProductController {
   deleteProduct = (id: string) => {
     return this.service.delete(id)
   }
+
+  publishProduct = (id: string) => {
+    return this.service.publish(id)
+  }
+
+  unpublishProduct = (id: string) => {
+    return this.service.unpublish(id)
+  }
 }

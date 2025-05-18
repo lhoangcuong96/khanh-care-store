@@ -20,67 +20,32 @@ export const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 export const MAX_FILE_SIZE = 300 * 1024 * 1024; // 300MB
 export const MAX_PRODUCT_IMAGES = 9;
 
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
 const ProductCreationBaseFormSchema = z.object({
-  thumbnail: z
-    .union([
-      z.instanceof(File, {
-        message: "Hình ảnh không hợp lệ",
-      }),
-      z.string().url({
-        message: "Hình ảnh không hợp lệ",
-      }),
-    ])
-    .refine((file) => {
-      return file instanceof File
-        ? ACCEPTED_IMAGE_TYPES.includes(file.type)
-        : true;
-    }, "Chỉ chấp nhận các định dạng ảnh: JPG, PNG, WEBP")
-    .refine((file) => {
-      return file instanceof File ? file.size <= MAX_IMAGE_SIZE : true;
-    }, `Hình ảnh không được vượt quá ${MAX_IMAGE_SIZE / 1024 / 1024}MB`),
-  productGallery: z
-    .array(
-      z.union([
-        z.instanceof(File, {
-          message: "Hình ảnh không hợp lệ",
-        }),
-        z.string().url({
-          message: "Hình ảnh không hợp lệ",
-        }),
-      ])
-    )
-    .optional()
-    .refine((files) => {
-      if (!files) return true;
-      return files.length <= MAX_PRODUCT_IMAGES;
-    }, `Không được vượt quá ${MAX_PRODUCT_IMAGES} hình ảnh`),
   name: z
     .string({
       required_error: "Vui lòng nhập tên sản phẩm",
     })
-    .min(10, "Tên sản phẩm phải có ít nhất 10 ký tự")
+    .min(1, "Vui lòng nhập tên sản phẩm")
     .max(120, "Tên sản phẩm không được vượt quá 120 ký tự"),
+  description: z
+    .string({
+      required_error: "Vui lòng nhập mô tả sản phẩm",
+    })
+    .min(1, "Vui lòng nhập mô tả sản phẩm"),
+  thumbnail: z.any({
+    required_error: "Vui lòng chọn hình ảnh sản phẩm",
+  }),
+  productGallery: z.array(z.any()).optional(),
   category: z
     .string({
       required_error: "Vui lòng chọn danh mục sản phẩm",
     })
     .min(1, "Vui lòng chọn danh mục sản phẩm"),
-  description: z
-    .string()
-    .max(10000, "Mô tả sản phẩm không được vượt quá 10000 ký tự")
-    .optional()
-    .nullable(),
   price: z
     .number({
-      required_error: "Vui lòng nhập giá bán",
+      required_error: "Vui lòng nhập giá sản phẩm",
     })
-    .min(1, "Vui lòng nhập giá bán"),
+    .min(1, "Vui lòng nhập giá sản phẩm"),
   stock: z
     .number({
       required_error: "Vui lòng nhập số lượng",
@@ -88,6 +53,7 @@ const ProductCreationBaseFormSchema = z.object({
     .min(1, "Vui lòng nhập số lượng"),
   isFeatured: z.boolean().optional().nullable(),
   isBestSeller: z.boolean().optional().nullable(),
+  isPublished: z.boolean().optional().default(false),
   tags: z.array(z.any()).optional(),
 });
 
@@ -297,6 +263,7 @@ export function useHandleForm({
       attributes: data.attributes,
       isFeatured: data.isFeatured || false,
       isBestSeller: data.isBestSeller || false,
+      isPublished: data.isPublished || false,
       variants: data.variants,
     };
 

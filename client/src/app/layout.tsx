@@ -67,6 +67,8 @@ export default async function RootLayout({
     console.error(getListCategoryResponse.reason);
   }
 
+  console.log(getListCategoryResponse);
+
   return (
     <html lang="vi">
       <head>

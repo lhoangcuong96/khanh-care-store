@@ -15,8 +15,7 @@ export const CreateProductBodySchema = ProductSchema.omit({
   isPromotion: true,
   promotionPercent: true,
   promotionStart: true,
-  promotionEnd: true,
-  isPublished: true
+  promotionEnd: true
 })
   .merge(
     z.object({
@@ -53,7 +52,13 @@ export type UpdateProductBodyType = CreateProductBodyType
 /*----------------List---------------------*/
 export const ProductListQueryParamsSchema = z.object({
   ...CommonQuery.shape,
-  category: z.string().optional()
+  category: z.string().optional(),
+  priceFrom: z.coerce.number().optional(),
+  priceTo: z.coerce.number().optional(),
+  stockStatus: z.enum(['all', 'in_stock', 'low_stock', 'out_of_stock']).optional(),
+  createdFrom: z.coerce.date().optional(),
+  createdTo: z.coerce.date().optional(),
+  isPublished: z.string().optional()
 })
 
 export const ProductInListSchema = ProductSchema.pick({
@@ -98,7 +103,8 @@ export const ProductDetailSchema = ProductSchema.omit({
   promotionStart: true,
   promotionEnd: true,
   isPublished: true,
-  variants: true
+  variants: true,
+  categoryId: true
 }).merge(
   z.object({
     category: z
@@ -125,4 +131,19 @@ export const DeleteProductParamsSchema = z.object({
   id: z.string()
 })
 export type DeleteProductParamsType = z.TypeOf<typeof DeleteProductParamsSchema>
-/*----------------End Delete---------------------*/
+
+/*----------------Publish---------------------*/
+export const PublishProductParamsSchema = z.object({
+  id: z.string()
+})
+
+export type PublishProductParamsType = z.TypeOf<typeof PublishProductParamsSchema>
+/*----------------End Publish---------------------*/
+
+/*----------------Unpublish---------------------*/
+export const UnpublishProductParamsSchema = z.object({
+  id: z.string()
+})
+
+export type UnpublishProductParamsType = z.TypeOf<typeof UnpublishProductParamsSchema>
+/*----------------End Unpublish---------------------*/

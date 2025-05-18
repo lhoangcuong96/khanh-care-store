@@ -12,14 +12,11 @@ import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import { FaTools } from "react-icons/fa";
+import { routePath } from "@/constants/routes";
 
-interface ProductSectionProps {
-  banner?: string;
-  title: string | React.ReactNode;
-  subtitle?: string | React.ReactNode;
+interface BestSellingProductsProps {
   products: ProductInListType[];
   error?: string;
-  viewAllUrl?: string;
 }
 
 interface ComponentState {
@@ -59,14 +56,10 @@ const reducer = (
   }
 };
 
-export function ProductSection({
-  banner,
-  title,
-  subtitle,
+export function BestSellingProducts({
   products,
   error,
-  viewAllUrl,
-}: ProductSectionProps) {
+}: BestSellingProductsProps) {
   const swiperRef = useRef<SwiperRef | null>(null);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
@@ -85,29 +78,21 @@ export function ProductSection({
 
   return (
     <div
-      className={`max-w-full w-screen h-fit mt-5 relative z-50 grid ${
-        banner ? "grid-cols-[max-content_auto] md:gap-8" : "grid-cols-1"
-      } `}
+      className={`max-w-full w-screen h-fit mt-5 relative z-50 grid grid-cols-[auto_max-content] md:gap-8`}
     >
-      {banner && (
-        <Link href={viewAllUrl || "#"} className="">
-          <Image
-            src={banner}
-            alt={`${title} banner`}
-            width="287"
-            height="410"
-            className="rounded-sm hidden lg:block w-[287px] h-[410px] object-cover"
-          ></Image>
-        </Link>
-      )}
       <div className="w-full max-w-full overflow-hidden">
         <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
           <div>
             <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
-              <Link href={viewAllUrl || "#"}>{title}</Link>
+              <Link
+                href={routePath.customer.products({
+                  isBestSeller: true,
+                })}
+              >
+                Sản phẩm bán chạy
+              </Link>
               <FaTools className="text-slate-600"></FaTools>
             </h3>
-            {subtitle && <p className="font-semibold">{subtitle}</p>}
           </div>
 
           <div className="flex flex-row items-center justify-center">
@@ -170,7 +155,11 @@ export function ProductSection({
                 );
               })}
             </Swiper>
-            <Link href={viewAllUrl || "#"}>
+            <Link
+              href={routePath.customer.products({
+                isBestSeller: true,
+              })}
+            >
               <OutlineButton className="mt-4 m-auto block">
                 Xem tất cả
               </OutlineButton>
@@ -178,6 +167,20 @@ export function ProductSection({
           </>
         )}
       </div>
+      <Link
+        href={routePath.customer.products({
+          isBestSeller: true,
+        })}
+        className=""
+      >
+        <Image
+          src="/images/best-seller-banner.jpg"
+          alt={`KCS: best selling products banner`}
+          width="287"
+          height="410"
+          className="rounded-sm hidden lg:block w-[287px] h-[410px] object-cover"
+        ></Image>
+      </Link>
     </div>
   );
 }

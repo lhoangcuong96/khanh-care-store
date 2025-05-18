@@ -70,11 +70,10 @@ export const ProductCreationBaseFormSchema = z.object({
     .min(0, "Khối lượng sản phẩm phải lớn hơn hoặc bằng 0")
     .max(1000000, "Khối lượng sản phẩm không được vượt quá 1000kg"),
 
-  category: z.string().min(1, "Vui lòng chọn danh mục sản phẩm"),
   description: z
     .string()
     .min(1, "Vui lòng nhập mô tả sản phẩm")
-    .max(10000, "Mô tả sản phẩm không được vượt quá 10000 ký tự"),
+    .max(100000, "Mô tả sản phẩm không được vượt quá 100000 ký tự"),
   price: z
     .number({
       required_error: "Vui lòng nhập giá bán",
@@ -458,7 +457,7 @@ export default function ProductBasicInfo() {
                   <FormMessage />
                   <div className="text-right">
                     <span className="text-sm text-muted-foreground">
-                      {field.value?.length}/10000
+                      {field.value?.length}/100000
                     </span>
                   </div>
                 </div>

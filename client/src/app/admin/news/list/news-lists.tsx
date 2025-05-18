@@ -232,12 +232,13 @@ export function NewsList({
               <TableRow key={news.id}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
-                    <div className="relative h-10 w-16 overflow-hidden rounded-md">
+                    <div className="relative contents h-10 w-16 overflow-hidden rounded-md">
                       <Image
                         src={news.image.thumbnail}
                         alt={news.title}
-                        fill
-                        className="object-cover"
+                        width={64}
+                        height={40}
+                        className="object-contain w-10 h-16"
                       />
                     </div>
                     <div className="space-y-1">

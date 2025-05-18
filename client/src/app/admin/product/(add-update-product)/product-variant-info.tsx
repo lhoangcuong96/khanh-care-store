@@ -44,11 +44,6 @@ export default function VariantInfo({
     name: "variants",
   });
 
-  const variants = watch("variants");
-  useEffect(() => {
-    console.log(variants);
-  }, [variants]);
-
   return (
     <Card className="col-span-2">
       <CardHeader className="flex flex-row items-center justify-between">

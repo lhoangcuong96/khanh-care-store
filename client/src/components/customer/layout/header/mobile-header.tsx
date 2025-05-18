@@ -5,16 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { routePath } from "@/constants/routes";
 import { useAppContext } from "@/provider/app-provider";
-import { Menu, Search, ShoppingBag } from "lucide-react";
+import { ChevronDown, Menu, Search, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { menuItems } from "./menu";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export default function MobileHeader() {
   const [isOpen, setIsOpen] = useState(false);
-  const { cart, account } = useAppContext();
+  const [openProductMenu, setOpenProductMenu] = useState(false);
+  const { cart, account, categories } = useAppContext();
 
   const searchRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -91,20 +97,71 @@ export default function MobileHeader() {
                     )}
                   </div>
                   <div className="p-4 border-b">
-                    <h3 className="font-bold text-slatee-600 mb-4">
+                    <h3 className="font-bold text-slate-600 mb-4">
                       MENU CHÍNH
                     </h3>
                     <nav className="space-y-2">
-                      {menuItems.map((item) => (
-                        <Link
-                          href={item.path}
-                          className="flex items-center py-2"
-                          key={item.label}
-                          onClick={() => setIsOpen(false)}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                      {menuItems.map((item) => {
+                        if (item.key === "product") {
+                          return (
+                            <Collapsible
+                              key={item.key}
+                              open={openProductMenu}
+                              onOpenChange={setOpenProductMenu}
+                              className="w-full"
+                            >
+                              <CollapsibleTrigger className="flex items-center justify-between w-full py-2">
+                                <span>{item.label}</span>
+                                <ChevronDown
+                                  className={`h-4 w-4 transition-transform ${
+                                    openProductMenu
+                                      ? "transform rotate-180"
+                                      : ""
+                                  }`}
+                                />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="pl-4 space-y-2">
+                                {categories.map((category) => (
+                                  <div key={category.id} className="py-1">
+                                    <Link
+                                      href={`/products?category=${category.id}`}
+                                      className="block"
+                                      onClick={() => setIsOpen(false)}
+                                    >
+                                      {category.name}
+                                    </Link>
+                                    {category.children &&
+                                      category.children.length > 0 && (
+                                        <div className="pl-4 space-y-1 mt-1">
+                                          {category.children.map((child) => (
+                                            <Link
+                                              key={child.id}
+                                              href={`/products?category=${child.id}`}
+                                              className="block py-1 text-sm text-gray-600"
+                                              onClick={() => setIsOpen(false)}
+                                            >
+                                              {child.name}
+                                            </Link>
+                                          ))}
+                                        </div>
+                                      )}
+                                  </div>
+                                ))}
+                              </CollapsibleContent>
+                            </Collapsible>
+                          );
+                        }
+                        return (
+                          <Link
+                            href={item.path}
+                            className="flex items-center py-2"
+                            key={item.label}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
                     </nav>
                   </div>
                   <div className="p-4">
@@ -142,7 +199,7 @@ export default function MobileHeader() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-slatee-600 relative"
+                  className="text-slate-600 relative"
                 >
                   <ShoppingBag className="!h-6 !w-6" />
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">

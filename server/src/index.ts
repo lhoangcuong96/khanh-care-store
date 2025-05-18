@@ -5,7 +5,7 @@ import validatorCompilerPlugin from '@/plugins/validatorCompiler.plugins'
 import accountRoutes from '@/routes/account.route'
 import authRoutes from '@/routes/auth.route'
 import mediaRoutes from '@/routes/media.route'
-import productRoutes from '@/routes/product.route'
+import ProductRoutes from '@/routes/product.route'
 import staticRoutes from '@/routes/static.route'
 import testRoutes from '@/routes/test.route'
 import { createFolder } from '@/utils/helpers'
@@ -20,10 +20,10 @@ import path from 'path'
 import adminRoutes from './routes/admin'
 import { CartRoutes } from './routes/cart.route'
 import { CategoryRoutes } from './routes/category.routes'
+import LandingRoutes from './routes/landing.route'
 import OrderRoutes from './routes/order.route'
 import StorageRoutes from './routes/storage.route'
-import ProductRoutes from '@/routes/product.route'
-import LandingRoutes from './routes/landing.route'
+import { NewsRoutes } from './routes/news.route'
 
 const fastify = Fastify({
   logger: true
@@ -99,11 +99,13 @@ const start = async () => {
     }),
       fastify.register(StorageRoutes, {
         prefix: '/storage'
+      }),
+      fastify.register(NewsRoutes, {
+        prefix: '/news'
+      }),
+      fastify.register(testRoutes, {
+        prefix: '/test'
       })
-
-    fastify.register(testRoutes, {
-      prefix: '/test'
-    })
 
     fastify.register(fastifyStatic, {
       root: path.resolve('public')

@@ -28,8 +28,6 @@ export function ProductForm({
     productDetail,
   });
 
-  console.log(form.formState.errors);
-
   return (
     <div className="flex">
       <FormProvider {...form}>
@@ -58,10 +56,25 @@ export function ProductForm({
                 </Button>
               </Link>
 
-              <Button type="submit" variant="secondary" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                variant="secondary"
+                disabled={isSubmitting}
+                onClick={() => {
+                  form.setValue("isPublished", false);
+                  form.handleSubmit(onSubmit)();
+                }}
+              >
                 {isSubmitting ? "Đang lưu..." : "Lưu & Ẩn"}
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                onClick={() => {
+                  form.setValue("isPublished", true);
+                  form.handleSubmit(onSubmit)();
+                }}
+              >
                 {isSubmitting ? "Đang lưu..." : "Lưu & Hiển thị"}
               </Button>
             </div>

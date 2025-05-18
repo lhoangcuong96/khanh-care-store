@@ -1,6 +1,7 @@
 import prisma from '@/database'
 import { CategoryService } from './category.service'
 import { ProductService } from './product.service'
+import { CategoryStatus } from '@prisma/client'
 
 export default class LandingService {
   static async getLandingData() {
@@ -25,17 +26,52 @@ export default class LandingService {
       isBestSeller: true
     })
 
-    const [featuredCategories, featuredProducts, promotionalProducts, bestSellerProducts] = await Promise.all([
-      getFeaturedCategories,
-      getFeaturedProducts,
-      getPromotionalProducts,
-      getBestSellerProducts
-    ])
+    // Get list categories that their products will be shown on home page
+    const getHomeCategoriesWithProducts = prisma.category.findMany({
+      where: {
+        status: CategoryStatus.ACTIVE,
+        isShowOnHomePage: true
+      },
+      select: {
+        id: true,
+        products: {
+          where: {
+            isPublished: true
+          },
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            slug: true,
+            description: true,
+            title: true,
+            stock: true,
+            isBestSeller: true,
+            isFeatured: true,
+            isPromotion: true,
+            promotionPercent: true,
+            promotionStart: true,
+            promotionEnd: true,
+            image: true
+          }
+        }
+      }
+    })
+
+    const [featuredCategories, featuredProducts, promotionalProducts, bestSellerProducts, categoriesWithProducts] =
+      await Promise.all([
+        getFeaturedCategories,
+        getFeaturedProducts,
+        getPromotionalProducts,
+        getBestSellerProducts,
+        getHomeCategoriesWithProducts
+      ])
     return {
-      featuredCategories,
-      featuredProducts,
-      promotionalProducts,
-      bestSellerProducts
+      featuredCategories: featuredCategories,
+      featuredProducts: featuredProducts.data,
+      promotionalProducts: promotionalProducts.data,
+      bestSellerProducts: bestSellerProducts.data,
+      categoriesWithProducts: categoriesWithProducts
     }
   }
 }

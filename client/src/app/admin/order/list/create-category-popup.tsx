@@ -82,7 +82,6 @@ export default function CreateCategoryPopup({
     }
   };
 
-  console.log(form.getValues());
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>

@@ -113,7 +113,6 @@ export const request = async <T>(
     const tokenPayload = jwtDecode<{ account: Partial<Account> }>(accessToken);
     const account = tokenPayload?.account;
     if (!account || account.role !== "ADMIN") {
-      console.log(account);
       throw new ForbiddenError("Bạn không có quyền truy cập");
     }
   }

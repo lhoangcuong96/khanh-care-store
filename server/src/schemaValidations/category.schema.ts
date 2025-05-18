@@ -40,7 +40,8 @@ export const CategorySchema = z.object({
     .array(z.lazy((): z.ZodType<any> => CategorySchema))
     .optional()
     .nullable(),
-  attributes: z.array(CategoryAttributeSchema).optional().nullable()
+  attributes: z.array(CategoryAttributeSchema).optional().nullable(),
+  products: z.array(z.any()).optional().nullable()
 })
 
 export type AttributeSchemaType = z.infer<typeof AttributeSchema>
@@ -53,7 +54,8 @@ export const CategoryInListSchema = CategorySchema.pick({
   name: true,
   slug: true,
   description: true,
-  parentId: true
+  parentId: true,
+  children: true
 })
 
 export const ListCategoryResponseSchema = z.object({

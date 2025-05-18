@@ -4,13 +4,12 @@ import DefaultButton from "@/components/customer/UI/button/default-button";
 import CategoryCard from "@/components/customer/UI/card/category-card";
 import { ErrorMessage } from "@/components/customer/UI/error-message";
 import { routePath } from "@/constants/routes";
-import useCategory from "@/hooks/modules/use-category";
-import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { FaTools } from "react-icons/fa";
+import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 
+import { FeaturedCategoryType } from "@/validation-schema/category";
 import {
   A11y,
   Autoplay,
@@ -20,7 +19,6 @@ import {
   Virtual,
 } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
-import { FeaturedCategoryType } from "@/validation-schema/category";
 
 export function FeaturedCategories({
   categories,

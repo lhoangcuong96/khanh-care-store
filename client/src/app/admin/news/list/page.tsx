@@ -38,10 +38,7 @@ async function getNews(searchParams: PageProps["searchParams"]) {
         : undefined,
     });
 
-    console.log("validatedParams", validatedParams);
-
     const response = await adminNewsApiRequest.getAll(validatedParams);
-    console.log(response);
     if (!response.payload) {
       throw new Error("Không có dữ liệu");
     }
@@ -79,8 +76,6 @@ export default async function NewsListPage(props: {
 }) {
   const searchParams: PageProps["searchParams"] | undefined =
     await props.searchParams;
-
-  console.log("searchParams", searchParams);
 
   const { news, total, currentPage, limit, totalPages, error } = await getNews(
     searchParams || {
