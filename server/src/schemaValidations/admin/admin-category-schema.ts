@@ -86,6 +86,8 @@ export const AdminCategoryInListSchema = CategorySchema.pick({
   image: true,
   children: true,
   attributes: true
+}).extend({
+  totalProduct: z.number()
 })
 
 export const AdminListCategoryResponseSchema = z.object({

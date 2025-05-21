@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GetCategoryAttributesDataType as CategoryAttribute } from "@/validation-schema/admin/category";
 import { Plus, Trash2 } from "lucide-react";
-import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import AttributeInput from "./attribute-input";
 

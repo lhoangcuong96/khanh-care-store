@@ -4,13 +4,20 @@ enum CategoryStatus {
     DELETED
 }
 
+type CategoryImage {
+    thumbnail String
+    banner    String?
+    featured  String?
+    gallery   String[]
+}
+
 // Category model with hierarchical structure
 model Category {
     id               String         @id @default(auto()) @map("_id") @db.ObjectId
     name             String
     slug             String         @unique
     description      String?
-    image            String
+    image            CategoryImage
     parentId         String?        @db.ObjectId
     parent           Category?      @relation("CategoryToSubcategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
     children         Category[]     @relation("CategoryToSubcategory")

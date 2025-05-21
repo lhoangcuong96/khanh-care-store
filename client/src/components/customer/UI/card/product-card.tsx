@@ -16,26 +16,36 @@ export function ProductCard({ product }: { product: ProductInListType }) {
     ? product?.price - (product?.price * product?.promotionPercent) / 100
     : 0;
   return (
-    <Card className="w-full max-w-40 md:max-w-56 p-3 rounded-lg relative gap-1 m-[2px] shadow hover:outline-2 hover:outline-slate-600 hover:outline">
+    <Card className="w-full max-w-64 md:max-w-64 p-3 rounded-xl relative gap-2 m-[2px] shadow-lg hover:shadow-2xl hover:scale-[1.025] transition-all duration-200 bg-white border border-slate-100">
       <Link
-        className="w-full h-full flex flex-col gap-1"
+        className="w-full h-full flex flex-col gap-2"
         href={`${routePath.customer.productDetail}/${product?.slug}`}
       >
-        {product?.isPromotion && (
-          <div className="absolute -left-[1px] -top-[1px] bg-red-500 text-white px-3 py-1 text-sm rounded-br-lg rounded-tl-lg z-50">
-            <p>Giảm {product?.promotionPercent}%</p>
-          </div>
-        )}
-
-        <Image
-          src={product?.image?.thumbnail || ""}
-          alt={product?.name || ""}
-          height={148}
-          width={198}
-          className="m-auto h-[148px] w-[198px] object-cover rounded-lg"
-        ></Image>
+        <div
+          className="relative w-full flex items-center justify-center bg-slate-100 rounded-lg overflow-hidden"
+          style={{ width: 200, height: 130, margin: "0 auto" }}
+        >
+          {product?.isPromotion && (
+            <span className="absolute left-2 top-2 bg-red-500 text-white px-2 py-0.5 text-xs rounded shadow z-10 font-semibold animate-pulse">
+              -{product?.promotionPercent}%
+            </span>
+          )}
+          {product?.image?.thumbnail ? (
+            <Image
+              src={product?.image?.thumbnail}
+              alt={product?.name || ""}
+              width={200}
+              height={130}
+              className="object-cover w-[200px] h-[130px] rounded-lg"
+            />
+          ) : (
+            <div className="w-[200px] h-[130px] flex items-center justify-center text-slate-400 text-2xl">
+              No Image
+            </div>
+          )}
+        </div>
         <h3
-          className="font-semibold hover:text-slate-600 h-12"
+          className="font-semibold hover:text-slate-700 h-12 text-base md:text-lg leading-tight mt-1 mb-0.5"
           style={{
             display: "-webkit-box",
             WebkitBoxOrient: "vertical",
@@ -46,42 +56,50 @@ export function ProductCard({ product }: { product: ProductInListType }) {
         >
           {product?.name}
         </h3>
-        <div className="flex flex-row gap-2 items-center">
-          <p className="text-slatee-600 font-semibold">
-            {formatCurrency(product?.price || 0)}
-          </p>
-          {product?.isPromotion && (
-            <p className="line-through text-xs">
-              {formatCurrency(promotionalPrice)}
-            </p>
+        <div className="flex flex-row gap-2 items-end mt-1 mb-0.5">
+          {product?.isPromotion ? (
+            <>
+              <span className="text-lg font-bold text-red-500">
+                {formatCurrency(promotionalPrice)}
+              </span>
+              <span className="line-through text-xs text-slate-400">
+                {formatCurrency(product?.price || 0)}
+              </span>
+            </>
+          ) : (
+            <span className="text-lg font-bold text-slate-700">
+              {formatCurrency(product?.price || 0)}
+            </span>
           )}
         </div>
-        {/* <AppProgress /> */}
-        <p className="font-semibold text-sm">Đã bán: {product.sold}</p>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full">
+            Đã bán: {product.sold}
+          </span>
+        </div>
       </Link>
-
-      <div className="absolute top-2 right-2 flex flex-col gap-2 z-20">
+      <div className="flex flex-row gap-2 justify-center items-center mt-3 border-t pt-2 bg-white z-10">
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 bg-slate-600 text-white hover:bg-slate-600"
+          className="h-9 w-9 bg-slate-700 text-white hover:bg-slate-900 border border-slate-200 shadow-sm transition-colors"
           onClick={() => handleAddToCart(product.id!)}
         >
-          <ShoppingCart className="h-4 w-4" />
+          <ShoppingCart className="h-5 w-5" />
         </Button>
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 bg-slate-600 text-white hover:bg-slate-600"
+          className="h-9 w-9 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 shadow-sm"
         >
-          <Search className="h-4 w-4" />
+          <Search className="h-5 w-5" />
         </Button>
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 bg-slate-600 text-white hover:bg-slate-600"
+          className="h-9 w-9 bg-slate-100 text-slate-700 hover:bg-pink-100 border border-slate-200 shadow-sm"
         >
-          <Heart className="h-4 w-4" />
+          <Heart className="h-5 w-5" />
         </Button>
       </div>
     </Card>

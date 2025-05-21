@@ -9,7 +9,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useReducer, useRef } from "react";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
-import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
+import {
+  A11y,
+  Autoplay,
+  Navigation,
+  Pagination,
+  Scrollbar,
+} from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import { FaTools } from "react-icons/fa";
 import { routePath } from "@/constants/routes";
@@ -139,10 +145,9 @@ export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
           <>
             <Swiper
               ref={swiperRef}
-              modules={[Navigation, Pagination, Scrollbar, A11y]}
+              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
               spaceBetween={10}
               slidesPerView={"auto"}
-              navigation
               pagination={{ clickable: true }}
               scrollbar={{ draggable: true }}
               autoplay={true}

@@ -42,6 +42,11 @@ export default class AdminCategoryService {
               not: CategoryStatus.DELETED
             }
           }
+        },
+        products: {
+          select: {
+            id: true
+          }
         }
       },
       where: {
@@ -53,7 +58,12 @@ export default class AdminCategoryService {
         }
       }
     })
-    return data
+    return data.map((category) => {
+      return {
+        ...category,
+        totalProduct: category.products.length
+      }
+    })
   }
 
   static create = async (data: AdminCreateCategoryBodyType) => {
@@ -80,7 +90,12 @@ export default class AdminCategoryService {
         name,
         description,
         slug,
-        image,
+        image: {
+          thumbnail: image.thumbnail,
+          banner: image.banner,
+          featured: image.featured,
+          gallery: image.gallery || []
+        },
         isFeatured,
         isShowOnHomePage,
         ...(parentId ? { parent: { connect: { id: parentId } } } : {})
@@ -135,7 +150,12 @@ export default class AdminCategoryService {
         name,
         description,
         slug,
-        image,
+        image: {
+          thumbnail: image.thumbnail,
+          banner: image.banner,
+          featured: image.featured,
+          gallery: image.gallery || []
+        },
         isFeatured,
         isShowOnHomePage,
         ...(parentId ? { parent: { connect: { id: parentId } } } : {})

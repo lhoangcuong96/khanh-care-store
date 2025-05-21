@@ -39,17 +39,7 @@ import {
   Trash,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
-// Extend the AdminCategoryInListType to include attributes and children if needed
-type ExtendedCategoryType = AdminCategoryInListType & {
-  children?: ExtendedCategoryType[];
-  attributes?: Array<{
-    id: string;
-    name: string;
-    values?: Array<{ id: string; name: string }>;
-  }>;
-};
+import { JSX, useEffect, useState } from "react";
 
 export default function CategoriesPage() {
   const { toast } = useToast();
@@ -58,14 +48,6 @@ export default function CategoriesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-  const [showAllChildren, setShowAllChildren] = useState(false);
-
-  // Get parent category name
-  const getParentName = (parentId: string | null) => {
-    if (!parentId) return "-";
-    const parent = categories.find((cat) => cat.id === parentId);
-    return parent ? parent.name : "-";
-  };
 
   // Handle category deletion
   const handleDeleteCategory = (id: string) => {
@@ -138,11 +120,10 @@ export default function CategoriesPage() {
         cat.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : categories;
-
   // Get root categories (those without a parent)
-  const rootCategories = filteredCategories.filter((cat) => !cat.parentId);
+  const rootCategories = filteredCategories.filter((cat) => !cat.);
 
-  const renderCategoryRow = (category: AdminCategoryInListType, level = 0) => {
+  const renderCategoryRow = (category: AdminCategoryInListType, level = 0): JSX.Element => {
     const isExpanded = expandedCategories.includes(category.id);
     const hasChildren = category?.children
       ? category.children.length > 0
@@ -171,11 +152,11 @@ export default function CategoriesPage() {
                 </Button>
               )}
               {!hasChildren && <div className="w-6" />}
-              {category.image && (
+              {category.image.thumbnail && (
                 <div className="w-10 h-10 rounded-md overflow-hidden border">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={category.image || "/placeholder.svg"}
+                    src={category.image.thumbnail || "/placeholder.svg"}
                     alt={category.name}
                     className="w-full h-full object-cover"
                   />
@@ -201,7 +182,7 @@ export default function CategoriesPage() {
               0
             )}
           </TableCell>
-          <TableCell>{0}</TableCell>
+          <TableCell>{category.totalProduct || 0}</TableCell>
           <TableCell className="text-right">
             <div className="flex items-center justify-end gap-2">
               <Button
@@ -237,24 +218,27 @@ export default function CategoriesPage() {
                       key={index}
                       className="text-xs p-2 bg-muted/30 rounded-md"
                     >
-                      <span className="font-medium">{attr.name}</span>
-                      {attr.values && attr.values.length > 0 && (
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {attr.values.slice(0, 3).map((value, vIndex) => (
-                            <span
-                              key={vIndex}
-                              className="text-xs bg-muted/50 px-1 rounded"
-                            >
-                              {value.name}
-                            </span>
-                          ))}
-                          {attr.values.length > 3 && (
-                            <span className="text-xs text-muted-foreground">
-                              +{attr.values.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      )}
+                      <span className="font-medium">{attr.attribute.name}</span>
+                      {attr.attribute.options &&
+                        attr.attribute.options.length > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {attr.attribute.options
+                              .slice(0, 3)
+                              .map((value: any, vIndex: number) => (
+                                <span
+                                  key={vIndex}
+                                  className="text-xs bg-muted/50 px-1 rounded"
+                                >
+                                  {value.name}
+                                </span>
+                              ))}
+                            {attr.attribute.options.length > 3 && (
+                              <span className="text-xs text-muted-foreground">
+                                +{attr.attribute.options.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        )}
                     </div>
                   ))}
                 </div>

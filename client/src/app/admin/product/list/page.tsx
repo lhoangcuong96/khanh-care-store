@@ -60,7 +60,6 @@ export default async function ProductList({
       totalProducts = products.length;
       totalPages = Math.ceil(totalProducts / limit);
     }
-    console.log("totalPages", totalPages);
   } catch (e) {
     console.log(e);
   }

@@ -1,6 +1,13 @@
 import { AttributeType, FilterType } from '@prisma/client'
 import z from 'zod'
 
+export const CategoryImageSchema = z.object({
+  thumbnail: z.string(),
+  banner: z.string().nullable().optional(),
+  featured: z.string().nullable().optional(),
+  gallery: z.array(z.string()).nullable().optional()
+})
+
 export const AttributeSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -25,7 +32,7 @@ export const CategorySchema = z.object({
   name: z.string().min(1).max(50),
   slug: z.string(),
   description: z.string().optional().nullable(),
-  image: z.string(),
+  image: CategoryImageSchema,
   isFeatured: z.boolean().optional().default(false),
   isShowOnHomePage: z.boolean().optional().default(false),
   parentId: z.string().optional().nullable(),

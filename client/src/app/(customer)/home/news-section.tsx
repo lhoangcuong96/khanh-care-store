@@ -1,126 +1,75 @@
 "use client";
 
-import DefaultButton from "@/components/customer/UI/button/default-button";
-import CategoryCard from "@/components/customer/UI/card/category-card";
-import { ErrorMessage } from "@/components/customer/UI/error-message";
-import { Category } from "@prisma/client";
-import { useEffect, useReducer, useRef } from "react";
-import { FaTools } from "react-icons/fa";
-import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
-import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
-import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
-interface ComponentState {
-  isDisabledNext: boolean;
-  isDisabledPrev: boolean;
-}
+// Mock news data
+const mockNews = [
+  {
+    id: 1,
+    title: "Khuyến mãi lớn cuối tuần!",
+    image: "/images/news1.jpg",
+    summary:
+      "Đừng bỏ lỡ chương trình khuyến mãi cực lớn vào cuối tuần này với hàng ngàn sản phẩm giảm giá.",
+  },
+  {
+    id: 2,
+    title: "Cách chọn sản phẩm phù hợp cho gia đình bạn",
+    image: "/images/news2.jpg",
+    summary:
+      "Hướng dẫn chi tiết giúp bạn lựa chọn sản phẩm tốt nhất cho nhu cầu của gia đình.",
+  },
+  {
+    id: 3,
+    title: "Xu hướng tiêu dùng năm 2024",
+    image: "/images/news3.jpg",
+    summary:
+      "Khám phá những xu hướng tiêu dùng nổi bật sẽ lên ngôi trong năm 2024.",
+  },
+];
 
-enum ActionType {
-  DISABLE_NEXT_BUTTON = "DISABLE_NEXT_BUTTON",
-  DISABLE_PREV_BUTTON = "DISABLE_PREV_BUTTON",
-}
-
-const INITIAL_STATE: ComponentState = {
-  isDisabledNext: true,
-  isDisabledPrev: true,
-};
-
-const reducer = (
-  state: ComponentState,
-  action: { type: ActionType; value: boolean }
-) => {
-  switch (action.type) {
-    case ActionType.DISABLE_NEXT_BUTTON:
-      return {
-        ...state,
-        isDisabledNext: action.value,
-      };
-
-    case ActionType.DISABLE_PREV_BUTTON:
-      return {
-        ...state,
-        isDisabledPrev: action.value,
-      };
-
-    default:
-      throw Error("Unknown action.");
-  }
-};
-
-export function NewsSection({
-  categories,
-  error,
-}: {
-  categories: Category[];
-  error?: string;
-}) {
-  const swiperRef = useRef<SwiperRef | null>(null);
-
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-
-  useEffect(() => {
-    if (swiperRef.current?.swiper) {
-      dispatch({
-        type: ActionType.DISABLE_NEXT_BUTTON,
-        value: swiperRef.current.swiper.isEnd,
-      });
-      dispatch({
-        type: ActionType.DISABLE_PREV_BUTTON,
-        value: swiperRef.current.swiper.isBeginning,
-      });
-    }
-  }, [swiperRef]);
-
+function NewsSection() {
   return (
-    <div className="max-w-full w-screen h-fit mt-5 relative z-50">
-      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
-        <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
-          Danh mục nổi bật <FaTools className="text-slate-600"></FaTools>
-        </h3>
-        <div className="flex flex-row items-center justify-center">
-          <DefaultButton
-            className="!h-8 !min-w-8 "
-            suffix={
-              <MdOutlineNavigateBefore className="!h-5 !w-5"></MdOutlineNavigateBefore>
-            }
-            disabled={state.isDisabledPrev}
-            onClick={() => swiperRef.current?.swiper.slidePrev()}
-          ></DefaultButton>
-          <DefaultButton
-            className="!h-8 !min-w-8 "
-            suffix={
-              <MdOutlineNavigateNext className="!h-5 !w-5"></MdOutlineNavigateNext>
-            }
-            disabled={state.isDisabledNext}
-            onClick={() => swiperRef.current?.swiper.slideNext()}
-          ></DefaultButton>
-        </div>
-      </div>
-
-      {error ? (
-        <ErrorMessage>{error}</ErrorMessage>
-      ) : (
-        <div>
-          <Swiper
-            ref={swiperRef}
-            modules={[Navigation, Pagination, Scrollbar, A11y]}
-            spaceBetween={10}
-            slidesPerView={6}
-            navigation
-            pagination={{ clickable: true }}
-            scrollbar={{ draggable: true }}
-            autoplay={true}
-          >
-            {categories.map((category) => {
-              return (
-                <SwiperSlide key={category.id}>
-                  <CategoryCard category={category} key={category.id} />
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        </div>
-      )}
-    </div>
+    <section className="mt-12 mb-8 w-full max-w-screen-xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-slate-800">
+        Tin tức mới nhất
+      </h2>
+      <Swiper
+        modules={[Navigation]}
+        navigation
+        spaceBetween={20}
+        slidesPerView={1}
+        breakpoints={{
+          640: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+        }}
+        className="pb-8"
+      >
+        {mockNews.map((item) => (
+          <SwiperSlide key={item.id}>
+            <div className="bg-white rounded-xl shadow p-4 flex flex-col hover:scale-105 hover:shadow-xl transition-transform transition-shadow duration-200 cursor-pointer">
+              <Image
+                src={item.image}
+                alt={item.title}
+                className="w-full h-40 object-cover rounded mb-3"
+                width={200}
+                height={130}
+              />
+              <h4 className="font-semibold text-lg mb-2 line-clamp-2">
+                {item.title}
+              </h4>
+              <p className="text-sm text-gray-600 line-clamp-3">
+                {item.summary}
+              </p>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </section>
   );
 }
+
+export default NewsSection;

@@ -80,7 +80,7 @@ export function FeaturedCategories({
           >
             {categories.map((category) => {
               return (
-                <SwiperSlide key={category.id} className="!w-fit !m-2">
+                <SwiperSlide key={category.id} className="!w-fit !my-2 !mx-4">
                   <Link
                     href={`${routePath.customer.products({
                       category: category.slug,

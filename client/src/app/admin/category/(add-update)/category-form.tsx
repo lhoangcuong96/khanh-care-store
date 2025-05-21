@@ -42,6 +42,7 @@ import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 import CategoryDropdown from "../../product/(add-update-product)/category-dropdown";
+import Image from "next/image";
 // Define the schema for attributes
 
 const attributeSchema = z.object({
@@ -88,6 +89,7 @@ const formSchema = z.object({
   image: z.string({
     required_error: "Hình ảnh không được để trống",
   }),
+  banner: z.string().optional(),
   isFeatured: z.boolean().default(false),
   isShowOnHomePage: z.boolean().default(false),
   attributes: z.array(categoryAttributeSchema),
@@ -121,6 +123,8 @@ const CategoryForm = ({ category }: { category?: any }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [banner, setBanner] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
 
   const { uploadFile } = useHandleStore();
   // Initialize the form
@@ -132,7 +136,8 @@ const CategoryForm = ({ category }: { category?: any }) => {
       slug: category?.slug || "",
       description: category?.description || "",
       parentId: category?.parentId || "",
-      image: category?.image || "",
+      image: category?.image.thumbnail || "",
+      banner: category?.image.banner || "",
       isFeatured: category?.isFeatured || false,
       isShowOnHomePage: category?.isShowOnHomePage || false,
       attributes: category?.attributes || [],
@@ -177,6 +182,20 @@ const CategoryForm = ({ category }: { category?: any }) => {
     }
   };
 
+  // Handle banner upload
+  const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setBanner(file);
+      setBannerPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const removeBanner = () => {
+    setBanner(null);
+    setBannerPreview(null);
+  };
+
   // Handle form submission
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -185,32 +204,45 @@ const CategoryForm = ({ category }: { category?: any }) => {
       const processedData = {
         ...data,
       };
-
+      const uploadPromise = [];
       // Upload image
       if (image) {
-        const imageUrl = await uploadFile(image!);
-        if (imageUrl) {
-          processedData.image = imageUrl;
-        } else {
-          await toast({
-            title: "Lỗi",
-            description: "Đã xảy ra lỗi khi tải lên hình ảnh",
-            variant: "destructive",
-            duration: 300,
-          });
-          return;
+        uploadPromise.push(uploadFile(image));
+      }
+      if (banner) {
+        uploadPromise.push(uploadFile(banner));
+      }
+      const uploadResults = await Promise.all(uploadPromise);
+      console.log(uploadResults);
+      if (image) {
+        processedData.image = uploadResults[0];
+        if (banner) {
+          processedData.banner = uploadResults[1];
+        }
+      } else {
+        if (banner) {
+          processedData.banner = uploadResults[0];
         }
       }
 
       let message = `Đã tạo danh mục "${data.name}" thành công`;
       if (processedData.id) {
-        await adminCategoryRequestApis.updateCategory(
-          processedData.id,
-          processedData
-        );
+        await adminCategoryRequestApis.updateCategory(processedData.id, {
+          ...processedData,
+          image: {
+            thumbnail: processedData.image,
+            banner: processedData.banner,
+          },
+        });
         message = `Đã cập nhật danh mục "${data.name}" thành công`;
       } else {
-        await adminCategoryRequestApis.createCategory(processedData);
+        await adminCategoryRequestApis.createCategory({
+          ...processedData,
+          image: {
+            thumbnail: processedData.image,
+            banner: processedData.banner,
+          },
+        });
       }
 
       await toast({
@@ -374,7 +406,7 @@ const CategoryForm = ({ category }: { category?: any }) => {
                   <FormField
                     control={form.control}
                     name="image"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel>Hình ảnh danh mục</FormLabel>
                         <div className="flex items-center gap-4">
@@ -388,18 +420,30 @@ const CategoryForm = ({ category }: { category?: any }) => {
                             />
                           </FormControl>
                           <div className="flex items-center gap-4">
-                            {(imagePreview || category?.image) && (
-                              <div className="relative w-24 h-24 border rounded-md overflow-hidden">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
+                            {(imagePreview || category?.image.thumbnail) && (
+                              <div className="relative w-24 h-24 border rounded-md overflow-hidden group">
+                                <Image
                                   src={
                                     imagePreview ||
-                                    category?.image ||
+                                    category?.image.thumbnail ||
                                     "/placeholder.svg"
                                   }
                                   alt="Category preview"
                                   className="w-full h-full object-cover"
+                                  width={96}
+                                  height={96}
                                 />
+                                <button
+                                  type="button"
+                                  className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-red-500 hover:bg-opacity-100"
+                                  onClick={() => {
+                                    setImage(null);
+                                    setImagePreview(null);
+                                    form.setValue("image", "");
+                                  }}
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </button>
                               </div>
                             )}
                             <label
@@ -419,6 +463,48 @@ const CategoryForm = ({ category }: { category?: any }) => {
                       </FormItem>
                     )}
                   />
+                  {/* Category Banner Upload */}
+                  <div className="mt-4">
+                    <FormLabel>Ảnh banner danh mục</FormLabel>
+                    <div className="flex items-center gap-4 mt-2">
+                      {bannerPreview && (
+                        <div className="relative w-48 h-24 border rounded-md overflow-hidden group">
+                          <Image
+                            src={bannerPreview}
+                            className="w-full h-full object-cover"
+                            width={192}
+                            height={72}
+                            alt="Banner preview"
+                          />
+                          <button
+                            type="button"
+                            className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-red-500 hover:bg-opacity-100"
+                            onClick={removeBanner}
+                          >
+                            <Trash className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        id="category-banner"
+                        onChange={handleBannerUpload}
+                      />
+                      <label
+                        htmlFor="category-banner"
+                        className="flex items-center justify-center px-4 py-2 border border-dashed rounded-md cursor-pointer hover:bg-muted"
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Tải lên banner
+                      </label>
+                    </div>
+                    <FormDescription>
+                      Tải lên một ảnh banner cho danh mục này. Kích thước khuyến
+                      nghị: 1200x300px.
+                    </FormDescription>
+                  </div>
                   <FormField
                     control={form.control}
                     name="isFeatured"

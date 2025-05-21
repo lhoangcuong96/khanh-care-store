@@ -96,7 +96,7 @@ export default function MobileHeader() {
                       </>
                     )}
                   </div>
-                  <div className="p-4 border-b">
+                  <div className="p-4 border-b h-full overflow-y-auto">
                     <h3 className="font-bold text-slate-600 mb-4">
                       MENU CHÍNH
                     </h3>

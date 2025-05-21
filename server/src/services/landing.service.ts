@@ -34,6 +34,9 @@ export default class LandingService {
       },
       select: {
         id: true,
+        name: true,
+        slug: true,
+        image: true,
         products: {
           where: {
             isPublished: true
@@ -66,6 +69,7 @@ export default class LandingService {
         getBestSellerProducts,
         getHomeCategoriesWithProducts
       ])
+    console.log(categoriesWithProducts)
     return {
       featuredCategories: featuredCategories,
       featuredProducts: featuredProducts.data,

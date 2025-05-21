@@ -43,7 +43,6 @@ export default async function AdminProductRoutes(fastify: FastifyInstance, optio
     },
     async (request, reply) => {
       const queryParams = request.query as ProductListQueryType
-      console.log(queryParams)
       const products = await controller.getProductList({
         ...queryParams
       })

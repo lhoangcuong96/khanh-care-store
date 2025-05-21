@@ -30,5 +30,9 @@ export const GetLandingResponseSchema = z.object({
   data: GetLandingDataSchema,
   message: z.string(),
 });
+
+export type CategoryWithProductsType = z.TypeOf<
+  typeof CategoryWithProductsSchema
+>;
 export type GetLandingDataType = z.TypeOf<typeof GetLandingDataSchema>;
 export type GetLandingResponseType = z.TypeOf<typeof GetLandingResponseSchema>;
