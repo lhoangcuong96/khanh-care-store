@@ -23,7 +23,7 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Chạy lệnh generate cho prisma
-RUN npx prisma generate
+RUN npx prisma@5.22.0 generate
 
 # Build ứng dụng Next.js
 RUN npm run build
@@ -37,8 +37,11 @@ RUN npm install -g pm2
 # Chạy ứng dụng bằng PM2
 CMD ["pm2-runtime", "start", "npm", "--", "start"]
 
-# docker build -t original_food_client .
-# docker run -p 3000:3000 original_food_client
+# docker login  
 
-# docker tag original_food_client lhoangcuong1996/original_food_client:latest 
-# docker push lhoangcuong1996/original_food_client:latest
+# docker build -t kcs-client .
+# docker run -p 4000:4000 kcs-client
+
+# docker tag kcs-client kcarestore/kcs-client:latest
+# docker push kcarestore/kcs-client:latest
+

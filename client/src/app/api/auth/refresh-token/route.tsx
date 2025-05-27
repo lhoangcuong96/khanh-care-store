@@ -23,15 +23,15 @@ export async function POST() {
     const headers = new Headers();
     headers.append(
       "Set-Cookie",
-      `accessToken=${result.payload.data?.accessToken}; Path=/; HttpOnly; SameSite=Strict`
+      `accessToken=${result.payload?.data?.accessToken}; Path=/; HttpOnly; SameSite=Strict`
     );
     headers.append(
       "Set-Cookie",
-      `refreshToken=${result.payload.data?.refreshToken}; Path=/; HttpOnly; SameSite=Strict`
+      `refreshToken=${result.payload?.data?.refreshToken}; Path=/; HttpOnly; SameSite=Strict`
     );
     return Response.json(
       {
-        message: result.payload.message,
+        message: result.payload?.message,
       },
       {
         status: result.status,

@@ -36,7 +36,7 @@ export function ProductForm({
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
-            <ProductBasicInfo productDetail={undefined} />
+            <ProductBasicInfo />
             <ProductAttributes
               isLoading={isLoading}
               error={error}

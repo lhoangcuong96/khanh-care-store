@@ -160,13 +160,14 @@ const getCustomerTransactions = (id: string) => {
   return transactions[id as keyof typeof transactions] || [];
 };
 
-export default function CustomerDetailPage({
+export default async function CustomerDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const customer = getCustomerById(params.id);
-  const transactions = getCustomerTransactions(params.id);
+  const { id } = await params;
+  const customer = getCustomerById(id);
+  const transactions = getCustomerTransactions(id);
 
   if (!customer) {
     return (
@@ -190,7 +191,9 @@ export default function CustomerDetailPage({
             </Link>
           </Button>
           <h2 className="text-2xl font-bold tracking-tight">{customer.name}</h2>
-          <Badge variant={customer.remainingDebt > 0 ? "secondary" : "outline"}>
+          <Badge
+            variant={customer.remainingDebt > 0 ? "destructive" : "secondary"}
+          >
             {customer.remainingDebt > 0 ? "Còn nợ" : "Đã thanh toán"}
           </Badge>
         </div>
@@ -204,7 +207,7 @@ export default function CustomerDetailPage({
             Xuất Excel
           </Button>
           <Button asChild>
-            <Link href={`/transactions/payment?customer=${params.id}`}>
+            <Link href={`/transactions/payment?customer=${id}`}>
               Thanh toán công nợ
             </Link>
           </Button>
@@ -292,7 +295,7 @@ export default function CustomerDetailPage({
             <CardTitle>Biểu đồ công nợ</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            <CustomerDebtChart customerId={params.id} />
+            <CustomerDebtChart customerId={id} />
           </CardContent>
         </Card>
       </div>
@@ -346,11 +349,11 @@ export default function CustomerDetailPage({
                       <TableCell className="text-right">
                         <Badge
                           variant={
-                            transaction.statusColor === "green"
-                              ? "success"
+                            transaction.statusColor === "red"
+                              ? "destructive"
                               : transaction.statusColor === "yellow"
-                              ? "warning"
-                              : "destructive"
+                              ? "secondary"
+                              : "default"
                           }
                         >
                           {transaction.status}
@@ -405,11 +408,11 @@ export default function CustomerDetailPage({
                         <TableCell className="text-right">
                           <Badge
                             variant={
-                              transaction.statusColor === "green"
-                                ? "success"
+                              transaction.statusColor === "red"
+                                ? "destructive"
                                 : transaction.statusColor === "yellow"
-                                ? "warning"
-                                : "destructive"
+                                ? "secondary"
+                                : "default"
                             }
                           >
                             {transaction.status}
@@ -469,11 +472,11 @@ export default function CustomerDetailPage({
                         <TableCell className="text-right">
                           <Badge
                             variant={
-                              transaction.statusColor === "green"
-                                ? "success"
+                              transaction.statusColor === "red"
+                                ? "destructive"
                                 : transaction.statusColor === "yellow"
-                                ? "warning"
-                                : "destructive"
+                                ? "secondary"
+                                : "default"
                             }
                           >
                             {transaction.status}

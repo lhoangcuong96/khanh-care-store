@@ -30,7 +30,6 @@ export default function VariantInfo({
   const {
     control,
     formState: { errors },
-    watch,
     getValues,
   } = useFormContext();
 

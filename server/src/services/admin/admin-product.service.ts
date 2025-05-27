@@ -203,8 +203,9 @@ export class AdminProductService {
   }
 
   async update(id: string, data: UpdateProductBodyType): Promise<Partial<ProductType>> {
-    const { categoryId, ...rest } = data
+    const { categoryId, variants, ...rest } = data
     const slug = slugify(rest.name)
+
     const product = await prisma.product.update({
       where: {
         id
@@ -220,7 +221,19 @@ export class AdminProductService {
           connect: {
             id: categoryId
           }
-        }
+        },
+        variants: variants
+          ? {
+              deleteMany: {},
+              create: variants.map((variant) => ({
+                name: variant.name,
+                sku: variant.sku,
+                price: variant.price,
+                stock: variant.stock,
+                attributes: variant.attributes || {}
+              }))
+            }
+          : undefined
       }
     })
     return product as Partial<ProductType>

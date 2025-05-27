@@ -129,6 +129,7 @@ export default function CreateNewsPage() {
           });
         }
       } catch (error) {
+        console.error("Error uploading image:", error);
         toast({
           title: "Lỗi",
           description: "Đã xảy ra lỗi khi tải lên hình ảnh",
@@ -335,7 +336,7 @@ export default function CreateNewsPage() {
               <FormField
                 control={form.control}
                 name="tags"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Tags</FormLabel>
                     <FormControl>

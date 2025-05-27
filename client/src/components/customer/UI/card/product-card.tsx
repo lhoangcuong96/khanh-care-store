@@ -18,7 +18,7 @@ export function ProductCard({ product }: { product: ProductInListType }) {
   return (
     <Card className="w-full max-w-64 md:max-w-64 p-3 rounded-xl relative gap-2 m-[2px] shadow-lg hover:shadow-2xl hover:scale-[1.025] transition-all duration-200 bg-white border border-slate-100">
       <Link
-        className="w-full h-full flex flex-col gap-2"
+        className="w-full flex flex-col gap-2"
         href={`${routePath.customer.productDetail}/${product?.slug}`}
       >
         <div

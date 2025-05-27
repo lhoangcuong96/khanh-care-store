@@ -1,6 +1,6 @@
 import prisma from '@/database'
 import { LiteCategoryInListType } from '@/schemaValidations/category.schema'
-import { Category, CategoryStatus } from '@prisma/client/'
+import { Category, CategoryStatus } from '@prisma/client'
 
 export class CategoryService {
   static async list() {

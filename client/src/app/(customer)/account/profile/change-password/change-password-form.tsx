@@ -17,13 +17,13 @@ import {
 } from "@/components/ui/form";
 import { useHandleMessage } from "@/hooks/use-handle-message";
 import {
-  ChangePasswordDataType,
+  ChangePasswordBodyType,
   changePasswordSchema,
 } from "@/validation-schema/account";
 
 export default function ChangePasswordForm() {
   const { messageApi } = useHandleMessage();
-  const form = useForm<ChangePasswordDataType>({
+  const form = useForm<ChangePasswordBodyType>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
       oldPassword: "",
@@ -32,7 +32,7 @@ export default function ChangePasswordForm() {
     },
   });
 
-  async function onSubmit(values: ChangePasswordDataType) {
+  async function onSubmit(values: ChangePasswordBodyType) {
     try {
       await accountApiRequest.changePassword(values);
       messageApi.success({

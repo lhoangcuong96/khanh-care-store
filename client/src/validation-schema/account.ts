@@ -65,12 +65,25 @@ export type UpdateProfileBodyType = z.TypeOf<typeof UpdateProfileBody>;
 /* Update account */
 
 /* Change password*/
-export const ChangePasswordBody = z.object({
-  oldPassword: z.string(),
-  newPassword: z.string().min(6, "Mật khẩu mới ít nhất 6 kí tự"),
-});
+export const changePasswordSchema = z
+  .object({
+    oldPassword: z.string().min(1, "Vui lòng nhập mật khẩu hiện tại"),
+    newPassword: z
+      .string()
+      .min(6, "Mật khẩu phải có ít nhất 6 kí tự!")
+      .max(100, "Mật khẩu có nhiều nhất 100 kí tự!"),
+    confirmPassword: z.string().min(1, "Vui lòng xác nhận mật khẩu"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"],
+  })
+  .refine((data) => data.oldPassword !== data.newPassword, {
+    message: "Mật khẩu mới phải khác mật khẩu hiện tại",
+    path: ["newPassword"],
+  });
 
-export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>;
+export type ChangePasswordBodyType = z.infer<typeof changePasswordSchema>;
 /* Change password*/
 
 /* Update shipping address */

@@ -11,4 +11,8 @@ export default class NewsController {
   getNewsList = (params: NewsListQueryType) => {
     return this.service.list(params)
   }
+
+  getNewsDetails = (slug: string) => {
+    return this.service.getNewsDetails(slug)
+  }
 }

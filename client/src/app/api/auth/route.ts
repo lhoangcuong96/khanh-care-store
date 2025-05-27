@@ -1,6 +1,7 @@
 import { TokenType } from "@/constants/types";
 import { SetCookieRequestDataType } from "@/validation-schema/auth";
 import { jwtDecode } from "jwt-decode";
+import { RoleType } from "@prisma/client";
 
 export type PayloadJWT = {
   iat: number; // thời gian tạo token(issue at)
@@ -8,7 +9,7 @@ export type PayloadJWT = {
   tokenType: string;
   account: {
     id: string;
-    role: string;
+    role: RoleType;
   };
 };
 

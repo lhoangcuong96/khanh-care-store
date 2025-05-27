@@ -26,8 +26,8 @@ export const NewsListQuerySchema = z.object({
   sort: z.string().optional(),
   order: z.nativeEnum(Order).optional(),
   search: z.string().optional(),
-  isPublished: z.union([z.boolean(), z.string().transform((val) => val === 'true')]).optional(),
-  isFeatured: z.union([z.boolean(), z.string().transform((val) => val === 'true')]).optional()
+  isFeatured: z.union([z.boolean(), z.string().transform((val) => val === 'true')]).optional(),
+  isPublished: z.union([z.boolean(), z.string().transform((val) => val === 'true')]).optional()
 })
 
 export type NewsListQueryType = z.infer<typeof NewsListQuerySchema>

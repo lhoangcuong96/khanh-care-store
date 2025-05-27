@@ -1,3 +1,4 @@
+import { adminNewsApiRequest } from "@/api-request/admin/news";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,12 +8,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { routePath } from "@/constants/routes";
+import { NewsListQuerySchema } from "@/validation-schema/admin/admin-news-schema";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { NewsList } from "./news-lists";
-import prisma from "@/lib/prisma";
-import { NewsListQuerySchema } from "@/validation-schema/admin/admin-news-schema";
-import { adminNewsApiRequest } from "@/api-request/admin/news";
 
 interface PageProps {
   searchParams: {
@@ -111,7 +110,15 @@ export default async function NewsListPage(props: {
             total={total}
             currentPage={currentPage}
             limit={limit}
-            searchParams={searchParams}
+            searchParams={
+              searchParams || {
+                page: "1",
+                limit: "10",
+                search: "",
+                isPublished: undefined,
+                isFeatured: undefined,
+              }
+            }
             totalPages={totalPages}
             error={error}
           />

@@ -20,8 +20,8 @@ const configProject = envConfigSchema.safeParse({
 });
 
 if (configProject.error?.issues) {
-  console.error(configProject.error?.issues);
-  throw new Error("Các giá trị khai báo trong env không hợp lệ");
+  console.error(configProject.error.message);
+  // throw new Error("Các giá trị khai báo trong env không hợp lệ");
 }
 
 const envConfig = configProject.data;

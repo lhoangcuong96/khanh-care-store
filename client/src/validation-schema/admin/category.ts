@@ -87,6 +87,7 @@ export const AdminCategoryInListSchema = CategorySchema.pick({
   image: true,
   children: true,
   attributes: true,
+  parentId: true,
 }).extend({
   totalProduct: z.number().optional().nullable().default(0),
 });

@@ -1,25 +1,27 @@
 "use client";
 
-import { useState } from "react";
 import {
-  MoreHorizontal,
-  Search,
-  Download,
-  RefreshCw,
-  Filter,
-  CheckCircle2,
-  Clock,
   AlertCircle,
-  XCircle,
+  CheckCircle2,
   ChevronDown,
-  ChevronRight,
-  ShoppingBag,
-  ChevronLeft,
-  ChevronLast,
   ChevronFirst,
+  ChevronLast,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Download,
+  Filter,
+  MoreHorizontal,
+  RefreshCw,
+  Search,
+  ShoppingBag,
+  XCircle,
 } from "lucide-react";
+import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,15 +30,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -46,19 +39,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { OrderInListDataType } from "@/validation-schema/admin/order";
 import { formatDate } from "date-fns";
 
 export default function AdminOrdersTable({
   orders,
+  errorMessage,
 }: {
   orders: OrderInListDataType[];
+  errorMessage?: string;
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -193,6 +189,9 @@ export default function AdminOrdersTable({
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
+          {errorMessage && (
+            <div className="text-red-500 text-sm">{errorMessage}</div>
+          )}
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <div className="flex w-full sm:w-auto items-center gap-2">
               <div className="relative w-full sm:w-[300px]">

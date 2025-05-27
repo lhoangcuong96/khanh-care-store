@@ -1,6 +1,5 @@
 import prisma from '@/database'
-import { NewsInListType, NewsListQueryType } from '@/schemaValidations/admin/admin-news-schema'
-import { Order } from '@/schemaValidations/common.schema'
+import { NewsInListType, NewsListQueryType, NewsSchemaType } from '@/schemaValidations/news.schema'
 import { Prisma } from '@prisma/client'
 
 export class PublicNewsService {
@@ -12,7 +11,7 @@ export class PublicNewsService {
     currentPage: number
     totalItems: number
   }> {
-    const { page = 1, limit = 20, sort = 'publishedAt', order = Order.Desc, search, isFeatured } = params
+    const { page = 1, limit = 20, search } = params
     const skip = (page - 1) * limit
     const take = limit
 
@@ -29,8 +28,7 @@ export class PublicNewsService {
                 { tags: { has: search } }
               ]
             }
-          : {},
-        isFeatured !== undefined ? { isFeatured } : {}
+          : {}
       ]
     }
 
@@ -40,7 +38,7 @@ export class PublicNewsService {
         skip,
         take,
         orderBy: {
-          [sort]: order === Order.Asc ? 'asc' : 'desc'
+          createdAt: 'desc'
         },
         select: {
           id: true,
@@ -50,11 +48,9 @@ export class PublicNewsService {
           image: true,
           author: true,
           tags: true,
-          isPublished: true,
           isFeatured: true,
           viewCount: true,
-          createdAt: true,
-          publishedAt: true
+          createdAt: true
         }
       }),
       prisma.news.count({ where })
@@ -68,5 +64,43 @@ export class PublicNewsService {
       currentPage: page,
       totalItems: total
     }
+  }
+
+  async getNewsDetails(slug: string): Promise<NewsSchemaType | null> {
+    const news = await prisma.news.findFirst({
+      where: {
+        slug,
+        isPublished: true
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        summary: true,
+        content: true,
+        image: true,
+        author: true,
+        tags: true,
+        isFeatured: true,
+        isPublished: true,
+        viewCount: true,
+        createdAt: true,
+        updatedAt: true,
+        publishedAt: true,
+        metaTitle: true,
+        metaDescription: true,
+        metaKeywords: true
+      }
+    })
+
+    if (news) {
+      // Increment view count
+      await prisma.news.update({
+        where: { id: news.id },
+        data: { viewCount: { increment: 1 } }
+      })
+    }
+
+    return news
   }
 }

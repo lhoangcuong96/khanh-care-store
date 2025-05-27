@@ -13,7 +13,7 @@ export default async function OrderPage() {
       errorMessage = "Không tìm thấy dữ liệu";
     }
   } catch (error) {
-    errorMessage = "Có lỗi xảy ra";
+    errorMessage = (error as Error).message || "Có lỗi xảy ra";
   }
   return (
     <div className="p-4">

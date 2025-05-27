@@ -24,7 +24,6 @@ export default function CallButton() {
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
-        ("Clicked outside the popover");
         setIsOpen(false);
       }
     };

@@ -8,7 +8,7 @@ import Breadcrumb from "@/components/customer/layout/breadcrumb";
 // Mock data - replace with actual API calls
 const mockProducts: ProductInListType[] = [
   {
-    id: 1,
+    id: "1",
     name: "Sản phẩm A",
     price: 100000,
     image: {
@@ -17,9 +17,13 @@ const mockProducts: ProductInListType[] = [
     slug: "san-pham-a",
     isPromotion: true,
     promotionPercent: 10,
+    stock: 100,
+    isFeatured: false,
+    isBestSeller: false,
+    isPublished: true,
   },
   {
-    id: 2,
+    id: "2",
     name: "Sản phẩm B",
     price: 200000,
     image: {
@@ -28,9 +32,13 @@ const mockProducts: ProductInListType[] = [
     slug: "san-pham-b",
     isPromotion: false,
     promotionPercent: 0,
+    stock: 50,
+    isFeatured: false,
+    isBestSeller: false,
+    isPublished: true,
   },
   {
-    id: 3,
+    id: "3",
     name: "Sản phẩm C",
     price: 300000,
     image: {
@@ -39,6 +47,10 @@ const mockProducts: ProductInListType[] = [
     slug: "san-pham-c",
     isPromotion: true,
     promotionPercent: 20,
+    stock: 75,
+    isFeatured: false,
+    isBestSeller: false,
+    isPublished: true,
   },
 ];
 

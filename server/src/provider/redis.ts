@@ -1,9 +1,20 @@
 import envConfig from '@/config'
 import { AccountType } from '@/schemaValidations/account.schema'
-import { Account } from '@prisma/client'
 import Redis from 'ioredis'
 
-const redisClient = new Redis(envConfig.REDIS_URL)
+const redisClient = new Redis({
+  host: envConfig.REDIS_HOST,
+  port: envConfig.REDIS_PORT,
+  password: envConfig.REDIS_PASSWORD
+})
+
+redisClient.on('error', (err) => {
+  console.error('Redis error:', err)
+})
+
+redisClient.on('connect', () => {
+  console.log('Redis connected')
+})
 
 async function setupBloomFilter() {
   try {

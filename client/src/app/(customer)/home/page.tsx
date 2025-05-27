@@ -69,7 +69,7 @@ export default async function CustomerHomePage() {
         <OurSpecialServices></OurSpecialServices>
       </div>
       {/* News Section with mock data */}
-      <NewsSection />
+      <NewsSection news={landingPageData?.listNews || []} />
     </div>
   );
 }

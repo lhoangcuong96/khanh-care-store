@@ -121,9 +121,12 @@ export default function CategoriesPage() {
       )
     : categories;
   // Get root categories (those without a parent)
-  const rootCategories = filteredCategories.filter((cat) => !cat.);
+  const rootCategories = filteredCategories.filter((cat) => !cat.parentId);
 
-  const renderCategoryRow = (category: AdminCategoryInListType, level = 0): JSX.Element => {
+  const renderCategoryRow = (
+    category: AdminCategoryInListType,
+    level = 0
+  ): JSX.Element => {
     const isExpanded = expandedCategories.includes(category.id);
     const hasChildren = category?.children
       ? category.children.length > 0

@@ -6,8 +6,14 @@ import useCart from "@/hooks/modules/use-cart";
 import { useState } from "react";
 import { IoCartOutline } from "react-icons/io5";
 
-export default function AddToCart({ id }: { id: string }) {
-  const [quantity, setQuantity] = useState(1);
+export default function AddToCart({
+  id,
+  quantity: initialQuantity = 1,
+}: {
+  id: string;
+  quantity?: number;
+}) {
+  const [quantity, setQuantity] = useState(initialQuantity);
   const { handleAddToCart } = useCart();
   return (
     <>

@@ -81,18 +81,22 @@ export default function MobileHeader() {
                       </>
                     ) : (
                       <>
-                        <Button
-                          className="w-full bg-slate-600 hover:bg-slate-600/90"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Đăng ký
-                        </Button>
-                        <Button
-                          className="w-full bg-slate-600 hover:bg-slate-600/90"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Đăng nhập
-                        </Button>
+                        <Link href={routePath.signUp}>
+                          <Button
+                            className="w-full bg-slate-600 hover:bg-slate-600/90"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            Đăng ký
+                          </Button>
+                        </Link>
+                        <Link href={routePath.signIn}>
+                          <Button
+                            className="w-full bg-slate-600 hover:bg-slate-600/90"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            Đăng nhập
+                          </Button>
+                        </Link>
                       </>
                     )}
                   </div>

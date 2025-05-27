@@ -30,18 +30,17 @@ export function SignUpForm() {
 
   const { setAccount, setCart } = useAppContext();
 
-  const { control, handleSubmit, setError, formState } =
-    useForm<SignUpRequestDataType>({
-      resolver: zodResolver(signUpSchema),
-      defaultValues: {
-        fullname: "",
-        phoneNumber: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      },
-      mode: "all",
-    });
+  const { control, handleSubmit, setError } = useForm<SignUpRequestDataType>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      fullname: "",
+      phoneNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    mode: "all",
+  });
 
   const onSubmit = async (data: SignUpRequestDataType) => {
     setIsSubmitting(true);

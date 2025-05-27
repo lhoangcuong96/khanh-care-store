@@ -15,8 +15,7 @@ import {
   Autoplay,
   Navigation,
   Pagination,
-  Scrollbar,
-  Virtual,
+  Virtual
 } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 
@@ -63,14 +62,7 @@ export function FeaturedCategories({
             onSlideChange={(swiper) => {
               swiperRef.current = swiper;
             }}
-            modules={[
-              Navigation,
-              Pagination,
-              Scrollbar,
-              A11y,
-              Autoplay,
-              Virtual,
-            ]}
+            modules={[Navigation, Pagination, A11y, Autoplay, Virtual]}
             spaceBetween={0}
             slidesPerView="auto"
             navigation

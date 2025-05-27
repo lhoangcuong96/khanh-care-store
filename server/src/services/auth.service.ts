@@ -52,7 +52,7 @@ export default class AuthService {
             items: [],
             updatedAt: new Date()
           },
-          role: 'ADMIN',
+          role: 'USER',
           shippingAddress: {
             address: '',
             district: '',

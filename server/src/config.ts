@@ -19,7 +19,6 @@ checkEnv()
 const configSchema = z.object({
   PORT: z.coerce.number().default(4000),
   DATABASE_URL: z.string(),
-  REDIS_URL: z.string(),
   TOKEN_SECRET: z.string(),
   ACCESS_TOKEN_EXPIRES_IN: z.string(),
   REFRESH_TOKEN_EXPIRES_IN: z.string(),
@@ -28,7 +27,10 @@ const configSchema = z.object({
   UPLOAD_FOLDER: z.string(),
   COOKIE_MODE: z.enum(['true', 'false']).transform((val) => val === 'true'),
   IS_PRODUCTION: z.enum(['true', 'false']).transform((val) => val === 'true'),
-  PRODUCTION_URL: z.string()
+  PRODUCTION_URL: z.string(),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.coerce.number(),
+  REDIS_PASSWORD: z.string()
 })
 
 const configServer = configSchema.safeParse(process.env)

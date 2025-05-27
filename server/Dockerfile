@@ -7,24 +7,31 @@ RUN apk add --no-cache openssl libc6-compat
 # Tạo thư mục làm việc trong container
 WORKDIR /usr/src/app/server
 
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    gcc
+
+# Install pnpm globally
+RUN npm install -g pnpm
+
 # Sao chép package.json và package-lock.json (nếu có)
-# tách riêng lệnh này để cache layer khi không có thay đổi trong file package.json
-# đa phần các thay đổi sẽ nằm ở các file code chứ không phải file package.json
-# nếu không có thay đổi trong file package.json thì lệnh npm install sẽ không chạy
 COPY package*.json ./
 
 # Copy prisma schema
 COPY prisma ./prisma/
 
-RUN npm install -g pnpm
-
+# Install dependencies and rebuild bcrypt
 RUN pnpm install
+RUN cd node_modules/bcrypt && npm rebuild bcrypt --build-from-source
 
 # Sao chép toàn bộ mã nguồn
 COPY . .
 
 # Chạy lệnh generate cho prisma
-RUN npx prisma generate
+RUN npx prisma@5.22.0 generate
 
 # Build ứng dụng
 RUN npm run build
@@ -38,8 +45,10 @@ RUN npm install -g pm2
 # Chạy ứng dụng bằng PM2
 CMD ["pm2-runtime", "start", "npm", "--", "start"]
 
-# docker build -t original_food_server .
-# docker run -p 4000:4000 original_food_server
+# docker login  
 
-# docker tag original_food_server lhoangcuong1996/original_food_server:latest 
-# docker push original_food_server:latest
+# docker build -t kcs-server .
+# docker run -p 4000:4000 kcs-server
+
+# docker tag kcs-server kcarestore/kcs-server:latest
+# docker push kcarestore/kcs-server:latest

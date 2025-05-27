@@ -4,7 +4,7 @@ import { routePath } from "@/constants/routes";
 import { shopInfo } from "@/constants/shop-info";
 import { Apple, Leaf, ShieldCheck } from "lucide-react";
 import Image from "next/image";
-import Link from "next/Link";
+import Link from "next/link";
 
 export async function generateMetadata() {
   return {

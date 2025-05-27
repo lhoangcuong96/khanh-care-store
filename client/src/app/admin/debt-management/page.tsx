@@ -7,9 +7,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { Overview } from "./overview";
-import { RecentSales } from "./recent-sales";
 import { routePath } from "@/constants/routes";
+import { Overview } from "./debt-overview/overview";
+import { RecentSales } from "./debt-overview/recent-sales";
 
 export default function DashboardPage() {
   return (

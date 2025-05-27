@@ -65,7 +65,18 @@ export abstract class SocialAuthService {
         data: {
           email,
           fullname,
-          avatar
+          avatar,
+          cart: {
+            items: [],
+            updatedAt: new Date()
+          },
+          shippingAddress: {
+            address: '',
+            district: '',
+            ward: '',
+            province: ''
+          },
+          role: 'USER'
         }
       })
     }

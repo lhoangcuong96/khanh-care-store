@@ -36,11 +36,7 @@ export function ProductInfo({ product }: { product: ProductDetailType }) {
           }}
         />
       )}
-      <AddToCart
-        id={product.id}
-        variantSku={selectedVariant}
-        quantity={1}
-      ></AddToCart>
+      <AddToCart id={product.id} quantity={1}></AddToCart>
       <ProductPromotions />
     </div>
   );

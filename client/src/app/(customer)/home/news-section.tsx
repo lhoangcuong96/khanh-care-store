@@ -1,64 +1,80 @@
 "use client";
 
+import DefaultButton from "@/components/customer/UI/button/default-button";
+import { routePath } from "@/constants/routes";
+import { NewsInListType } from "@/validation-schema/news.schema";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import Link from "next/link";
+import { useRef } from "react";
+import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import "swiper/css";
 import "swiper/css/navigation";
+import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 
-// Mock news data
-const mockNews = [
-  {
-    id: 1,
-    title: "Khuyến mãi lớn cuối tuần!",
-    image: "/images/news1.jpg",
-    summary:
-      "Đừng bỏ lỡ chương trình khuyến mãi cực lớn vào cuối tuần này với hàng ngàn sản phẩm giảm giá.",
-  },
-  {
-    id: 2,
-    title: "Cách chọn sản phẩm phù hợp cho gia đình bạn",
-    image: "/images/news2.jpg",
-    summary:
-      "Hướng dẫn chi tiết giúp bạn lựa chọn sản phẩm tốt nhất cho nhu cầu của gia đình.",
-  },
-  {
-    id: 3,
-    title: "Xu hướng tiêu dùng năm 2024",
-    image: "/images/news3.jpg",
-    summary:
-      "Khám phá những xu hướng tiêu dùng nổi bật sẽ lên ngôi trong năm 2024.",
-  },
-];
+function NewsSection({ news }: { news: NewsInListType[] }) {
+  const swiperRef = useRef<SwiperClass>(null);
 
-function NewsSection() {
   return (
     <section className="mt-12 mb-8 w-full max-w-screen-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-slate-800">
-        Tin tức mới nhất
-      </h2>
+      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
+        <Link href={routePath.customer.news}>
+          <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
+            Tin tức mới nhất
+          </h3>
+        </Link>
+
+        <div className="flex flex-row items-center justify-center">
+          <DefaultButton
+            className="!h-8 !w-8 !p-0 !min-w-8"
+            suffix={
+              <MdOutlineNavigateBefore className="!h-5 !w-5"></MdOutlineNavigateBefore>
+            }
+            onClick={() => swiperRef.current?.slidePrev()}
+          ></DefaultButton>
+          <DefaultButton
+            className="!h-8 !w-8 !p-0 !min-w-8"
+            suffix={
+              <MdOutlineNavigateNext className="!h-5 !w-5"></MdOutlineNavigateNext>
+            }
+            onClick={() => swiperRef.current?.slideNext()}
+          ></DefaultButton>
+        </div>
+      </div>
       <Swiper
-        modules={[Navigation]}
-        navigation
-        spaceBetween={20}
-        slidesPerView={1}
+        modules={[Navigation, Pagination, A11y, Autoplay]}
+        spaceBetween={10}
+        slidesPerView={"auto"}
+        pagination={{ clickable: true }}
+        scrollbar={{ draggable: true }}
+        autoplay={true}
         breakpoints={{
           640: { slidesPerView: 2 },
           1024: { slidesPerView: 3 },
         }}
-        className="pb-8"
+        className="!pb-8"
+        onSwiper={(ref) => (swiperRef.current = ref)}
       >
-        {mockNews.map((item) => (
+        {news.map((item) => (
           <SwiperSlide key={item.id}>
             <div className="bg-white rounded-xl shadow p-4 flex flex-col hover:scale-105 hover:shadow-xl transition-transform transition-shadow duration-200 cursor-pointer">
               <Image
-                src={item.image}
+                src={item.image.thumbnail}
                 alt={item.title}
                 className="w-full h-40 object-cover rounded mb-3"
                 width={200}
                 height={130}
               />
-              <h4 className="font-semibold text-lg mb-2 line-clamp-2">
+              <h4
+                className="font-semibold text-lg mb-2 line-clamp-2"
+                style={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: "2",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                }}
+              >
                 {item.title}
               </h4>
               <p className="text-sm text-gray-600 line-clamp-3">

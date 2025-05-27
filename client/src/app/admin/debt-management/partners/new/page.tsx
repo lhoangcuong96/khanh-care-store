@@ -33,12 +33,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  CreatePartnerType,
-  PartnerType,
-} from "@/validation-schema/admin/debt-management";
+import { CreatePartnerType } from "@/validation-schema/admin/debt-management";
 import AdminDebtManagementRequestApis from "@/api-request/admin/debt-management";
 import { useHandleMessage } from "@/hooks/use-handle-message";
+import { PartnerType } from "@/constants/debt";
 
 // Định nghĩa schema validation với Zod
 const partnerFormSchema = z.object({

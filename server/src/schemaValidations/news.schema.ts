@@ -27,3 +27,34 @@ export const NewsSchema = z.object({
 })
 
 export type NewsSchemaType = z.infer<typeof NewsSchema>
+
+/* Get list news */
+
+export const NewsListQuerySchema = z.object({
+  page: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
+  search: z.string().optional()
+})
+
+export type NewsListQueryType = z.infer<typeof NewsListQuerySchema>
+export const NewsInListSchema = NewsSchema.pick({
+  id: true,
+  title: true,
+  slug: true,
+  summary: true,
+  image: true,
+  author: true,
+  tags: true,
+  isFeatured: true,
+  viewCount: true,
+  createdAt: true
+})
+
+export type NewsInListType = z.infer<typeof NewsInListSchema>
+
+export const NewsListResponseSchema = z.object({
+  data: z.array(NewsInListSchema),
+  total: z.number(),
+  page: z.number(),
+  limit: z.number()
+})

@@ -2,6 +2,7 @@ import prisma from '@/database'
 import { CategoryService } from './category.service'
 import { ProductService } from './product.service'
 import { CategoryStatus } from '@prisma/client'
+import { PublicNewsService } from './news.service'
 
 export default class LandingService {
   static async getLandingData() {
@@ -61,21 +62,34 @@ export default class LandingService {
       }
     })
 
-    const [featuredCategories, featuredProducts, promotionalProducts, bestSellerProducts, categoriesWithProducts] =
-      await Promise.all([
-        getFeaturedCategories,
-        getFeaturedProducts,
-        getPromotionalProducts,
-        getBestSellerProducts,
-        getHomeCategoriesWithProducts
-      ])
+    const getNews = new PublicNewsService().list({
+      page: 1,
+      limit: 10
+    })
+
+    const [
+      featuredCategories,
+      featuredProducts,
+      promotionalProducts,
+      bestSellerProducts,
+      categoriesWithProducts,
+      listNews
+    ] = await Promise.all([
+      getFeaturedCategories,
+      getFeaturedProducts,
+      getPromotionalProducts,
+      getBestSellerProducts,
+      getHomeCategoriesWithProducts,
+      getNews
+    ])
     console.log(categoriesWithProducts)
     return {
       featuredCategories: featuredCategories,
       featuredProducts: featuredProducts.data,
       promotionalProducts: promotionalProducts.data,
       bestSellerProducts: bestSellerProducts.data,
-      categoriesWithProducts: categoriesWithProducts
+      categoriesWithProducts: categoriesWithProducts,
+      listNews: listNews.data
     }
   }
 }

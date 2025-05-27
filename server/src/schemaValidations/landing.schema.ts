@@ -1,6 +1,7 @@
 import z from 'zod'
 import { ProductInListSchema } from './product.schema'
 import { CategorySchema } from './category.schema'
+import { NewsInListSchema } from './news.schema'
 
 export const FeaturedCategoriesSchema = CategorySchema.pick({
   id: true,
@@ -23,7 +24,8 @@ export const GetLandingDataSchema = z.object({
   featuredProducts: z.array(ProductInListSchema),
   promotionalProducts: z.array(ProductInListSchema),
   bestSellerProducts: z.array(ProductInListSchema),
-  categoriesWithProducts: z.array(CategoryWithProductsSchema)
+  categoriesWithProducts: z.array(CategoryWithProductsSchema),
+  listNews: z.array(NewsInListSchema)
 })
 
 export const GetLandingResponseSchema = z.object({
