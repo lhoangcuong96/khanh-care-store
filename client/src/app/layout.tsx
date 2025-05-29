@@ -10,10 +10,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ReactQueryProvider from "@/provider/react-query-provider";
 import { AccountType } from "@/validation-schema/account";
 import { CartType } from "@/validation-schema/cart";
-import { cookies } from "next/headers";
+import { CategoryInListType } from "@/validation-schema/category";
+import { cookies, headers } from "next/headers";
 import "swiper/css";
 import "./globals.css";
 import ScrollToTop from "@/components/ui/scroll-to-top";
+import { redirect } from "next/navigation";
+import { AuthError } from "@/lib/http";
+import { routePath } from "@/constants/routes";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -35,6 +39,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const pathname =
+    headersList.get("x-invoke-path") || headersList.get("x-pathname") || "";
+  const isAuthPage =
+    pathname.startsWith(routePath.signIn) ||
+    pathname.startsWith(routePath.signUp) ||
+    pathname.startsWith(routePath.signOut);
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
@@ -56,18 +67,41 @@ export default async function RootLayout({
     return res.payload.data;
   };
 
-  const [getUserResponse, getListCategoryResponse] = await Promise.allSettled([
-    accessToken ? getUserMe() : Promise.resolve(null),
-    getListCategory(),
-  ]);
-  if (getUserResponse.status === "rejected") {
-    console.error(getUserResponse.reason);
-  }
-  if (getListCategoryResponse.status === "rejected") {
-    console.error(getListCategoryResponse.reason);
+  if (pathname !== routePath.signOut) {
   }
 
-  console.log(getListCategoryResponse);
+  let userCart: CartType | undefined = undefined;
+  let userAccount: AccountType | undefined = undefined;
+  let categories: CategoryInListType[] | undefined = undefined;
+  if (pathname !== routePath.signOut) {
+    const [getUserResponse, getListCategoryResponse] = await Promise.allSettled(
+      [
+        !isAuthPage && accessToken ? getUserMe() : Promise.resolve(null),
+        getListCategory(),
+      ]
+    );
+    if (!isAuthPage && getUserResponse.status === "rejected") {
+      if (getUserResponse.reason instanceof AuthError) {
+        if (accessToken) {
+          redirect("/sign-out");
+        } else {
+          redirect("/sign-in");
+        }
+      }
+    }
+    if (getListCategoryResponse.status === "fulfilled") {
+      categories = getListCategoryResponse.value;
+    }
+    if (getListCategoryResponse.status === "rejected") {
+      console.error(getListCategoryResponse.reason);
+    }
+    if (getUserResponse.status === "fulfilled") {
+      userAccount = getUserResponse.value?.account;
+      userCart = getUserResponse.value?.cart;
+    }
+  }
+
+  console.log(userCart, userAccount, categories);
 
   return (
     <html lang="vi">
@@ -78,21 +112,9 @@ export default async function RootLayout({
         className={`${quicksand.className} antialiased bg-white text-gray-700`}
       >
         <AppProvider
-          initialAccount={
-            getUserResponse.status === "fulfilled"
-              ? getUserResponse.value?.account
-              : undefined
-          }
-          initialCart={
-            getUserResponse.status === "fulfilled"
-              ? getUserResponse.value?.cart
-              : undefined
-          }
-          initialCategories={
-            getListCategoryResponse.status === "fulfilled"
-              ? getListCategoryResponse.value
-              : undefined
-          }
+          initialAccount={userAccount}
+          initialCart={userCart}
+          initialCategories={categories}
         >
           <ReactQueryProvider>
             <TooltipProvider>

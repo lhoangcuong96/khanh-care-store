@@ -1,6 +1,9 @@
 # Sử dụng Node.js làm base image
 FROM node:20-alpine
 
+# Set NODE_ENV to production
+ENV NODE_ENV=production
+
 # Install OpenSSL and other necessary build tools
 RUN apk add --no-cache openssl libc6-compat
 

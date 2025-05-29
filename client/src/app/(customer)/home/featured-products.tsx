@@ -4,21 +4,15 @@ import DefaultButton from "@/components/customer/UI/button/default-button";
 import OutlineButton from "@/components/customer/UI/button/outline-button";
 import { ProductCard } from "@/components/customer/UI/card/product-card";
 import { ErrorMessage } from "@/components/customer/UI/error-message";
+import { routePath } from "@/constants/routes";
 import { ProductInListType } from "@/validation-schema/product";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useReducer, useRef } from "react";
-import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
-import {
-  A11y,
-  Autoplay,
-  Navigation,
-  Pagination,
-  Scrollbar,
-} from "swiper/modules";
-import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import { useEffect, useReducer, useRef } from "react";
 import { FaTools } from "react-icons/fa";
-import { routePath } from "@/constants/routes";
+import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
+import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 
 interface FeaturedProductsProps {
   products: ProductInListType[];
@@ -145,7 +139,7 @@ export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
           <>
             <Swiper
               ref={swiperRef}
-              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+              modules={[Navigation, Pagination, A11y, Autoplay]}
               spaceBetween={10}
               slidesPerView={"auto"}
               pagination={{ clickable: true }}

@@ -15,14 +15,16 @@ import {
   Autoplay,
   Navigation,
   Pagination,
-  Virtual
+  Virtual,
 } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 
 export function FeaturedCategories({
   categories,
+  error,
 }: {
   categories: FeaturedCategoryType[];
+  error: string;
 }) {
   const swiperRef = useRef<SwiperClass>(null);
 
@@ -52,10 +54,13 @@ export function FeaturedCategories({
           ></DefaultButton>
         </div>
       </div>
-
-      {!categories || !categories.length ? (
-        <ErrorMessage>Lỗi khi lấy dữ liệu danh mục</ErrorMessage>
-      ) : (
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {!error && (!categories || categories.length === 0) && (
+        <ErrorMessage className="text-center">
+          Không tìm thấy danh mục nổi bật
+        </ErrorMessage>
+      )}
+      {!error && categories && categories.length > 0 && (
         <div>
           <Swiper
             onSwiper={(ref) => (swiperRef.current = ref)}

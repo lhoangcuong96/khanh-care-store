@@ -11,7 +11,8 @@ import { comparePassword, hashPassword } from '@/utils/crypto'
 import { StatusError } from '@/utils/errors'
 export class AccountService {
   static getMe = async (accountId: string) => {
-    const cachedAccount = await RedisPlugin.getAccountInfo(accountId)
+    // const cachedAccount = await RedisPlugin.getAccountInfo(accountId)
+    const cachedAccount = null
     let account: AccountType | null = null
     if (!cachedAccount) {
       account = await prisma.account.findUnique({

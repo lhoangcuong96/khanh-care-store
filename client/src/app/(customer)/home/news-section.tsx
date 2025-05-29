@@ -1,6 +1,7 @@
 "use client";
 
 import DefaultButton from "@/components/customer/UI/button/default-button";
+import { ErrorMessage } from "@/components/customer/UI/error-message";
 import { routePath } from "@/constants/routes";
 import { NewsInListType } from "@/validation-schema/news.schema";
 import Image from "next/image";
@@ -41,49 +42,56 @@ function NewsSection({ news }: { news: NewsInListType[] }) {
           ></DefaultButton>
         </div>
       </div>
-      <Swiper
-        modules={[Navigation, Pagination, A11y, Autoplay]}
-        spaceBetween={10}
-        slidesPerView={"auto"}
-        pagination={{ clickable: true }}
-        scrollbar={{ draggable: true }}
-        autoplay={true}
-        breakpoints={{
-          640: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
-        className="!pb-8"
-        onSwiper={(ref) => (swiperRef.current = ref)}
-      >
-        {news.map((item) => (
-          <SwiperSlide key={item.id}>
-            <div className="bg-white rounded-xl shadow p-4 flex flex-col hover:scale-105 hover:shadow-xl transition-transform transition-shadow duration-200 cursor-pointer">
-              <Image
-                src={item.image.thumbnail}
-                alt={item.title}
-                className="w-full h-40 object-cover rounded mb-3"
-                width={200}
-                height={130}
-              />
-              <h4
-                className="font-semibold text-lg mb-2 line-clamp-2"
-                style={{
-                  display: "-webkit-box",
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: "2",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                }}
-              >
-                {item.title}
-              </h4>
-              <p className="text-sm text-gray-600 line-clamp-3">
-                {item.summary}
-              </p>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      {news.length === 0 && (
+        <ErrorMessage className="text-center">
+          Không tìm thấy tin tức mới nhất
+        </ErrorMessage>
+      )}
+      {news.length > 0 && (
+        <Swiper
+          modules={[Navigation, Pagination, A11y, Autoplay]}
+          spaceBetween={10}
+          slidesPerView={"auto"}
+          pagination={{ clickable: true }}
+          scrollbar={{ draggable: true }}
+          autoplay={true}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+          className="!pb-8"
+          onSwiper={(ref) => (swiperRef.current = ref)}
+        >
+          {news.map((item) => (
+            <SwiperSlide key={item.id}>
+              <div className="bg-white rounded-xl shadow p-4 flex flex-col hover:scale-105 hover:shadow-xl transition-transform transition-shadow duration-200 cursor-pointer">
+                <Image
+                  src={item.image.thumbnail}
+                  alt={item.title}
+                  className="w-full h-40 object-cover rounded mb-3"
+                  width={200}
+                  height={130}
+                />
+                <h4
+                  className="font-semibold text-lg mb-2 line-clamp-2"
+                  style={{
+                    display: "-webkit-box",
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: "2",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                  }}
+                >
+                  {item.title}
+                </h4>
+                <p className="text-sm text-gray-600 line-clamp-3">
+                  {item.summary}
+                </p>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
     </section>
   );
 }

@@ -1,10 +1,8 @@
-import { routePath } from "@/constants/routes";
 import { TokenType } from "@/constants/types";
 import envConfig from "@/envConfig";
 import SessionStore from "@/helper/local-store/session-store";
 import { Account } from "@prisma/client";
 import { jwtDecode } from "jwt-decode";
-import { redirect } from "next/navigation";
 
 export type HTTPPayload = {
   message: string;
@@ -153,7 +151,7 @@ export const request = async <T>(
     if (res.status === 422) {
       throw new EntityError(data);
     } else if (res.status === 401) {
-      await redirect(routePath.signOut);
+      throw new AuthError("Phiên đăng nhập đã hết hạn");
     } else {
       throw new HttpError(
         data as {

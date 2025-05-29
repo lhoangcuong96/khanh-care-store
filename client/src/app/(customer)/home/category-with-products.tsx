@@ -6,13 +6,13 @@ import { ProductCard } from "@/components/customer/UI/card/product-card";
 import { ErrorMessage } from "@/components/customer/UI/error-message";
 import { routePath } from "@/constants/routes";
 import { CategoryWithProductsType } from "@/validation-schema/landing";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useReducer, useRef } from "react";
 import { FaTools } from "react-icons/fa";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
-import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
+import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
-import Image from "next/image";
 
 interface CategoryWithProductsProps {
   category: CategoryWithProductsType;
@@ -60,7 +60,6 @@ export function CategoryWithProducts({
   category,
   error,
 }: CategoryWithProductsProps) {
-  console.log(category);
   const swiperRef = useRef<SwiperRef | null>(null);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
@@ -136,7 +135,7 @@ export function CategoryWithProducts({
           <>
             <Swiper
               ref={swiperRef}
-              modules={[Navigation, Pagination, Scrollbar, A11y]}
+              modules={[Navigation, Pagination, A11y, Autoplay]}
               spaceBetween={10}
               slidesPerView={"auto"}
               navigation

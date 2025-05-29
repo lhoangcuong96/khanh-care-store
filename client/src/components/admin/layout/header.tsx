@@ -1,5 +1,13 @@
 "use client";
-import { Bell, HelpCircle, ChevronDown, User, Settings, LogOut, Search } from "lucide-react";
+import {
+  Bell,
+  HelpCircle,
+  ChevronDown,
+  User,
+  Settings,
+  LogOut,
+  Search,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -78,20 +86,29 @@ export function Header() {
               <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/admin/profile" className="flex items-center cursor-pointer">
+                <Link
+                  href="/admin/profile"
+                  className="flex items-center cursor-pointer"
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Hồ sơ</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/admin/settings" className="flex items-center cursor-pointer">
+                <Link
+                  href="/admin/settings"
+                  className="flex items-center cursor-pointer"
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Cài đặt</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/sign-out" className="flex items-center cursor-pointer text-red-600">
+                <Link
+                  href="/sign-out"
+                  className="flex items-center cursor-pointer text-red-600"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Đăng xuất</span>
                 </Link>
