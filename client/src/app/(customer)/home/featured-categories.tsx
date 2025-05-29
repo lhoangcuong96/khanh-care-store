@@ -24,7 +24,7 @@ export function FeaturedCategories({
   error,
 }: {
   categories: FeaturedCategoryType[];
-  error: string;
+  error?: string;
 }) {
   const swiperRef = useRef<SwiperClass>(null);
 

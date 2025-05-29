@@ -40,6 +40,7 @@ export default async function CustomerHomePage() {
         <Suspense fallback={<Spinner />}>
           <FeaturedCategories
             categories={landingPageData?.featuredCategories || []}
+            error={getProductError}
           ></FeaturedCategories>
         </Suspense>
         <Suspense fallback={<Spinner />}>

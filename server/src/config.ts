@@ -56,7 +56,6 @@ if (!configServer.success) {
   throw new Error('Các giá trị khai báo trong file .env không hợp lệ')
 }
 const envConfig = configServer.data
-console.log(envConfig)
 export const API_URL = envConfig.IS_PRODUCTION
   ? envConfig.PRODUCTION_URL
   : `${envConfig.PROTOCOL}://${envConfig.DOMAIN}:${envConfig.PORT}`
