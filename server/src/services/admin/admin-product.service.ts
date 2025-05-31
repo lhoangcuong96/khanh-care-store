@@ -77,7 +77,8 @@ export class AdminProductService {
                 return {
                   productId: createdProduct.id,
                   attributeId: attribute.key,
-                  value: attribute.value || ''
+                  value: attribute.value || '',
+                  variantId: createdVariant.id
                 }
               }) || []
           })
@@ -87,7 +88,13 @@ export class AdminProductService {
     /* Create product*/
   }
 
-  async list(queryParams: ProductListQueryType): Promise<ProductInListType> {
+  async list(queryParams: ProductListQueryType): Promise<{
+    data: ProductInListType[]
+    total: number
+    limit: number
+    page: number
+    totalPages: number
+  }> {
     const {
       page = 1,
       limit = 20,
@@ -143,6 +150,7 @@ export class AdminProductService {
         isPublished !== undefined ? { isPublished: isPublished === 'true' } : {}
       ]
     }
+
     const select = {
       id: true,
       name: true,
@@ -159,21 +167,24 @@ export class AdminProductService {
       promotionEnd: true,
       image: {
         select: {
-          thumbnail: true
+          thumbnail: true,
+          banner: true,
+          featured: true,
+          gallery: true
         }
       }
     }
 
     let orderBy: { [x: string]: string } = {
-      createdAt: 'desc'
+      updatedAt: 'desc'
     }
     // Map UI sort values to Prisma orderBy
     switch (sort) {
       case 'newest':
-        orderBy = { createdAt: 'desc' }
+        orderBy = { updatedAt: 'desc' }
         break
       case 'oldest':
-        orderBy = { createdAt: 'asc' }
+        orderBy = { updatedAt: 'asc' }
         break
       case 'name_asc':
         orderBy = { name: 'asc' }
@@ -188,66 +199,125 @@ export class AdminProductService {
         orderBy = { price: 'asc' }
         break
       default:
-        orderBy = { createdAt: order === Order.Asc ? 'asc' : 'desc' }
+        orderBy = { updatedAt: order === Order.Asc ? 'asc' : 'desc' }
         break
     }
-    const data = await prisma.product.findMany({
+    const getProducts = prisma.product.findMany({
       where,
       skip,
       take,
       orderBy,
       select
     })
+    const getTotal = prisma.product.count({
+      where
+    })
 
-    return data
+    const [data, total] = await Promise.all([getProducts, getTotal])
+
+    return {
+      data: data as unknown as ProductInListType[],
+      total,
+      limit,
+      page,
+      totalPages: Math.ceil(total / limit)
+    }
   }
 
   async update(id: string, data: UpdateProductBodyType): Promise<Partial<ProductType>> {
-    const { categoryId, variants, ...rest } = data
+    const { categoryId, variants, attributes, ...rest } = data
     const slug = slugify(rest.name)
 
-    const product = await prisma.product.update({
-      where: {
-        id
-      },
-      data: {
-        ...rest,
-        slug,
-        image: {
-          ...data.image,
-          gallery: data.image.gallery || []
-        },
-        category: {
-          connect: {
-            id: categoryId
-          }
-        },
-        variants: variants
-          ? {
-              deleteMany: {},
-              create: variants.map((variant) => ({
-                name: variant.name,
-                sku: variant.sku,
-                price: variant.price,
-                stock: variant.stock,
-                attributes: variant.attributes || {}
-              }))
+    // First check if product exists
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        attributes: true,
+        variants: true
+      }
+    })
+
+    if (!existingProduct) {
+      throw new Error('Product not found')
+    }
+
+    // Start transaction
+    return await prisma.$transaction(async (tx) => {
+      // Update basic product info
+      const updatedProduct = await tx.product.update({
+        where: { id },
+        data: {
+          ...rest,
+          slug,
+          image: {
+            ...data.image,
+            gallery: data.image.gallery || []
+          },
+          category: {
+            connect: {
+              id: categoryId
             }
-          : undefined
+          }
+        }
+      })
+
+      // Update attributes
+      if (attributes) {
+        const productAttributes = Object.entries(attributes).map(([key, value]) => ({
+          productId: id,
+          attributeId: key,
+          value: value || ''
+        }))
+
+        if (productAttributes.length > 0) {
+          for (const attribute of productAttributes) {
+            await tx.productAttributeValue.upsert({
+              where: {
+                productId_attributeId: {
+                  productId: id,
+                  attributeId: attribute.attributeId
+                }
+              },
+              create: attribute,
+              update: { value: attribute.value }
+            })
+          }
+        }
       }
+
+      // Update variants
+      if (variants) {
+        const variantsData = variants.map((variant) => {
+          const { attributes, ...rest } = variant
+          return { ...rest, productId: id }
+        })
+        for (const variant of variantsData) {
+          await tx.productVariant.upsert({
+            where: {
+              productId: id,
+              sku: variant.sku
+            },
+            create: variant,
+            update: variant
+          })
+        }
+      }
+
+      return updatedProduct as Partial<ProductType>
     })
-    return product as Partial<ProductType>
   }
 
-  async delete(id: string) {
-    await prisma.product.delete({
+  async delete(ids: string[]) {
+    await prisma.product.deleteMany({
       where: {
-        id
+        id: {
+          in: ids
+        }
       }
     })
   }
 
-  async getDetailBySlug(slug: string): Promise<ProductDetailType> {
+  async getDetailBySlug(slug: string) {
     const product = await prisma.product.findFirstOrThrow({
       where: {
         slug
@@ -260,18 +330,12 @@ export class AdminProductService {
         description: true,
         slug: true,
         stock: true,
-        isPublished: true,
         image: true,
+        categoryId: true,
+        tags: true,
         isFeatured: true,
         isBestSeller: true,
-        category: true,
-        attributes: {
-          select: {
-            id: true,
-            value: true
-          }
-        },
-        tags: true,
+        attributes: true,
         variants: {
           select: {
             id: true,
@@ -281,14 +345,18 @@ export class AdminProductService {
             stock: true,
             attributes: {
               select: {
-                id: true,
-                value: true
+                attribute: {
+                  select: {
+                    
+                  }
+                }
               }
             }
           }
         }
       }
     })
+    // Transform the data to match the schema
     return product
   }
 

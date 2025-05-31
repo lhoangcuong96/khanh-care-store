@@ -14,7 +14,6 @@ export function CategoryRoutes(fastify: FastifyInstance, options: FastifyPluginO
     },
     async (request, reply) => {
       const listCategory = await CategoryController.list()
-      console.log('CategoryRoutes', listCategory)
       reply.send({
         data: listCategory,
         message: 'Lấy danh sách danh mục thành công'

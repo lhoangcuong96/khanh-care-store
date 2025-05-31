@@ -27,7 +27,6 @@ export default async function CustomerHomePage() {
   try {
     const response = await landingApiRequest.getLandingData();
     landingPageData = response.payload?.data;
-    console.log("landingPageData", landingPageData);
   } catch (err) {
     console.error("Có lỗi xảy ra khi lấy dữ liệu sản phẩm!", err);
     getProductError = "Có lỗi xảy ra khi lấy dữ liệu sản phẩm!";

@@ -43,11 +43,15 @@ export default async function AdminProductRoutes(fastify: FastifyInstance, optio
     },
     async (request, reply) => {
       const queryParams = request.query as ProductListQueryType
-      const products = await controller.getProductList({
+      const { data, total, limit, page, totalPages } = await controller.getProductList({
         ...queryParams
       })
       reply.send({
-        data: products,
+        data,
+        total,
+        limit,
+        page,
+        totalPages,
         message: 'Lấy danh sách sản phẩm thành công!'
       })
     }
@@ -107,15 +111,35 @@ export default async function AdminProductRoutes(fastify: FastifyInstance, optio
         params: UpdateProductParamsSchema,
         body: UpdateProductBodySchema,
         response: {
-          200: MessageResponseSchema
+          200: MessageResponseSchema,
+          404: MessageResponseSchema,
+          500: MessageResponseSchema
         }
       }
     },
     async (request, reply) => {
-      await controller.updateProduct(request.params.id, request.body)
-      reply.send({
-        message: 'Cập nhật sản phẩm thành công!'
-      })
+      try {
+        await controller.updateProduct(request.params.id, request.body)
+        reply.send({
+          message: 'Cập nhật sản phẩm thành công!'
+        })
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.message.includes('not found')) {
+            reply.code(404).send({
+              message: 'Không tìm thấy sản phẩm!'
+            })
+          } else {
+            reply.code(500).send({
+              message: error.message
+            })
+          }
+        } else {
+          reply.code(500).send({
+            message: 'Có lỗi xảy ra khi cập nhật sản phẩm!'
+          })
+        }
+      }
     }
   )
 
@@ -139,6 +163,19 @@ export default async function AdminProductRoutes(fastify: FastifyInstance, optio
       })
     }
   )
+
+  fastify.delete<{
+    Body: {
+      ids: string[]
+    }
+    Reply: MessageResponseType
+  }>('/', async (request, reply) => {
+    console.log(request.body.ids)
+    await controller.bulkDeleteProduct(request.body.ids)
+    reply.send({
+      message: 'Xóa sản phẩm thành công!'
+    })
+  })
 
   fastify.post<{
     Params: PublishProductParamsType

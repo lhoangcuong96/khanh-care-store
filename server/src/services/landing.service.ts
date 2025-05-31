@@ -82,7 +82,6 @@ export default class LandingService {
       getHomeCategoriesWithProducts,
       getNews
     ])
-    console.log(categoriesWithProducts)
     return {
       featuredCategories: featuredCategories,
       featuredProducts: featuredProducts.data,

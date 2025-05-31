@@ -19,7 +19,7 @@ export const ProductVariantSchema = z.object({
   sku: z.string(),
   price: z.number(),
   stock: z.number(),
-  attributes: ProductAttributeValueSchema,
+  attributes: z.array(ProductAttributeValueSchema),
   image: ProductImageSchema,
   isPromotion: z.boolean(),
   promotionPercent: z.number().optional().nullable(),
@@ -56,18 +56,41 @@ export const ProductSchema = z.object({
 export const ProductDetailParamsSchema = z.object({
   slug: z.coerce.string(),
 });
-export const ProductDetailSchema = ProductSchema.pick({
-  id: true,
-  name: true,
-  price: true,
+export const ProductDetailSchema = ProductSchema.omit({
+  sold: true,
+  createdAt: true,
+  updatedAt: true,
   slug: true,
-  description: true,
-  title: true,
-  stock: true,
-  image: true,
-  variants: true,
-  categoryId: true,
-});
+  isPromotion: true,
+  promotionPercent: true,
+  promotionStart: true,
+  promotionEnd: true,
+  isPublished: true,
+}).merge(
+  z.object({
+    category: z
+      .object({
+        id: z.string(),
+        name: z.string(),
+      })
+      .optional()
+      .nullable(),
+    variants: z.array(
+      ProductVariantSchema.omit({
+        id: true,
+        isPromotion: true,
+        promotionPercent: true,
+        promotionStart: true,
+        promotionEnd: true,
+      }).merge(
+        z.object({
+          attributes: z.array(ProductAttributeValueSchema),
+        })
+      )
+    ),
+  })
+);
+
 export const ProductDetailResponseSchema = z.object({
   data: ProductDetailSchema,
   message: z.string(),

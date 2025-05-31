@@ -26,7 +26,7 @@ export async function generateMetadata({
     const { slug } = await params;
     const res = await getProductDetail(slug);
     const product = res.payload?.data;
-    const url = `${envConfig?.NEXT_PUBLIC_URL}/ ${routePath.customer}/${product?.slug}`;
+    const url = `${envConfig?.NEXT_PUBLIC_URL}/${routePath.customer}/${slug}`;
     return {
       ...sharedMetadata,
       title: product?.name || "Không tìm thấy sản phẩm",

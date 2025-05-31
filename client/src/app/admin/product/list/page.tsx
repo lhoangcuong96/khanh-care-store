@@ -56,9 +56,9 @@ export default async function ProductList({
       ...(isPublished && { isPublished }),
     });
     if (response.payload?.data) {
-      products = response.payload.data as ProductInListType;
-      totalProducts = products.length;
-      totalPages = Math.ceil(totalProducts / limit);
+      products = response.payload.data;
+      totalProducts = response.payload.total;
+      totalPages = response.payload.totalPages;
     }
   } catch (e) {
     console.log(e);

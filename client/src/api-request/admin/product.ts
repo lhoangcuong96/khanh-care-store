@@ -11,8 +11,6 @@ import { MessageResponseType } from "@/validation-schema/common";
 export const adminProductApiRequest = {
   getProducts: (params: ProductListQueryParamsType) => {
     const queryParams = new URLSearchParams();
-    console.log(params);
-
     // Add common query params
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.limit) queryParams.append("limit", params.limit.toString());
@@ -34,8 +32,6 @@ export const adminProductApiRequest = {
       queryParams.append("createdTo", params.createdTo.toISOString());
     if (params.isPublished)
       queryParams.append("isPublished", params.isPublished);
-
-    console.log(queryParams.toString());
 
     const url = `/admin/products?${queryParams.toString()}`;
     return http.get<ProductListResponseType>(url, {
@@ -79,6 +75,30 @@ export const adminProductApiRequest = {
     return http.post<MessageResponseType>(
       `/admin/products/${id}/unpublish`,
       {},
+      {
+        isAdminRequest: true,
+        isPrivate: true,
+      }
+    );
+  },
+
+  deleteProduct: (id: string) => {
+    return http.delete<MessageResponseType>(
+      `/admin/products/${id}`,
+      {},
+      {
+        isAdminRequest: true,
+        isPrivate: true,
+      }
+    );
+  },
+
+  deleteProducts: (ids: string[]) => {
+    return http.delete<MessageResponseType>(
+      `/admin/products`,
+      {
+        ids,
+      },
       {
         isAdminRequest: true,
         isPrivate: true,

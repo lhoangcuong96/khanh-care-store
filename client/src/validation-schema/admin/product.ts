@@ -84,6 +84,10 @@ export const ProductInListSchema = ProductSchema.pick({
 
 export const ProductListResSchema = z.object({
   data: z.array(ProductInListSchema),
+  total: z.number(),
+  limit: z.number(),
+  page: z.number(),
+  totalPages: z.number(),
   message: z.string(),
 });
 export type ProductListQueryParamsType = z.TypeOf<
@@ -108,7 +112,6 @@ export const ProductDetailSchema = ProductSchema.omit({
   promotionPercent: true,
   promotionStart: true,
   promotionEnd: true,
-  isPublished: true,
 }).merge(
   z.object({
     category: z.object({

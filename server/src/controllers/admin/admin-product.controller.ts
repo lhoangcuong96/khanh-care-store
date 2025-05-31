@@ -23,12 +23,24 @@ export default class AdminProductController {
   createProduct = (data: CreateProductBodyType): Promise<void> => {
     return this.service.create(data)
   }
-  updateProduct = (id: string, data: UpdateProductBodyType) => {
-    return this.service.update(id, data)
+  updateProduct = async (id: string, data: UpdateProductBodyType) => {
+    try {
+      const updatedProduct = await this.service.update(id, data)
+      return updatedProduct
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to update product: ${error.message}`)
+      }
+      throw new Error('Failed to update product')
+    }
   }
 
   deleteProduct = (id: string) => {
-    return this.service.delete(id)
+    return this.service.delete([id])
+  }
+
+  bulkDeleteProduct = (ids: string[]) => {
+    return this.service.delete(ids)
   }
 
   publishProduct = (id: string) => {

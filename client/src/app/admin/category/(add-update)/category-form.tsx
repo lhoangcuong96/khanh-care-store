@@ -213,7 +213,6 @@ const CategoryForm = ({ category }: { category?: any }) => {
         uploadPromise.push(uploadFile(banner));
       }
       const uploadResults = await Promise.all(uploadPromise);
-      console.log(uploadResults);
       if (image) {
         processedData.image = uploadResults[0];
         if (banner) {

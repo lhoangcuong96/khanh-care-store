@@ -28,6 +28,8 @@ export function ProductForm({
     productDetail,
   });
 
+  console.log(productDetail);
+
   return (
     <div className="flex">
       <FormProvider {...form}>

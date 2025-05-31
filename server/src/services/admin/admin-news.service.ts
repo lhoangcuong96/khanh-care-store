@@ -64,8 +64,6 @@ export class AdminNewsService {
     const skip = (page - 1) * limit
     const take = limit
 
-    console.log('isPublished', isPublished, isFeatured)
-
     const where: Prisma.NewsWhereInput = {
       AND: [
         search

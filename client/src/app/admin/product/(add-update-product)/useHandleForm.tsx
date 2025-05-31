@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { adminCategoryRequestApis } from "@/api-request/admin/category";
 import { adminProductApiRequest } from "@/api-request/admin/product";
@@ -55,11 +55,22 @@ const ProductCreationBaseFormSchema = z.object({
   isBestSeller: z.boolean().optional().nullable(),
   isPublished: z.boolean().optional().default(false),
   tags: z.array(z.any()).optional(),
+  attributes: z.record(z.any()).optional(),
+  variants: z.array(z.any()).optional(),
 });
 
 export type ProductCreationBaseFormValues = z.infer<
   typeof ProductCreationBaseFormSchema
->;
+> & {
+  attributes?: Record<string, any>;
+  variants?: Array<{
+    name: string;
+    sku: string;
+    price: number;
+    stock: number;
+    attributes?: Record<string, any>;
+  }>;
+};
 
 const createAttributesSchema = (categoryAttributes: CategoryAttribute[]) => {
   const schemaMap: Record<string, any> = {};
@@ -158,9 +169,30 @@ export function useHandleForm({
   const { messageApi } = useHandleMessage();
   const router = useRouter();
 
+  const categoryAttributeIds = useMemo(() => {
+    return categoryAttributes.map((item) => item.attribute.id);
+  }, [categoryAttributes]);
+
+  const getDefaultValues = (): any => {
+    if (!productDetail) return {};
+    return {
+      name: productDetail.name || "",
+      description: productDetail.description || "",
+      thumbnail: productDetail.image?.thumbnail || "",
+      productGallery: productDetail.image?.gallery || [],
+      category: productDetail.categoryId || "",
+      price: productDetail.price || 0,
+      stock: productDetail.stock || 0,
+      isFeatured: productDetail.isFeatured ?? false,
+      isBestSeller: productDetail.isBestSeller ?? false,
+      tags: productDetail.tags || [],
+    };
+  };
+
   const form = useForm<ProductCreationBaseFormValues>({
     resolver: zodResolver(formSchema),
     mode: "all",
+    defaultValues: getDefaultValues(),
   });
 
   const selectedCategory = form.watch("category");
@@ -195,79 +227,81 @@ export function useHandleForm({
         )
         .optional(),
     });
-    setFormSchema(newFormSchema);
+    setFormSchema(newFormSchema as any);
   };
 
   const onSubmit = async (data: Record<string, any>) => {
-    let thumbnail = data.thumbnail;
-    let gallery = data.productGallery || [];
-    const files: File[] = [];
-    if (thumbnail instanceof File) {
-      files.push(thumbnail);
-    }
-
-    if (gallery && gallery.some((item: any) => item instanceof File)) {
-      gallery.forEach((item: any) => {
-        if (item instanceof File) {
-          files.push(item);
-        }
-      });
-    }
-    if (files.length > 0) {
-      const presignedUrls = await storageRequestApis.generatePresignedUrls({
-        files: files.map((file) => ({
-          fileName: file.name,
-          fileType: file.type,
-        })),
-      });
-      if (!presignedUrls?.payload?.data) {
-        messageApi.error({
-          error: presignedUrls.payload?.message || "Lỗi khi tạo URL",
-        });
-        return;
-      }
-      const uploadPromises = presignedUrls.payload.data.map(
-        (presignedUrl, index) => {
-          const file = files[index];
-          return storageRequestApis.upload(presignedUrl.presignedUrl, file);
-        }
-      );
-      const response = await Promise.all(uploadPromises);
-      if (!response.every((res) => res.ok)) {
-        messageApi.error({
-          error: "Lỗi khi tải lên hình ảnh",
-        });
-        return;
-      }
-      thumbnail = presignedUrls.payload.data[0].fileUrl;
-      gallery = gallery
-        .filter((item: any) => !(item instanceof File))
-        .concat(
-          presignedUrls.payload.data.slice(1).map((item) => item.fileUrl)
-        );
-    }
-
-    const requestData: CreateProductBodyType = {
-      name: data.name,
-      price: data.price,
-      description: data.description,
-      stock: data.stock,
-      image: {
-        thumbnail,
-        gallery,
-        banner: "",
-        featured: "",
-      },
-      categoryId: data.category,
-      tags: [],
-      attributes: data.attributes,
-      isFeatured: data.isFeatured || false,
-      isBestSeller: data.isBestSeller || false,
-      isPublished: data.isPublished || false,
-      variants: data.variants,
-    };
-
+    if (isSubmitting) return;
     try {
+      setIsSubmitting(true);
+      let thumbnail = data.thumbnail;
+      let gallery = data.productGallery || [];
+      const files: File[] = [];
+      if (thumbnail instanceof File) {
+        files.push(thumbnail);
+      }
+
+      if (gallery && gallery.some((item: any) => item instanceof File)) {
+        gallery.forEach((item: any) => {
+          if (item instanceof File) {
+            files.push(item);
+          }
+        });
+      }
+      if (files.length > 0) {
+        const presignedUrls = await storageRequestApis.generatePresignedUrls({
+          files: files.map((file) => ({
+            fileName: file.name,
+            fileType: file.type,
+          })),
+        });
+        if (!presignedUrls?.payload?.data) {
+          messageApi.error({
+            error: presignedUrls.payload?.message || "Lỗi khi tạo URL",
+          });
+          return;
+        }
+        const uploadPromises = presignedUrls.payload.data.map(
+          (presignedUrl, index) => {
+            const file = files[index];
+            return storageRequestApis.upload(presignedUrl.presignedUrl, file);
+          }
+        );
+        const response = await Promise.all(uploadPromises);
+        if (!response.every((res) => res.ok)) {
+          messageApi.error({
+            error: "Lỗi khi tải lên hình ảnh",
+          });
+          return;
+        }
+        thumbnail = presignedUrls.payload.data[0].fileUrl;
+        gallery = gallery
+          .filter((item: any) => !(item instanceof File))
+          .concat(
+            presignedUrls.payload.data.slice(1).map((item) => item.fileUrl)
+          );
+      }
+
+      const requestData: CreateProductBodyType = {
+        name: data.name,
+        price: data.price,
+        description: data.description,
+        stock: data.stock,
+        image: {
+          thumbnail,
+          gallery,
+          banner: "",
+          featured: "",
+        },
+        categoryId: data.category,
+        tags: [],
+        attributes: data.attributes,
+        isFeatured: data.isFeatured || false,
+        isBestSeller: data.isBestSeller || false,
+        isPublished: data.isPublished || false,
+        variants: data.variants,
+      };
+
       setIsSubmitting(true);
       if (productDetail) {
         await adminProductApiRequest.updateProduct(
@@ -293,10 +327,61 @@ export function useHandleForm({
     }
   };
 
+  const fillAttributes = useCallback(() => {
+    const attributes = productDetail?.attributes?.reduce(
+      (acc: any, attribute: any) => {
+        if (categoryAttributeIds.includes(attribute.attributeId)) {
+          acc[attribute.attributeId] = attribute.value;
+        }
+        return acc;
+      },
+      {}
+    );
+    form.setValue("attributes", attributes);
+  }, [categoryAttributeIds, productDetail, form]);
+
+  const fillVariants = useCallback(() => {
+    const variants = productDetail?.variants.map((variant) => {
+      return {
+        name: variant.name,
+        sku: variant.sku,
+        price: variant.price,
+        stock: variant.stock,
+        attributes: variant.attributes.reduce((acc: any, attribute: any) => {
+          if (categoryAttributeIds.includes(attribute.attributeId)) {
+            acc[attribute.attributeId] = attribute.value;
+          }
+          return acc;
+        }, {}),
+      };
+    });
+    console.log(variants);
+    form.setValue("variants", variants);
+  }, [categoryAttributeIds, productDetail, form]);
+
   useEffect(() => {
     if (!selectedCategory) return;
     loadAttributes(selectedCategory);
   }, [selectedCategory, form]);
+
+  useEffect(() => {
+    if (
+      !selectedCategory ||
+      !productDetail ||
+      !categoryAttributes.length ||
+      !form
+    )
+      return;
+    fillAttributes();
+    fillVariants();
+  }, [
+    fillAttributes,
+    selectedCategory,
+    productDetail,
+    categoryAttributes,
+    form,
+    fillAttributes,
+  ]);
 
   return {
     formSchema,

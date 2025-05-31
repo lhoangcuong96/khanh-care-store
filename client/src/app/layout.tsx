@@ -62,13 +62,15 @@ export default async function RootLayout({
   };
 
   const getListCategory = async () => {
-    const res = await categoryApiRequests.getListCategory();
-    if (!res.payload?.data) throw new Error("Không thể lấy danh sách danh mục");
-    return res.payload.data;
+    try {
+      const res = await categoryApiRequests.getListCategory();
+      if (!res.payload?.data)
+        throw new Error("Không thể lấy danh sách danh mục");
+      return res.payload.data;
+    } catch (error) {
+      throw error;
+    }
   };
-
-  if (pathname !== routePath.signOut) {
-  }
 
   let userCart: CartType | undefined = undefined;
   let userAccount: AccountType | undefined = undefined;
@@ -100,8 +102,6 @@ export default async function RootLayout({
       userCart = getUserResponse.value?.cart;
     }
   }
-
-  console.log(userCart, userAccount, categories);
 
   return (
     <html lang="vi">

@@ -1,6 +1,6 @@
 import z from 'zod'
 import { CommonQuery } from '../common.schema'
-import { ProductSchema } from '@/schemaValidations/product.schema'
+import { ProductAttributeValueSchema, ProductSchema, ProductVariantSchema } from '@/schemaValidations/product.schema'
 
 export type ProductType = z.TypeOf<typeof ProductSchema>
 
@@ -80,11 +80,15 @@ export const ProductInListSchema = ProductSchema.pick({
 
 export const ProductListResSchema = z.object({
   data: z.array(ProductInListSchema),
+  total: z.number(),
+  limit: z.number(),
+  page: z.number(),
+  totalPages: z.number(),
   message: z.string()
 })
 export type ProductListQueryType = z.TypeOf<typeof ProductListQueryParamsSchema>
 export type ProductListResType = z.TypeOf<typeof ProductListResSchema>
-export type ProductInListType = z.TypeOf<typeof ProductInListSchema>[]
+export type ProductInListType = z.TypeOf<typeof ProductInListSchema>
 
 /*----------------End List---------------------*/
 
@@ -102,9 +106,7 @@ export const ProductDetailSchema = ProductSchema.omit({
   promotionPercent: true,
   promotionStart: true,
   promotionEnd: true,
-  isPublished: true,
-  variants: true,
-  categoryId: true
+  isPublished: true
 }).merge(
   z.object({
     category: z
@@ -113,7 +115,20 @@ export const ProductDetailSchema = ProductSchema.omit({
         name: z.string()
       })
       .optional()
-      .nullable()
+      .nullable(),
+    variants: z.array(
+      ProductVariantSchema.omit({
+        id: true,
+        isPromotion: true,
+        promotionPercent: true,
+        promotionStart: true,
+        promotionEnd: true
+      }).merge(
+        z.object({
+          attributes: z.array(ProductAttributeValueSchema)
+        })
+      )
+    )
   })
 )
 export const ProductDetailResponseSchema = z.object({

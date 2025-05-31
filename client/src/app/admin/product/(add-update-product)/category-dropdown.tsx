@@ -75,7 +75,6 @@ export default function CategoryDropdown({
 
   const renderCategoryItem = (category: LiteCategoryInListType) => {
     const hasChildren = category.children && category.children.length > 0;
-
     const isOpen = !category?.id ? false : openCategories[category?.id];
 
     if (!hasChildren) {
@@ -87,8 +86,10 @@ export default function CategoryDropdown({
             onSelect(category);
             setIsOpen(false);
           }}
-          className={`${
-            selectedCategory?.id === category.id ? "bg-gray-100" : ""
+          className={`px-4 py-2 rounded transition font-normal hover:bg-gray-100 ${
+            selectedCategory?.id === category.id
+              ? "bg-blue-100 font-semibold"
+              : ""
           }`}
         >
           <span>{category.name}</span>
@@ -99,8 +100,10 @@ export default function CategoryDropdown({
     return (
       <div key={category.id} className="relative">
         <div
-          className={`flex items-center justify-between px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground ${
-            selectedCategory?.id === category.id ? "bg-gray-100" : ""
+          className={`flex items-center justify-between px-4 py-2 text-sm rounded cursor-pointer hover:bg-gray-100 transition ${
+            selectedCategory?.id === category.id
+              ? "bg-blue-100 font-semibold"
+              : ""
           }`}
           onClick={(e) => {
             e.stopPropagation();
@@ -117,15 +120,16 @@ export default function CategoryDropdown({
           >
             <span>{category.name}</span>
           </div>
-          <ChevronRight
-            className={`h-4 w-4 transition-transform ${
-              isOpen ? "rotate-90" : ""
-            }`}
-          />
+          {hasChildren && (
+            <ChevronRight
+              className={`h-4 w-4 transition-transform ${
+                isOpen ? "rotate-90" : ""
+              }`}
+            />
+          )}
         </div>
-
         {isOpen && (
-          <div className="pl-4 border-l border-l-gray-200 ml-3 mt-1">
+          <div className="pl-6 border-l-2 border-gray-200 ml-2 mt-1">
             {category.children?.map((child) => (
               <DropdownMenuItem
                 key={child.id}
@@ -134,8 +138,10 @@ export default function CategoryDropdown({
                   onSelect(child);
                   setIsOpen(false);
                 }}
-                className={`${
-                  selectedCategory?.id === child.id ? "bg-gray-100" : ""
+                className={`pl-4 py-2 rounded hover:bg-gray-100 ${
+                  selectedCategory?.id === child.id
+                    ? "bg-blue-100 font-semibold"
+                    : ""
                 }`}
               >
                 <span>{child.name}</span>
@@ -175,8 +181,10 @@ export default function CategoryDropdown({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-full">
-        <DropdownMenuLabel>Loại</DropdownMenuLabel>
+      <DropdownMenuContent className="min-w-[var(--radix-popper-anchor-width)] shadow-lg rounded-md p-2">
+        <DropdownMenuLabel className="font-bold text-base pb-2">
+          Loại
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup className="max-h-[300px] overflow-y-auto">
           {dropdownItems.map((category) => renderCategoryItem(category))}
