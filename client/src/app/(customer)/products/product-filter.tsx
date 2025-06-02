@@ -1,38 +1,38 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { ProductListQueryParamsType } from "@/validation-schema/product";
+import { ProductListQueryType } from "@/validation-schema/product";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
-interface PriceRange {
-  label: string;
-  value: string;
-}
+// interface PriceRange {
+//   label: string;
+//   value: string;
+// }
 
-const priceRanges: PriceRange[] = [
-  { label: "Dưới 10.000đ", value: "0-10000" },
-  { label: "Từ 10.000đ - 50.000đ", value: "10000-50000" },
-  { label: "Từ 50.000đ - 100.000đ", value: "50000-100000" },
-  { label: "Từ 100.000đ - 200.000đ", value: "100000-200000" },
-  { label: "Từ 200.000đ - 300.000đ", value: "200000-300000" },
-  { label: "Từ 300.000đ - 500.000đ", value: "300000-500000" },
-  { label: "Từ 500.000đ - 1 triệu", value: "500000-1000000" },
-];
-const weights = [
-  {
-    label: "300g",
-    value: "300",
-  },
-  {
-    label: "500g",
-    value: "500",
-  },
-  {
-    label: "1kg",
-    value: "1000",
-  },
-];
+// const priceRanges: PriceRange[] = [
+//   { label: "Dưới 10.000đ", value: "0-10000" },
+//   { label: "Từ 10.000đ - 50.000đ", value: "10000-50000" },
+//   { label: "Từ 50.000đ - 100.000đ", value: "50000-100000" },
+//   { label: "Từ 100.000đ - 200.000đ", value: "100000-200000" },
+//   { label: "Từ 200.000đ - 300.000đ", value: "200000-300000" },
+//   { label: "Từ 300.000đ - 500.000đ", value: "300000-500000" },
+//   { label: "Từ 500.000đ - 1 triệu", value: "500000-1000000" },
+// ];
+// const weights = [
+//   {
+//     label: "300g",
+//     value: "300",
+//   },
+//   {
+//     label: "500g",
+//     value: "500",
+//   },
+//   {
+//     label: "1kg",
+//     value: "1000",
+//   },
+// ];
 
 const productTags = [
   { label: "Sản phẩm khuyến mãi", value: "isPromotion" },
@@ -49,53 +49,53 @@ const productTags = [
 export default function ProductFilter({
   params,
 }: {
-  params?: ProductListQueryParamsType;
+  params?: ProductListQueryType;
 }) {
   const router = useRouter();
 
-  const handlePriceCheckboxChange = useCallback(
-    (value: string) => {
-      const searchParams = new URLSearchParams(window.location.search);
-      if (!searchParams) return;
+  // const handlePriceCheckboxChange = useCallback(
+  //   (value: string) => {
+  //     const searchParams = new URLSearchParams(window.location.search);
+  //     if (!searchParams) return;
 
-      let currentValues = searchParams.getAll("price");
-      currentValues = currentValues.filter((v) => !!v);
+  //     let currentValues = searchParams.getAll("price");
+  //     currentValues = currentValues.filter((v) => !!v);
 
-      if (currentValues.includes(value)) {
-        currentValues = currentValues.filter((v) => v !== value);
-      } else {
-        currentValues.push(value);
-      }
+  //     if (currentValues.includes(value)) {
+  //       currentValues = currentValues.filter((v) => v !== value);
+  //     } else {
+  //       currentValues.push(value);
+  //     }
 
-      searchParams.delete("price");
-      currentValues.forEach((val) => searchParams.append("price", val));
+  //     searchParams.delete("price");
+  //     currentValues.forEach((val) => searchParams.append("price", val));
 
-      router.push(`/products?${searchParams.toString()}`);
-    },
-    [router]
-  );
+  //     router.push(`/products?${searchParams.toString()}`);
+  //   },
+  //   [router]
+  // );
 
-  const handleWeightCheckboxChange = useCallback(
-    (value: string) => {
-      const searchParams = new URLSearchParams(window.location.search);
-      if (!searchParams) return;
+  // const handleWeightCheckboxChange = useCallback(
+  //   (value: string) => {
+  //     const searchParams = new URLSearchParams(window.location.search);
+  //     if (!searchParams) return;
 
-      let currentValues = searchParams.getAll("weight");
-      currentValues = currentValues.filter((v) => !!v);
+  //     let currentValues = searchParams.getAll("weight");
+  //     currentValues = currentValues.filter((v) => !!v);
 
-      if (currentValues.includes(value)) {
-        currentValues = currentValues.filter((v) => v !== value);
-      } else {
-        currentValues.push(value);
-      }
+  //     if (currentValues.includes(value)) {
+  //       currentValues = currentValues.filter((v) => v !== value);
+  //     } else {
+  //       currentValues.push(value);
+  //     }
 
-      searchParams.delete("weight");
-      currentValues.forEach((val) => searchParams.append("weight", val));
+  //     searchParams.delete("weight");
+  //     currentValues.forEach((val) => searchParams.append("weight", val));
 
-      router.push(`/products?${searchParams.toString()}`);
-    },
-    [router]
-  );
+  //     router.push(`/products?${searchParams.toString()}`);
+  //   },
+  //   [router]
+  // );
 
   const handleProductTagCheckboxChange = useCallback(
     (value: string) => {
@@ -117,10 +117,9 @@ export default function ProductFilter({
         </div>
         {productTags.map((tag) => {
           let isChecked = false;
-          if (params?.[tag.value as keyof ProductListQueryParamsType]) {
+          if (params?.[tag.value as keyof ProductListQueryType]) {
             isChecked =
-              params?.[tag.value as keyof ProductListQueryParamsType] ===
-              "true";
+              params?.[tag.value as keyof ProductListQueryType] === "true";
           }
           return (
             <div key={tag.value} className="flex items-center space-x-2 mb-2">
@@ -138,7 +137,7 @@ export default function ProductFilter({
           );
         })}
       </div>
-      <div className="bg-slate-100 px-3 py-2 rounded-md">
+      {/* <div className="bg-slate-100 px-3 py-2 rounded-md">
         <div className="text-lg font-semibold mb-4 rounded flex flex-row gap-2 items-center justify-between">
           <h3 className="text-slatee-600">Chọn mức giá</h3>
         </div>
@@ -204,7 +203,7 @@ export default function ProductFilter({
             </div>
           );
         })}
-      </div>
+      </div> */}
     </>
   );
 }

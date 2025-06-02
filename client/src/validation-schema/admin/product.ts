@@ -90,7 +90,7 @@ export const ProductListResSchema = z.object({
   totalPages: z.number(),
   message: z.string(),
 });
-export type ProductListQueryParamsType = z.TypeOf<
+export type ProductListQueryType = z.TypeOf<
   typeof ProductListQueryParamsSchema
 >;
 export type ProductListResponseType = z.TypeOf<typeof ProductListResSchema>;

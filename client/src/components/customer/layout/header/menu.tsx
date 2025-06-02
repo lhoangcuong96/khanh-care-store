@@ -2,12 +2,16 @@
 "use client";
 
 import { routePath } from "@/constants/routes";
-import { Dropdown } from "antd";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useReducer } from "react";
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
 import { ProductMenu } from "../product-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface MenuProps {
   label: string;
@@ -15,6 +19,7 @@ interface MenuProps {
   key?: string;
   isHot?: boolean;
 }
+
 export const menuItems: MenuProps[] = [
   {
     path: routePath.customer.home,
@@ -75,30 +80,31 @@ export default function Menu() {
       {menuItems.map((item) => {
         if (item.key === "product") {
           return (
-            <Dropdown
+            <DropdownMenu
               key={item.key}
-              dropdownRender={() => {
-                return <ProductMenu />;
-              }}
               onOpenChange={(value) =>
                 dispatch({ type: "toggleProductMenu", value })
               }
-              className="flex items-center"
             >
-              <Link
-                href={item.path}
-                className="flex flex-row gap-1 text-white h-full"
-              >
-                {item.label}{" "}
-                <span className="text-lg">
-                  {state.isOpenProductMenu ? (
-                    <MdArrowDropUp></MdArrowDropUp>
-                  ) : (
-                    <MdArrowDropDown></MdArrowDropDown>
-                  )}
-                </span>
-              </Link>
-            </Dropdown>
+              <DropdownMenuTrigger asChild>
+                <Link
+                  href={item.path}
+                  className="flex flex-row gap-1 text-white h-full items-center px-5"
+                >
+                  {item.label}{" "}
+                  <span className="text-lg">
+                    {state.isOpenProductMenu ? (
+                      <MdArrowDropUp />
+                    ) : (
+                      <MdArrowDropDown />
+                    )}
+                  </span>
+                </Link>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[200px]">
+                <ProductMenu />
+              </DropdownMenuContent>
+            </DropdownMenu>
           );
         }
         const isHot = item.isHot ? "bg-red-500 hover:bg-red-500" : "";

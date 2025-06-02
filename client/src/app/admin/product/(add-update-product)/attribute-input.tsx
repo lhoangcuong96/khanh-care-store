@@ -30,6 +30,7 @@ import { AttributeSchemaType as Attribute } from "@/validation-schema/category";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { ChangeEvent } from "react";
 
 const AttributeInput = ({
   categoryAttribute,
@@ -94,16 +95,13 @@ const AttributeInput = ({
               </FormLabel>
               <FormControl>
                 <Input
-                  type="number"
                   {...field}
-                  onChange={(e) => {
-                    const value =
-                      e.target.value === ""
-                        ? undefined
-                        : Number(e.target.value);
-                    field.onChange(value);
+                  type="text"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    const value = e.target.value.replace(/[^0-9]/g, "");
+                    field.onChange(+value);
                   }}
-                  value={field.value === undefined ? "" : field.value}
+                  value={field.value ? field.value.toLocaleString() : ""}
                   placeholder={`Nhập ${categoryAttribute.attribute.name.toLowerCase()}`}
                 />
               </FormControl>

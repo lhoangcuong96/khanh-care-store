@@ -2,14 +2,14 @@ import { http } from "@/lib/http";
 import {
   CreateProductBodyType,
   ProductDetailResponseType,
-  ProductListQueryParamsType,
+  ProductListQueryType,
   ProductListResponseType,
   UpdateProductBodyType,
 } from "@/validation-schema/admin/product";
 import { MessageResponseType } from "@/validation-schema/common";
 
 export const adminProductApiRequest = {
-  getProducts: (params: ProductListQueryParamsType) => {
+  getProducts: (params: ProductListQueryType) => {
     const queryParams = new URLSearchParams();
     // Add common query params
     if (params.page) queryParams.append("page", params.page.toString());

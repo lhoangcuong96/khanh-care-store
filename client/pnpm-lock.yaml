@@ -104,9 +104,12 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.66.0
         version: 5.66.0(react@19.0.0-rc-65a56d0e-20241020)
+      '@tinymce/miniature':
+        specifier: ^6.0.0
+        version: 6.0.0(tinymce@7.9.1)
       '@tinymce/tinymce-react':
         specifier: ^6.0.0
-        version: 6.0.0(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)
+        version: 6.0.0(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(tinymce@7.9.1)
       '@types/recharts':
         specifier: ^1.8.29
         version: 1.8.29
@@ -413,6 +416,35 @@ packages:
 
   '@emotion/weak-memoize@0.4.0':
     resolution: {integrity: sha512-snKqtPW01tN0ui7yu9rGv69aJXr/a/Ywvl11sUjNtEcRc+ng/mQriFL0wLXMef74iHa/EkftbDzU9F8iFbH+zg==}
+
+  '@ephox/agar@8.0.1':
+    resolution: {integrity: sha512-2LR/u0oos9GadRoLFDVE6NRDV8Tl9+DYQyouVYn0+7afAYdouyw+nXaoTVG5nnvMG+ofsmldKOC82nJWu0a4kQ==}
+
+  '@ephox/bedrock-client@13.0.0':
+    resolution: {integrity: sha512-Zah4+o7wFmYO6x3AHiQ1fIYdWIKMAlgszFqKp+JYrmkmqQG9h25wk2izPvTvJ+UGrORU6W90PrDWuksE1XhcUw==}
+
+  '@ephox/bedrock-common@13.0.0':
+    resolution: {integrity: sha512-aJ3gtezZ0duGJAniT/+uWi0fFCJRqNdJjumxhCwOVTc2MSsXcyqn70s6FIlrp/Fw2QuyiEqxgormgrmBUbWNWA==}
+
+  '@ephox/dispute@1.0.16':
+    resolution: {integrity: sha512-qHy0c+TX4FZx6xI2EBoBqOjGlbtGqQlvK7uWMNCVkfXveJ/dWhjFKfxRR2fsIN/xOYDQ7uJ/GcD+oDpryxl1dA==}
+
+  '@ephox/jax@7.0.10':
+    resolution: {integrity: sha512-iDqR2M45ketsSdfQmrjy8xyqVGPiLUTs/FOYBmwUdbBNYifQx9sT2eKQrOmsVYuH6voZaoiXdA0EK8aqHcKGQg==}
+
+  '@ephox/katamari@9.1.6':
+    resolution: {integrity: sha512-7R7hcpiIWaDk4t731ppdr3X/hjLZkHTDjJCEgGgTS3ylddodGKtSMS91tISicYjKQXnB06GT+gJoOk3/McazIg==}
+
+  '@ephox/mcagar@9.0.1':
+    resolution: {integrity: sha512-iNMP8mkz8AtgiRceU4TAnstQje3RG8yxM/QoWKkriCeh6n5fe1sSfexFRVW3fwZ0bUrjTlyawSqoH0yhESqJjQ==}
+    peerDependencies:
+      tinymce: '>=4.0.0'
+
+  '@ephox/sand@6.0.10':
+    resolution: {integrity: sha512-q/2Xcjl1O5c9/HHxQiEKGZkGsC68WUjVP5ciDNKqrZd1s1BhA3VWbaubQxxBRt3SwKyBCukfS5gL53qkqTfbkg==}
+
+  '@ephox/sugar@9.3.1':
+    resolution: {integrity: sha512-NQMqDN0zC+IZGuhBuz/7RxncfJsmTBhCHgaqkHOJ5d1E0CIL9afIizBYQ0JSHS3osAb9woGGtwPobjCx3/Srpw==}
 
   '@eslint-community/eslint-utils@4.4.1':
     resolution: {integrity: sha512-s3O3waFUrMV8P/XaF/+ZTp1X9XBZW1a4B97ZnjQF2KYWaFD2A8KyFBsrsfSjEmjn3RGWAIuvlneuZm3CUK3jbA==}
@@ -1882,6 +1914,9 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
+  '@tinymce/miniature@6.0.0':
+    resolution: {integrity: sha512-bLpaTTgbyMHP3V8bucSxvCTVTUjRRk05zDgnlD5Hj2eo6hEyHT1FCqpuhdVLHx9mbCydrlAIhhsY8Ex6Hp8Qqg==}
+
   '@tinymce/tinymce-react@6.0.0':
     resolution: {integrity: sha512-v5q6x3/kgg3rfQjFYrAm8ZVCnPbUgOuB3yUvSskp75VwR/EUQimONG4S16KL85kFbstiiat6AUDDLMXN4hRxhQ==}
     peerDependencies:
@@ -1971,6 +2006,9 @@ packages:
 
   '@types/recharts@1.8.29':
     resolution: {integrity: sha512-ulKklaVsnFIIhTQsQw226TnOibrddW1qUQNFVhoQEyY1Z7FRQrNecFCGt7msRuJseudzE9czVawZb17dK/aPXw==}
+
+  '@types/sizzle@2.3.9':
+    resolution: {integrity: sha512-xzLEyKB50yqCUPUJkIsrVvoWNfFUbIZI+RspLWt8u+tIW/BetMBZtgV2LY/2o+tYH8dRvQ+eoPf3NdhQCcLE2w==}
 
   '@typescript-eslint/eslint-plugin@8.13.0':
     resolution: {integrity: sha512-nQtBLiZYMUPkclSeC3id+x4uVd1SGtHuElTxL++SfP47jR0zfkZBJHc+gL4qPsgTuypz0k8Y2GheaDYn6Gy3rg==}
@@ -2400,6 +2438,10 @@ packages:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
 
+  diff@5.2.0:
+    resolution: {integrity: sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==}
+    engines: {node: '>=0.3.1'}
+
   dlv@1.1.3:
     resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
 
@@ -2584,6 +2626,10 @@ packages:
 
   eventemitter3@4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
+
+  fast-check@2.25.0:
+    resolution: {integrity: sha512-wRUT2KD2lAmT75WNIJIHECawoUUMHM0I5jrlLXGtGeqmPL8jl/EldUDjY1VCp6fDY8yflyfUeIOsOBrIbIiArg==}
+    engines: {node: '>=8.0.0'}
 
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
@@ -3312,6 +3358,9 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  pure-rand@5.0.5:
+    resolution: {integrity: sha512-BwQpbqxSCBJVpamI6ydzcKqyFmnd5msMWUGvzXLm1aXvusbbgkbOto/EUPM00hjveJEaJtdbhUjKSzWRhQVkaw==}
+
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -3796,6 +3845,9 @@ packages:
     resolution: {integrity: sha512-94Bdh3cC2PKrbgSOUqTiGPWVZeSiXfKOVZNJniWoqrWrRkB1CJzBU3NEbiTsPcYy1lDsANA/THzS+9WBiy5nfQ==}
     engines: {node: '>= 10'}
 
+  sizzle@2.3.10:
+    resolution: {integrity: sha512-kPGev+SiByuzi/YPDTqCwdKLWCaN9+14ve86yH0gP6Efue04xjLYWJrcLC6y1buFyIVXkwHNXPsOTEd1MYVPbQ==}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -3941,6 +3993,9 @@ packages:
 
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
+
+  tinymce@7.9.1:
+    resolution: {integrity: sha512-zaOHwmiP1EqTeLRXAvVriDb00JYnfEjWGPdKEuac7MiZJ5aiDMZ4Unc98Gmajn+PBljOmO1GKV6G0KwWn3+k8A==}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -4374,6 +4429,56 @@ snapshots:
   '@emotion/utils@1.4.1': {}
 
   '@emotion/weak-memoize@0.4.0': {}
+
+  '@ephox/agar@8.0.1':
+    dependencies:
+      '@ephox/bedrock-client': 13.0.0
+      '@ephox/bedrock-common': 13.0.0
+      '@ephox/jax': 7.0.10
+      '@ephox/sand': 6.0.10
+      '@ephox/sugar': 9.3.1
+      '@types/sizzle': 2.3.9
+      fast-check: 2.25.0
+      sizzle: 2.3.10
+
+  '@ephox/bedrock-client@13.0.0':
+    dependencies:
+      '@ephox/bedrock-common': 13.0.0
+      '@ephox/dispute': 1.0.16
+
+  '@ephox/bedrock-common@13.0.0':
+    dependencies:
+      diff: 5.2.0
+
+  '@ephox/dispute@1.0.16':
+    dependencies:
+      tslib: 2.8.1
+
+  '@ephox/jax@7.0.10':
+    dependencies:
+      '@ephox/katamari': 9.1.6
+
+  '@ephox/katamari@9.1.6':
+    dependencies:
+      '@ephox/dispute': 1.0.16
+
+  '@ephox/mcagar@9.0.1(tinymce@7.9.1)':
+    dependencies:
+      '@ephox/agar': 8.0.1
+      '@ephox/katamari': 9.1.6
+      '@ephox/sand': 6.0.10
+      '@ephox/sugar': 9.3.1
+      fast-check: 2.25.0
+      tinymce: 7.9.1
+
+  '@ephox/sand@6.0.10':
+    dependencies:
+      '@ephox/katamari': 9.1.6
+
+  '@ephox/sugar@9.3.1':
+    dependencies:
+      '@ephox/katamari': 9.1.6
+      '@ephox/sand': 6.0.10
 
   '@eslint-community/eslint-utils@4.4.1(eslint@8.57.1)':
     dependencies:
@@ -5766,11 +5871,22 @@ snapshots:
       '@tanstack/query-core': 5.66.0
       react: 19.0.0-rc-65a56d0e-20241020
 
-  '@tinymce/tinymce-react@6.0.0(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)':
+  '@tinymce/miniature@6.0.0(tinymce@7.9.1)':
+    dependencies:
+      '@ephox/agar': 8.0.1
+      '@ephox/katamari': 9.1.6
+      '@ephox/mcagar': 9.0.1(tinymce@7.9.1)
+      '@ephox/sugar': 9.3.1
+    transitivePeerDependencies:
+      - tinymce
+
+  '@tinymce/tinymce-react@6.0.0(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020)(tinymce@7.9.1)':
     dependencies:
       prop-types: 15.8.1
       react: 19.0.0-rc-65a56d0e-20241020
       react-dom: 19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020)
+    optionalDependencies:
+      tinymce: 7.9.1
 
   '@tsconfig/node10@1.0.11': {}
 
@@ -5846,6 +5962,8 @@ snapshots:
     dependencies:
       '@types/d3-shape': 1.3.12
       '@types/react': 19.0.1
+
+  '@types/sizzle@2.3.9': {}
 
   '@typescript-eslint/eslint-plugin@8.13.0(@typescript-eslint/parser@8.13.0(eslint@8.57.1)(typescript@5.6.3))(eslint@8.57.1)(typescript@5.6.3)':
     dependencies:
@@ -6355,6 +6473,8 @@ snapshots:
 
   diff@4.0.2: {}
 
+  diff@5.2.0: {}
+
   dlv@1.1.3: {}
 
   doctrine@2.1.0:
@@ -6691,6 +6811,10 @@ snapshots:
   esutils@2.0.3: {}
 
   eventemitter3@4.0.7: {}
+
+  fast-check@2.25.0:
+    dependencies:
+      pure-rand: 5.0.5
 
   fast-deep-equal@3.1.3: {}
 
@@ -7394,6 +7518,8 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  pure-rand@5.0.5: {}
+
   queue-microtask@1.2.3: {}
 
   rc-cascader@3.28.2(react-dom@19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020))(react@19.0.0-rc-65a56d0e-20241020):
@@ -8020,6 +8146,8 @@ snapshots:
       mrmime: 2.0.0
       totalist: 3.0.1
 
+  sizzle@2.3.10: {}
+
   source-map-js@1.2.1: {}
 
   source-map@0.5.7: {}
@@ -8187,6 +8315,8 @@ snapshots:
   through@2.3.8: {}
 
   tiny-invariant@1.3.3: {}
+
+  tinymce@7.9.1: {}
 
   to-regex-range@5.0.1:
     dependencies:

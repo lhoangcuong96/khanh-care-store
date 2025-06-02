@@ -1,7 +1,7 @@
 import { Link } from "@/components/ui/link";
 import { routePath } from "@/constants/routes";
 import { CategoryInListType } from "@/validation-schema/category";
-import { ProductListQueryParamsType } from "@/validation-schema/product";
+import { ProductListQueryType } from "@/validation-schema/product";
 import Image from "next/image";
 
 const CategoryList = ({
@@ -9,8 +9,18 @@ const CategoryList = ({
   params,
 }: {
   categories: CategoryInListType[];
-  params?: ProductListQueryParamsType;
+  params?: ProductListQueryType;
 }) => {
+  const convertParams = (params?: ProductListQueryType) => {
+    if (!params) return {};
+    return {
+      ...params,
+      isBestSeller: params.isBestSeller === "true",
+      isFeatured: params.isFeatured === "true",
+      isPromotion: params.isPromotion === "true",
+    };
+  };
+
   return (
     <div className="bg-slate-100 px-3 py-2 rounded-md">
       <div className="text-lg font-semibold mb-4 rounded flex flex-row gap-2 items-center justify-between">
@@ -29,19 +39,19 @@ const CategoryList = ({
           <>
             <Link
               href={routePath.customer.products({
-                ...params,
+                ...convertParams(params),
                 category: "",
               })}
               className="block no-underline cursor-pointer"
               scroll={false}
             >
-              <li className="text-base hover:text-slatee-700">
+              <li className="text-base hover:text-slate-700">
                 Tất cả sản phẩm
               </li>
             </Link>
             {categories.map((category) => {
               const url = routePath.customer.products({
-                ...params,
+                ...convertParams(params),
                 category: category.slug,
               });
               const isActive = params?.category === category.slug;

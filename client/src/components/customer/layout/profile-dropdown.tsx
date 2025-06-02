@@ -106,11 +106,11 @@ export default function ProfileDropdown({
     : unLoggedProfileItems;
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <DefaultButton
           suffix={<CgProfile className="!w-6 !h-6"></CgProfile>}
           className="!font-semibold"
-        ></DefaultButton>
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {account && (

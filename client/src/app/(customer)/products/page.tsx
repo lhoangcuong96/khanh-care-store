@@ -4,7 +4,7 @@ import Promotions from "@/components/ui/promotions";
 import { routePath } from "@/constants/routes";
 import {
   ProductInListType,
-  ProductListQueryParamsType,
+  ProductListQueryType,
 } from "@/validation-schema/product";
 import { Metadata } from "next";
 import ProductGrid from "./product-grid";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function Products({
   searchParams,
 }: {
-  searchParams: Promise<ProductListQueryParamsType>;
+  searchParams: Promise<ProductListQueryType>;
 }) {
   const params = await searchParams;
 

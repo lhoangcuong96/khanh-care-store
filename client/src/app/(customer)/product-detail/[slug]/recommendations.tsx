@@ -8,35 +8,31 @@ import productRequestApi from "@/api-request/product";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-export function Recommendations({ categoryId }: { categoryId: string }) {
+export function Recommendations({ slug }: { slug: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 4;
 
-  const { data: recommendedProducts, isLoading } = useQuery({
-    queryKey: ["recommendations", categoryId],
+  const { data: res, isLoading } = useQuery({
+    queryKey: ["recommendations", slug],
     queryFn: async () => {
-      const resp = await productRequestApi.getProducts({
-        page: 1,
-        limit: 16,
-        category: categoryId,
+      const resp = await productRequestApi.getRelatedProducts(slug, {
+        page: currentPage,
+        limit: productsPerPage,
       });
-      return resp.payload?.data;
+      return resp.payload;
     },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
   });
-
-  const totalPages = recommendedProducts
-    ? Math.ceil(recommendedProducts.length / productsPerPage)
-    : 0;
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
-  const currentProducts = recommendedProducts?.slice(startIndex, endIndex);
 
   const handlePrevious = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleNext = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => Math.min(prev + 1, res?.totalPages || 0));
   };
 
   return (
@@ -61,7 +57,7 @@ export function Recommendations({ categoryId }: { categoryId: string }) {
             size="icon"
             className="h-8 w-8"
             onClick={handleNext}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === (res?.totalPages || 0)}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -73,7 +69,7 @@ export function Recommendations({ categoryId }: { categoryId: string }) {
         </div>
       ) : (
         <div className="space-y-4">
-          {currentProducts?.map((product) => (
+          {res?.data?.map((product) => (
             <Card key={product.id} className="p-4">
               <div className="flex gap-4">
                 <Image

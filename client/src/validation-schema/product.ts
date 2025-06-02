@@ -106,16 +106,15 @@ export type ProductDetailResponseType = z.TypeOf<
 /*----------------End Detail---------------------*/
 
 /*----------------List---------------------*/
-export const ProductListQueryParamsSchema = z.object({
-  ...CommonQuery.shape,
-  category: z.string().optional(),
-  slug: z.string().optional().nullable(),
-  isFeatured: z.boolean().optional(),
-  isBestSeller: z.boolean().optional(),
-  isPromotion: z.boolean().optional(),
-  price: z.array(z.string()).optional(),
-  weight: z.array(z.string()).optional(),
-});
+export const ProductListQueryParamsSchema = z
+  .object({
+    ...CommonQuery.shape,
+    category: z.string().optional(),
+    isFeatured: z.union([z.string(), z.boolean()]).optional(),
+    isBestSeller: z.union([z.string(), z.boolean()]).optional(),
+    isPromotion: z.union([z.string(), z.boolean()]).optional(),
+  })
+  .strip();
 
 export const ProductInListSchema = ProductSchema.pick({
   id: true,
@@ -126,7 +125,6 @@ export const ProductInListSchema = ProductSchema.pick({
   slug: true,
   isFeatured: true,
   isBestSeller: true,
-  isPublished: true,
   isPromotion: true,
   promotionPercent: true,
   promotionStart: true,
@@ -136,12 +134,16 @@ export const ProductInListSchema = ProductSchema.pick({
 
 export const ProductListResSchema = z.object({
   data: z.array(ProductInListSchema),
+  total: z.number(),
+  limit: z.number(),
+  page: z.number(),
+  totalPages: z.number(),
   message: z.string(),
 });
-export type ProductListQueryParamsType = z.TypeOf<
+export type ProductListQueryType = z.TypeOf<
   typeof ProductListQueryParamsSchema
 >;
-export type ProductListResponseType = z.TypeOf<typeof ProductListResSchema>;
+export type ProductListResType = z.TypeOf<typeof ProductListResSchema>;
 export type ProductInListType = z.TypeOf<typeof ProductInListSchema>;
 
 /*----------------End List---------------------*/

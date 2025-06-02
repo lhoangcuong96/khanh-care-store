@@ -19,6 +19,21 @@ import { routePath } from "@/constants/routes";
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 export const MAX_FILE_SIZE = 300 * 1024 * 1024; // 300MB
 export const MAX_PRODUCT_IMAGES = 9;
+export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+const imageSchema = z.union([
+  z.string().url("Vui lòng nhập URL hình ảnh hợp lệ"),
+  z
+    .instanceof(File, { message: "Vui lòng chọn file hình ảnh" })
+    .refine((file) => file.size <= MAX_IMAGE_SIZE, {
+      message: `Kích thước file không được vượt quá ${
+        MAX_IMAGE_SIZE / 1024 / 1024
+      }MB`,
+    })
+    .refine((file) => ALLOWED_IMAGE_TYPES.includes(file.type), {
+      message: "Chỉ chấp nhận file hình ảnh (JPEG, PNG, WEBP)",
+    }),
+]);
 
 const ProductCreationBaseFormSchema = z.object({
   name: z
@@ -32,10 +47,15 @@ const ProductCreationBaseFormSchema = z.object({
       required_error: "Vui lòng nhập mô tả sản phẩm",
     })
     .min(1, "Vui lòng nhập mô tả sản phẩm"),
-  thumbnail: z.any({
-    required_error: "Vui lòng chọn hình ảnh sản phẩm",
+  thumbnail: imageSchema.refine((val) => !!val, {
+    message: "Vui lòng chọn hình ảnh sản phẩm",
   }),
-  productGallery: z.array(z.any()).optional(),
+  productGallery: z
+    .array(imageSchema)
+    .max(MAX_PRODUCT_IMAGES, {
+      message: `Số lượng hình ảnh không được vượt quá ${MAX_PRODUCT_IMAGES}`,
+    })
+    .optional(),
   category: z
     .string({
       required_error: "Vui lòng chọn danh mục sản phẩm",
@@ -365,23 +385,12 @@ export function useHandleForm({
   }, [selectedCategory, form]);
 
   useEffect(() => {
-    if (
-      !selectedCategory ||
-      !productDetail ||
-      !categoryAttributes.length ||
-      !form
-    )
-      return;
-    fillAttributes();
+    if (!selectedCategory || !productDetail || !form) return;
+    if (categoryAttributes.length > 0) {
+      fillAttributes();
+    }
     fillVariants();
-  }, [
-    fillAttributes,
-    selectedCategory,
-    productDetail,
-    categoryAttributes,
-    form,
-    fillAttributes,
-  ]);
+  }, [selectedCategory, productDetail, categoryAttributes, form]);
 
   return {
     formSchema,

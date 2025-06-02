@@ -1,8 +1,8 @@
 import { http } from "@/lib/http";
 import {
   ProductDetailResponseType,
-  ProductListResponseType,
-  ProductListQueryParamsType,
+  ProductListQueryType,
+  ProductListResType,
 } from "@/validation-schema/product";
 
 const productRequestApi = {
@@ -12,10 +12,15 @@ const productRequestApi = {
   getProductDetail: (slug: string) => {
     return http.get<ProductDetailResponseType>(`/products/${slug}`);
   },
-  getProducts: (params: ProductListQueryParamsType) => {
+  getProducts: (params: ProductListQueryType) => {
     const currentParams = new URLSearchParams(params as any);
     const url = `/products?${currentParams.toString()}`;
-    return http.get<ProductListResponseType>(url);
+    return http.get<ProductListResType>(url);
+  },
+  getRelatedProducts: (slug: string, params: ProductListQueryType) => {
+    const currentParams = new URLSearchParams(params as any);
+    const url = `/products/${slug}/related-products?${currentParams.toString()}`;
+    return http.get<ProductListResType>(url);
   },
 };
 

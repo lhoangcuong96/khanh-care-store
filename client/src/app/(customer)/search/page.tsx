@@ -1,63 +1,40 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
-import { ProductCard } from "@/components/customer/UI/card/product-card";
-import { ProductInListType } from "@/validation-schema/product";
+import productRequestApi from "@/api-request/product";
 import Breadcrumb from "@/components/customer/layout/breadcrumb";
+import {
+  ProductInListType,
+  ProductListQueryType,
+} from "@/validation-schema/product";
+import SearchContent from "./search-content";
 
-// Mock data - replace with actual API calls
-const mockProducts: ProductInListType[] = [
-  {
-    id: "1",
-    name: "Sản phẩm A",
-    price: 100000,
-    image: {
-      thumbnail: "/images/product-placeholder.jpg",
-    },
-    slug: "san-pham-a",
-    isPromotion: true,
-    promotionPercent: 10,
-    stock: 100,
-    isFeatured: false,
-    isBestSeller: false,
-    isPublished: true,
-  },
-  {
-    id: "2",
-    name: "Sản phẩm B",
-    price: 200000,
-    image: {
-      thumbnail: "/images/product-placeholder.jpg",
-    },
-    slug: "san-pham-b",
-    isPromotion: false,
-    promotionPercent: 0,
-    stock: 50,
-    isFeatured: false,
-    isBestSeller: false,
-    isPublished: true,
-  },
-  {
-    id: "3",
-    name: "Sản phẩm C",
-    price: 300000,
-    image: {
-      thumbnail: "/images/product-placeholder.jpg",
-    },
-    slug: "san-pham-c",
-    isPromotion: true,
-    promotionPercent: 20,
-    stock: 75,
-    isFeatured: false,
-    isBestSeller: false,
-    isPublished: true,
-  },
-];
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<ProductListQueryType>;
+}) {
+  const params = await searchParams;
+  const query = params.search || "";
+  const page = params.page || 1;
+  const limit = params.limit || 10;
 
-export default function SearchPage() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get("q") || "";
+  let products: ProductInListType[] = [];
+  let totalProducts = 0;
+  const totalPages = 0;
 
+  try {
+    const { payload } = await productRequestApi.getProducts({
+      page: page,
+      limit: limit,
+      search: query,
+    });
+    if (payload?.data) {
+      products = payload.data;
+    }
+    if (payload?.total) {
+      totalProducts = payload.total;
+    }
+  } catch (error) {
+    console.log(error);
+  }
   return (
     <div className="flex flex-col w-full items-center justify-center h-full text-sm font-medium">
       <Breadcrumb
@@ -68,30 +45,14 @@ export default function SearchPage() {
           { title: query || "Tất cả sản phẩm", href: `/search?q=${query}` },
         ]}
       />
-      <div className="w-screen sm:p-8 flex items-center justify-center h-full">
-        <div className="max-w-screen-xl w-full">
-          <div className="mx-auto">
-            <div className="container mx-auto px-4 py-8 font-medium">
-              <div className="mb-6 self-start">
-                <h1 className="text-2xl font-bold">
-                  {query
-                    ? `Kết quả tìm kiếm cho "${query}"`
-                    : "Tất cả sản phẩm"}
-                </h1>
-                <p className="text-muted-foreground mt-2">
-                  {mockProducts.length} sản phẩm được tìm thấy
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {mockProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SearchContent
+        products={products}
+        query={query}
+        totalProducts={totalProducts}
+        page={page}
+        limit={limit}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

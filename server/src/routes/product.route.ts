@@ -8,9 +8,12 @@ import {
   ProductListQueryParamsSchema,
   ProductListQueryType,
   ProductListResSchema,
-  ProductListResType
+  ProductListResType,
+  ProductRelatedParamsSchema,
+  ProductRelatedQueryParamsSchema
 } from '@/schemaValidations/product.schema'
 import { FastifyInstance, FastifyPluginOptions } from 'fastify'
+import z from 'zod'
 
 export default async function ProductRoutes(fastify: FastifyInstance, options: FastifyPluginOptions) {
   const controller = new ProductController()
@@ -31,11 +34,15 @@ export default async function ProductRoutes(fastify: FastifyInstance, options: F
     },
     async (request, reply) => {
       const queryParams = request.query as ProductListQueryType
-      const { data } = await controller.getProductList({
+      const { data, total, limit, page, totalPages } = await controller.getProductList({
         ...queryParams
       })
       reply.send({
         data,
+        total,
+        limit,
+        page,
+        totalPages,
         message: 'Lấy danh sách sản phẩm thành công!'
       })
     }
@@ -59,6 +66,28 @@ export default async function ProductRoutes(fastify: FastifyInstance, options: F
       reply.send({
         data: product,
         message: 'Lấy thông tin sản phẩm thành công!'
+      })
+    }
+  )
+
+  fastify.get(
+    '/:slug/related-products',
+    {
+      schema: {
+        params: ProductRelatedParamsSchema,
+        querystring: ProductRelatedQueryParamsSchema,
+        response: {
+          200: ProductListResSchema
+        }
+      }
+    },
+    async (request, reply) => {
+      const { slug } = request.params as { slug: string }
+      const { limit, page } = request.query as { limit?: number; page?: number }
+      const relatedProducts = await controller.getRelatedProducts(slug, limit, page)
+      reply.send({
+        data: relatedProducts,
+        message: 'Lấy danh sách sản phẩm liên quan thành công!'
       })
     }
   )

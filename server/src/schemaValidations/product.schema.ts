@@ -59,10 +59,7 @@ export const ProductListQueryParamsSchema = z
     category: z.string().optional(),
     isFeatured: z.union([z.string(), z.boolean()]).optional(),
     isBestSeller: z.union([z.string(), z.boolean()]).optional(),
-    isPromotion: z.union([z.string(), z.boolean()]).optional(),
-    price: z.string().optional(),
-    weight: z.string().optional(),
-    isPublished: z.boolean().optional()
+    isPromotion: z.union([z.string(), z.boolean()]).optional()
   })
   .strip()
 
@@ -84,6 +81,10 @@ export const ProductInListSchema = ProductSchema.pick({
 
 export const ProductListResSchema = z.object({
   data: z.array(ProductInListSchema),
+  total: z.number(),
+  limit: z.number(),
+  page: z.number(),
+  totalPages: z.number(),
   message: z.string()
 })
 export type ProductListQueryType = z.TypeOf<typeof ProductListQueryParamsSchema>
@@ -117,3 +118,23 @@ export type ProductDetailParamsType = z.TypeOf<typeof ProductDetailParamsSchema>
 export type ProductDetailType = z.TypeOf<typeof ProductDetailSchema>
 export type ProductDetailResponseType = z.TypeOf<typeof ProductDetailResponseSchema>
 /*----------------End Detail---------------------*/
+
+/*----------------Related Products---------------------*/
+export const ProductRelatedQueryParamsSchema = z.object({
+  limit: z.coerce.number().optional(),
+  page: z.coerce.number().optional()
+})
+export const ProductRelatedParamsSchema = z.object({
+  slug: z.string()
+})
+
+export const ProductRelatedResponseSchema = z.object({
+  data: z.array(ProductInListSchema),
+  total: z.number(),
+  limit: z.number(),
+  page: z.number(),
+  totalPages: z.number()
+})
+
+export type ProductRelatedParamsType = z.TypeOf<typeof ProductRelatedParamsSchema>
+export type ProductRelatedResponseType = z.TypeOf<typeof ProductRelatedResponseSchema>

@@ -16,4 +16,8 @@ export default class ProductController {
   getProductDetail = (slug: string) => {
     return this.service.getDetailBySlug(slug)
   }
+
+  getRelatedProducts = (slug: string, limit?: number, page?: number) => {
+    return this.service.getRelatedProducts(slug, limit, page)
+  }
 }

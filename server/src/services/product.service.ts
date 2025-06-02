@@ -19,7 +19,13 @@ export class ProductService {
     return product
   }
 
-  async list(queryParams: ProductListQueryType): Promise<{ data: ProductInListType[] }> {
+  async list(queryParams: ProductListQueryType): Promise<{
+    data: ProductInListType[]
+    total: number
+    limit: number
+    page: number
+    totalPages: number
+  }> {
     const {
       page = 1,
       limit = 20,
@@ -29,30 +35,10 @@ export class ProductService {
       search,
       isPromotion = false,
       isBestSeller = false,
-      isFeatured = false,
-      price,
-      weight
+      isFeatured = false
     } = queryParams
     const skip = (page - 1) * limit
     const take = limit
-
-    const priceRanges = price ? decodeURIComponent(price).split(',') : []
-    const priceFilters = priceRanges.map((range) => {
-      const [min, max] = range.split('-').map(Number)
-      return { price: { gte: min, lte: max } }
-    })
-
-    const listWeight = weight ? decodeURIComponent(weight).split(',') : []
-    const weightFilters = listWeight.map((weight) => {
-      return {
-        attributes: {
-          some: {
-            key: 'weight',
-            value: { equals: weight }
-          }
-        }
-      }
-    })
 
     const categoryObj = category
       ? await prisma.category.findFirst({
@@ -81,11 +67,7 @@ export class ProductService {
         {
           isPublished: true
         }
-      ],
-      OR:
-        priceFilters.length || weightFilters.length
-          ? [...(priceFilters.length ? priceFilters : []), ...(weightFilters.length ? weightFilters : [])]
-          : undefined
+      ]
     }
 
     const select = {
@@ -114,14 +96,26 @@ export class ProductService {
       }
     }
 
-    const data = await prisma.product.findMany({
+    const getProducts = prisma.product.findMany({
       where,
       skip,
       take,
       orderBy,
       select
     })
-    return { data }
+
+    const getTotal = prisma.product.count({
+      where
+    })
+
+    const [data, total] = await Promise.all([getProducts, getTotal])
+    return {
+      data,
+      total,
+      limit,
+      page,
+      totalPages: Math.ceil(total / limit)
+    }
   }
 
   async getDetailBySlug(slug: string) {
@@ -151,5 +145,80 @@ export class ProductService {
       }
     })
     return data
+  }
+
+  async getRelatedProducts(
+    productId: string,
+    limit: number = 4,
+    page: number = 1
+  ): Promise<{
+    data: ProductInListType[]
+    total: number
+    limit: number
+    page: number
+    totalPages: number
+  }> {
+    try {
+      // First get the product to find its category
+      const product = await prisma.product.findUnique({
+        where: { id: productId },
+        select: { categoryId: true }
+      })
+
+      if (!product) {
+        throw new Error('Không tìm thấy sản phẩm')
+      }
+
+      // Get products from the same category, excluding the current product
+      const getRelativeProducts = prisma.product.findMany({
+        where: {
+          categoryId: product.categoryId,
+          id: { not: productId },
+          isPublished: true
+        },
+        take: limit,
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          slug: true,
+          description: true,
+          title: true,
+          stock: true,
+          isBestSeller: true,
+          isFeatured: true,
+          isPromotion: true,
+          promotionPercent: true,
+          promotionStart: true,
+          promotionEnd: true,
+          image: true
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      })
+      const getTotalProducts = prisma.product.count({
+        where: {
+          categoryId: product.categoryId,
+          id: { not: productId },
+          isPublished: true
+        }
+      })
+      const [relativeProducts, totalProducts] = await Promise.all([getRelativeProducts, getTotalProducts])
+      const totalPages = Math.ceil(totalProducts / limit)
+
+      return {
+        data: relativeProducts,
+        total: relativeProducts.length,
+        limit,
+        page,
+        totalPages
+      }
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new Error(`Database error: ${error.message}`)
+      }
+      throw error
+    }
   }
 }

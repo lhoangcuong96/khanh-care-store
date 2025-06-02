@@ -116,6 +116,12 @@ export const ProductDetailSchema = ProductSchema.omit({
       })
       .optional()
       .nullable(),
+    attributes: z.array(
+      z.object({
+        attributeId: z.string(),
+        value: z.any()
+      })
+    ),
     variants: z.array(
       ProductVariantSchema.omit({
         id: true,
@@ -125,7 +131,12 @@ export const ProductDetailSchema = ProductSchema.omit({
         promotionEnd: true
       }).merge(
         z.object({
-          attributes: z.array(ProductAttributeValueSchema)
+          attributes: z.array(
+            z.object({
+              attributeId: z.string(),
+              value: z.any()
+            })
+          )
         })
       )
     )
