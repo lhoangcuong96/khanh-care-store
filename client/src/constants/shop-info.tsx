@@ -6,8 +6,8 @@ export const shopInfo = {
     href: "tel:0826390079",
   },
   email: {
-    label: "lhoangcuong1996@gmail.com",
-    href: "mailto:lhoangcuong1996@gmail.com",
+    label: "kcarestore@gmail.com",
+    href: "mailto:kcarestore@gmail.com",
   },
   website: "https://kcs.com.vn",
   facebook: "https://www.facebook.com/share/15MVNirEeY/?mibextid=wwXIfr",

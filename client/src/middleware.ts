@@ -93,6 +93,10 @@ export async function middleware(request: NextRequest) {
   if (isIndex(pathname)) {
     return NextResponse.redirect(new URL(routePath.customer.home, request.url));
   }
+  
+  if (accessToken && isTokenExpired(accessToken)) {
+    return await handleRefreshToken(accessToken, refreshToken, request);
+  }
 
   if (accessToken && isAuthRoute(pathname)) {
     const previousUrl = request.headers.get("referer") || "/";
@@ -106,9 +110,6 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (accessToken && isTokenExpired(accessToken)) {
-    return await handleRefreshToken(accessToken, refreshToken, request);
-  }
 
   // unauthorized
   if (!accessToken && isPrivateRoute(pathname)) {
