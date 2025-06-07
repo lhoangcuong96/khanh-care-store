@@ -5,7 +5,7 @@ import ProfileContent from "./profile-content";
 
 export const generateMetadata = async (): Promise<Metadata> => {
   return {
-    title: "Trang khách hàng | Dollar Organic",
+    title: "Trang khách hàng | KCS",
     description: "Trang khách hàng",
   };
 };

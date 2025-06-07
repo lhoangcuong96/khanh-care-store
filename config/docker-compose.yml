@@ -36,8 +36,8 @@ services:
       REDIS_ARGS: "--save 60 1 --loglevel warning"
 
   nginx:
-    image: nginx:latest
     container_name: nginx
+    image: nginx:alpine
     ports:
       - "80:80"
       - "443:443"
@@ -45,23 +45,21 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    restart: always
-    networks:
-      - app-network
     depends_on:
       - frontend
       - backend
+    networks:
+      - app-network
 
   certbot:
-    image: certbot/certbot:latest
+    image: certbot/certbot
     container_name: certbot
     volumes:
-      - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
-    entrypoint: /bin/sh -c # The certonly command runs once for obtaining the certificate
-    # chỉ tạo 1 certificate duy nhất cho cả 2 domain
-    command: >
-      "certbot certonly --staging --webroot  --webroot-path=/var/www/certbot  --email lhoangcuong1999@gmail.com  --agree-tos  --no-eff-email  -d khanhstore.com -d api.khanhstore.com --staging --non-interactive"
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --email lhoangcuong1996@gmail.com -d khanhstore.com -d www.khanhstore.com -d api.khanhstore.com -d www.api.khanhstore.com --agree-tos --non-interactive
+    depends_on:
+      - nginx
     networks:
       - app-network
 

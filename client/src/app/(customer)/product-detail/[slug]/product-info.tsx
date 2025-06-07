@@ -181,7 +181,7 @@ export function ProductPromotions() {
               width={15}
               height={15}
             />
-            Tặng 100.000đ mua hàng tại website thành viên Heo sach nhà Thoa
+            Tặng 100.000đ mua hàng tại website thành viên KCS
           </li>
         </ul>
       </Card2>

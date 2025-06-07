@@ -4,7 +4,7 @@ import { SignUpForm } from "./sign-up-form";
 
 export const generateMetadata = async (): Promise<Metadata> => {
   return {
-    title: "Đăng Ký | Dollar Organic",
+    title: "Đăng Ký | KCS",
     description:
       "Đăng kí tài khoản của bạn để khám phá và mua sắm các sản phẩm sạch, an toàn và chất lượng cao.",
   };
