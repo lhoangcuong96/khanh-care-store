@@ -74,7 +74,7 @@ export default function CartSection() {
             cart.items.map((item) => (
               <TableRow key={item.product.id}>
                 <TableCell>
-                  <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex flex-col md:flex-row gap-4 items-center">
                     <Image
                       src={item.product.image.thumbnail || "/placeholder.svg"}
                       alt={item.product.name}
@@ -84,11 +84,16 @@ export default function CartSection() {
                     />
                     <div>
                       <div className="font-medium">{item.product.name}</div>
+                      {item.product.variant && (
+                        <div className="text-sm text-gray-600 opacity-80 mt-2">
+                          Phân loại hàng: {item.product.variant.name}
+                        </div>
+                      )}
                       <AlertDialog>
                         <AlertDialogTrigger>
                           <Button
                             variant="link"
-                            className="p-0 text-slate-600 underline"
+                            className="p-0 text-red-600 underline"
                           >
                             Xóa
                           </Button>

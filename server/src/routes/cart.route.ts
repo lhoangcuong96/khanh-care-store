@@ -2,8 +2,8 @@ import { CartController } from '@/controllers/cart.controller'
 import { requireLoggedHook } from '@/hooks/auth.hooks'
 import {
   AddProductToCartResponseSchema,
-  AddProductToCartSchema,
-  AddProductToCartType,
+  AddProductToCartBodySchema,
+  AddProductToCartBodyType,
   DeleteCartItemSchema,
   GetCartResponseSchema,
   UpdateCartItemQuantityBodySchema,
@@ -18,15 +18,15 @@ export function CartRoutes(fastify: FastifyInstance, options: FastifyPluginOptio
     '/add',
     {
       schema: {
-        body: AddProductToCartSchema,
+        body: AddProductToCartBodySchema,
         response: {
           200: AddProductToCartResponseSchema
         }
       }
     },
-    async (request: FastifyRequest<{ Body: AddProductToCartType }>, reply: FastifyReply) => {
-      const { productId, quantity } = request.body
-      const cart = await CartController.addProductToCart(productId, quantity, request.account?.id)
+    async (request: FastifyRequest<{ Body: AddProductToCartBodyType }>, reply: FastifyReply) => {
+      const { productId, variantId, quantity } = request.body
+      const cart = await CartController.addProductToCart(productId, quantity, variantId, request.account?.id)
       reply.send({
         message: 'Thêm sản phẩm vào giỏ hàng thành công',
         data: cart

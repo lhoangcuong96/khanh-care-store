@@ -90,10 +90,23 @@ export async function middleware(request: NextRequest) {
     const tokenPayload = jwtDecode<PayloadJWT>(accessToken);
     account = tokenPayload?.account;
   }
+
+  const response = NextResponse.next();
+  console.log(accessToken, account);
+  if (account) {
+    response.cookies.set("userId", account.id, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      // You can add maxAge or expires if you want the cookie to expire
+      // maxAge: 60 * 60 * 24, // 24 hours
+    });
+  }
+
   if (isIndex(pathname)) {
     return NextResponse.redirect(new URL(routePath.customer.home, request.url));
   }
-  
+
   if (accessToken && isTokenExpired(accessToken)) {
     return await handleRefreshToken(accessToken, refreshToken, request);
   }
@@ -110,12 +123,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-
   // unauthorized
   if (!accessToken && isPrivateRoute(pathname)) {
     return NextResponse.redirect(new URL(routePath.signIn, request.url));
   }
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
@@ -129,5 +141,7 @@ export const config = {
     "/sign-in",
     "/sign-up",
     "/",
+    "/home",
+    "/home/:path*",
   ],
 };

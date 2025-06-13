@@ -17,4 +17,12 @@ export class AccountController {
   static changePassword = async (accountId: string, oldPassword: string, newPassword: string) => {
     return AccountService.changePassword(accountId, oldPassword, newPassword)
   }
+
+  static addFavoriteProduct = async (accountId: string, productId: string) => {
+    return AccountService.addFavoriteProduct(accountId, productId)
+  }
+
+  static removeFavoriteProduct = async (accountId: string, productId: string) => {
+    return AccountService.removeFavoriteProduct(accountId, productId)
+  }
 }

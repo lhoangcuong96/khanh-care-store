@@ -47,6 +47,11 @@ export function CartPopup() {
                 />
                 <div className="flex flex-col flex-1 gap-1">
                   <h3 className="font-bold">{item.product.name}</h3>
+                  {item.product.variant && (
+                    <p className="text-sm text-slate-600">
+                      {item.product.variant.name}
+                    </p>
+                  )}
                   <AlertDialog>
                     <AlertDialogTrigger
                       className="text-red-500 hover:text-red-700 w-fit"

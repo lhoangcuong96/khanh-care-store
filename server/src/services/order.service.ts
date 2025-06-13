@@ -19,7 +19,7 @@ export default class OrderService {
     }
 
     // Validate that the items in the request body match the items in the cart
-    const cartItemIds = cart.items.map((item) => item.productId)
+    const cartItemIds = cart.items.map((item) => item.product?.id)
     const bodyItemIds = items.map((item) => item.productId)
     const isValid = bodyItemIds.every((id) => cartItemIds.includes(id))
     if (!isValid) {

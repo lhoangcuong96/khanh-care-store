@@ -5,19 +5,49 @@ import CategoryCard from "@/components/customer/UI/card/category-card";
 import { ErrorMessage } from "@/components/customer/UI/error-message";
 import { routePath } from "@/constants/routes";
 import Link from "next/link";
-import { useRef } from "react";
+import { useReducer, useRef } from "react";
 import { FaTools } from "react-icons/fa";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 
 import { FeaturedCategoryType } from "@/validation-schema/category";
-import {
-  A11y,
-  Autoplay,
-  Navigation,
-  Pagination,
-  Virtual,
-} from "swiper/modules";
+import { A11y, Autoplay, Pagination, Virtual } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
+interface ComponentState {
+  isDisabledNext: boolean;
+  isDisabledPrev: boolean;
+}
+
+enum ActionType {
+  DISABLE_NEXT_BUTTON = "DISABLE_NEXT_BUTTON",
+  DISABLE_PREV_BUTTON = "DISABLE_PREV_BUTTON",
+}
+
+const INITIAL_STATE: ComponentState = {
+  isDisabledNext: true,
+  isDisabledPrev: true,
+};
+
+const reducer = (
+  state: ComponentState,
+  action: { type: ActionType; value: boolean }
+) => {
+  switch (action.type) {
+    case ActionType.DISABLE_NEXT_BUTTON:
+      return {
+        ...state,
+        isDisabledNext: action.value,
+      };
+
+    case ActionType.DISABLE_PREV_BUTTON:
+      return {
+        ...state,
+        isDisabledPrev: action.value,
+      };
+
+    default:
+      throw Error("Unknown action.");
+  }
+};
 
 export function FeaturedCategories({
   categories,
@@ -27,10 +57,11 @@ export function FeaturedCategories({
   error?: string;
 }) {
   const swiperRef = useRef<SwiperClass>(null);
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   return (
     <div className="max-w-full w-screen h-fit mt-5 relative z-50">
-      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
+      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600 gap-4">
         <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
           Danh mục nổi bật
           <FaTools className="text-slate-600"></FaTools>
@@ -41,7 +72,7 @@ export function FeaturedCategories({
             suffix={
               <MdOutlineNavigateBefore className="!h-5 !w-5"></MdOutlineNavigateBefore>
             }
-            disabled={swiperRef.current?.isBeginning}
+            disabled={state.isDisabledPrev}
             onClick={() => swiperRef.current?.slidePrev()}
           ></DefaultButton>
           <DefaultButton
@@ -49,7 +80,7 @@ export function FeaturedCategories({
             suffix={
               <MdOutlineNavigateNext className="!h-5 !w-5"></MdOutlineNavigateNext>
             }
-            disabled={swiperRef.current?.isEnd}
+            disabled={state.isDisabledNext}
             onClick={() => swiperRef.current?.slideNext()}
           ></DefaultButton>
         </div>
@@ -65,12 +96,18 @@ export function FeaturedCategories({
           <Swiper
             onSwiper={(ref) => (swiperRef.current = ref)}
             onSlideChange={(swiper) => {
-              swiperRef.current = swiper;
+              dispatch({
+                type: ActionType.DISABLE_NEXT_BUTTON,
+                value: swiper.isEnd,
+              });
+              dispatch({
+                type: ActionType.DISABLE_PREV_BUTTON,
+                value: swiper.isBeginning,
+              });
             }}
-            modules={[Navigation, Pagination, A11y, Autoplay, Virtual]}
+            modules={[Pagination, A11y, Autoplay, Virtual]}
             spaceBetween={0}
             slidesPerView="auto"
-            navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
             autoplay={true}

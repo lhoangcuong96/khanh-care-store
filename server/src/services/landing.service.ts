@@ -1,12 +1,28 @@
 import prisma from '@/database'
-import { CategoryService } from './category.service'
-import { ProductService } from './product.service'
 import { CategoryStatus } from '@prisma/client'
+import { CategoryService } from './category.service'
 import { PublicNewsService } from './news.service'
+import { ProductService } from './product.service'
 
 export default class LandingService {
-  static async getLandingData() {
+  static async getLandingData(accountId?: string) {
     const productService = new ProductService()
+    let favoriteProducts: string[] = []
+    if (accountId) {
+      const account = await prisma.account.findUnique({
+        where: { id: accountId },
+        select: {
+          favoriteProducts: {
+            select: { id: true }
+          }
+        }
+      })
+      console.log(account)
+      if (account) {
+        favoriteProducts = account.favoriteProducts.map((product) => product.id)
+        console.log(favoriteProducts)
+      }
+    }
 
     const getFeaturedCategories = CategoryService.getFeaturedCategories()
     const getFeaturedProducts = productService.list({
@@ -82,12 +98,32 @@ export default class LandingService {
       getHomeCategoriesWithProducts,
       getNews
     ])
+    const featuredProductsWithFavorite = featuredProducts.data.map((product) => ({
+      ...product,
+      isFavorite: favoriteProducts.includes(product.id)
+    }))
+    const promotionalProductsWithFavorite = promotionalProducts.data.map((product) => ({
+      ...product,
+      isFavorite: favoriteProducts.includes(product.id)
+    }))
+    const bestSellerProductsWithFavorite = bestSellerProducts.data.map((product) => ({
+      ...product,
+      isFavorite: favoriteProducts.includes(product.id)
+    }))
+    const categoriesWithProductsWithFavorite = categoriesWithProducts.map((category) => ({
+      ...category,
+      products: category.products.map((product) => ({
+        ...product,
+        isFavorite: favoriteProducts.includes(product.id)
+      }))
+    }))
+
     return {
       featuredCategories: featuredCategories,
-      featuredProducts: featuredProducts.data,
-      promotionalProducts: promotionalProducts.data,
-      bestSellerProducts: bestSellerProducts.data,
-      categoriesWithProducts: categoriesWithProducts,
+      featuredProducts: featuredProductsWithFavorite,
+      promotionalProducts: promotionalProductsWithFavorite,
+      bestSellerProducts: bestSellerProductsWithFavorite,
+      categoriesWithProducts: categoriesWithProductsWithFavorite,
       listNews: listNews.data
     }
   }

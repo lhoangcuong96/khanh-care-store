@@ -3,8 +3,10 @@ import { requireLoggedHook } from '@/hooks/auth.hooks'
 import {
   AccountResponseSchema,
   AccountResponseType,
+  AddFavoriteProductBodySchema,
   ChangePasswordBody,
   ChangePasswordBodyType,
+  RemoveFavoriteProductBodySchema,
   UpdateProfileBodyType,
   UpdateShippingAddressBody,
   UpdateShippingAddressBodyType
@@ -84,6 +86,39 @@ export default async function accountRoutes(fastify: FastifyInstance, options: F
       const result = await AccountController.updateShippingAddress(request.account!.id, request.body)
       reply.send({
         message: 'Cập nhật địa chỉ giao hàng thành công'
+      })
+    }
+  )
+
+  fastify.post<{ Reply: MessageResponseType; Body: { productId: string } }>(
+    '/favorite',
+    {
+      schema: {
+        body: AddFavoriteProductBodySchema,
+        response: {
+          200: MessageResponseSchema
+        }
+      }
+    },
+    async (request, reply) => {
+      await AccountController.addFavoriteProduct(request.account!.id, request.body.productId)
+      reply.send({
+        message: 'Thêm sản phẩm vào danh sách yêu thích thành công'
+      })
+    }
+  )
+
+  fastify.delete<{ Reply: MessageResponseType; Body: { productId: string } }>(
+    '/favorite',
+    {
+      schema: {
+        body: RemoveFavoriteProductBodySchema
+      }
+    },
+    async (request, reply) => {
+      await AccountController.removeFavoriteProduct(request.account!.id, request.body.productId)
+      reply.send({
+        message: 'Xóa sản phẩm khỏi danh sách yêu thích thành công'
       })
     }
   )

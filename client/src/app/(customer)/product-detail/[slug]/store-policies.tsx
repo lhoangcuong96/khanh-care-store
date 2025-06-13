@@ -1,13 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { shopInfo } from "@/constants/shop-info";
 import { Truck, RefreshCw, HeadphonesIcon, Package } from "lucide-react";
+import { IoStorefront } from "react-icons/io5";
 
 export function StorePolicies() {
   return (
     <Card className="bg-[#f3fce8] p-4">
       <h3 className="font-semibold mb-4 flex items-center gap-2">
         Chính sách cửa hàng
-        <span className="text-slate-600">🍃</span>
+        <IoStorefront className="w-5 h-5 text-slate-600" />
       </h3>
       <div className="space-y-4">
         <PolicyItem

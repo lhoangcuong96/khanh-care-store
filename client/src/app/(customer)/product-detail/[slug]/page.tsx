@@ -1,18 +1,17 @@
 import productRequestApi from "@/api-request/product";
+import { sharedMetadata, sharedOpenGraph } from "@/app/shared-metadata";
 import AppBreadcrumb from "@/components/customer/layout/breadcrumb";
 import { ErrorMessage } from "@/components/customer/UI/error-message";
 import { routePath } from "@/constants/routes";
+import envConfig from "@/envConfig";
 import { HttpError } from "@/lib/http";
 import { ProductDetailType } from "@/validation-schema/product";
-import { ProductImages } from "./product-images";
+import { cache } from "react";
 import { ProductInfo, ProductPromotions } from "./product-info";
 import { ProductTabs } from "./product-tabs";
 import { PromotionCodes } from "./promotion-codes";
 import { Recommendations } from "./recommendations";
 import { StorePolicies } from "./store-policies";
-import { cache } from "react";
-import envConfig from "@/envConfig";
-import { sharedMetadata, sharedOpenGraph } from "@/app/shared-metadata";
 
 // sử dụng cache để tránh bị double fetch khi cả metadata và component cùng fetch dữ liệu
 const getProductDetail = cache(productRequestApi.getProductDetail);
@@ -106,12 +105,7 @@ export default async function ProductDetail({
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   <div className="lg:col-span-2">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <ProductImages
-                        images={productDetail?.image.gallery || []}
-                      />
-                      <ProductInfo product={productDetail} />
-                    </div>
+                    <ProductInfo product={productDetail} />
                     <div className="my-6">
                       <ProductPromotions />
                       <ProductTabs description={productDetail.description} />
@@ -120,7 +114,7 @@ export default async function ProductDetail({
                   <div className="lg:col-span-1">
                     <StorePolicies />
                     <PromotionCodes />
-                    <Recommendations slug={slug} />
+                    <Recommendations productId={productDetail?.id || ""} />
                   </div>
                   <div className="space-y-8"></div>
                 </div>

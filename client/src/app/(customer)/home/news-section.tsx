@@ -18,7 +18,7 @@ function NewsSection({ news }: { news: NewsInListType[] }) {
 
   return (
     <section className="mt-12 mb-8 w-full max-w-screen-xl mx-auto">
-      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
+      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600 gap-4">
         <Link href={routePath.customer.news}>
           <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
             Tin tức mới nhất

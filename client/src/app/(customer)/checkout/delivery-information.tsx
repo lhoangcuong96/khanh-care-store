@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Actions } from "./actions";
-import DeliveryDate from "./delivery-date";
 import DeliveryFormContent from "./delivery-form-content";
 import OrderSummary from "./order-summary";
 
@@ -30,7 +29,7 @@ const formSchema = z.object({
   district: z.string().min(1, "Quận/Huyện là bắt buộc"),
   ward: z.string().min(1, "Phường/Xã là bắt buộc"),
   note: z.string().optional(),
-  shippingDate: z.date().optional().nullable(),
+  // shippingDate: z.date().optional().nullable(),
   shippingPeriod: z.string().optional().nullable(),
 });
 
@@ -57,7 +56,7 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
         locations[0].districts[0].label ||
         "",
       ward: account?.shippingAddress?.ward || "",
-      shippingDate: new Date(),
+      // shippingDate: new Date(),
       shippingPeriod: Period.MORNING,
       note: "",
     },
@@ -83,7 +82,7 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
             province: data.province,
           },
           shippingFee: 0,
-          shippingDate: data.shippingDate,
+          // shippingDate: data.shippingDate,
           shippingPeriod: data.shippingPeriod,
           note: data.note,
         },
@@ -121,7 +120,7 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
         </div>
         <div className="grid gap-4">
           <OrderSummary />
-          <DeliveryDate />
+          {/* <DeliveryDate /> */}
           <Actions isLoading={isLoading} />
         </div>
       </form>

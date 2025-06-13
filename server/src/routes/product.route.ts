@@ -85,8 +85,9 @@ export default async function ProductRoutes(fastify: FastifyInstance, options: F
       const { slug } = request.params as { slug: string }
       const { limit, page } = request.query as { limit?: number; page?: number }
       const relatedProducts = await controller.getRelatedProducts(slug, limit, page)
+      console.log(relatedProducts)
       reply.send({
-        data: relatedProducts,
+        ...relatedProducts,
         message: 'Lấy danh sách sản phẩm liên quan thành công!'
       })
     }

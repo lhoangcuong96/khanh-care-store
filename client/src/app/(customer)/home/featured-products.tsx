@@ -8,14 +8,19 @@ import { routePath } from "@/constants/routes";
 import { ProductInListType } from "@/validation-schema/product";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { FaTools } from "react-icons/fa";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
-import { A11y, Autoplay, Navigation, Pagination } from "swiper/modules";
+import { A11y, Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import ProductDetailModal from "@/components/customer/UI/modal/product-detail-modal";
+import { useRouter } from "next/navigation";
+import useProduct from "@/hooks/modules/use-product";
 
 interface FeaturedProductsProps {
   products: ProductInListType[];
+  handleAddToFavorite: (id: string) => void;
+  handleRemoveFromFavorite: (id: string) => void;
   error?: string;
 }
 
@@ -56,9 +61,19 @@ const reducer = (
   }
 };
 
-export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
+export function FeaturedProducts({
+  products,
+  handleAddToFavorite,
+  handleRemoveFromFavorite,
+  error,
+}: FeaturedProductsProps) {
   const swiperRef = useRef<SwiperRef | null>(null);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [selectedProduct, setSelectedProduct] =
+    useState<ProductInListType | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (swiperRef.current?.swiper) {
@@ -72,6 +87,16 @@ export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
       });
     }
   }, [swiperRef]);
+
+  const handleSearchClick = (product: ProductInListType) => {
+    const isMobile = window.innerWidth < 768;
+    if (!isMobile) {
+      setSelectedProduct(product);
+      setModalOpen(true);
+    } else {
+      router.push(`${routePath.customer.productDetail}/${product.slug}`);
+    }
+  };
 
   return (
     <div
@@ -92,7 +117,7 @@ export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
         ></Image>
       </Link>
       <div className="w-full max-w-full overflow-hidden">
-        <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
+        <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600 gap-4">
           <div>
             <h3 className=" text-slatee-600 text-2xl font-bold flex flex-row items-center gap-2">
               <Link
@@ -139,7 +164,7 @@ export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
           <>
             <Swiper
               ref={swiperRef}
-              modules={[Navigation, Pagination, A11y, Autoplay]}
+              modules={[Pagination, A11y, Autoplay]}
               spaceBetween={10}
               slidesPerView={"auto"}
               pagination={{ clickable: true }}
@@ -160,7 +185,12 @@ export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
               {products.map((product) => {
                 return (
                   <SwiperSlide key={product.id} className="p-2 !w-fit !mr-2">
-                    <ProductCard product={product}></ProductCard>
+                    <ProductCard
+                      product={product}
+                      onSearchClick={() => handleSearchClick(product)}
+                      handleAddToFavorite={handleAddToFavorite}
+                      handleRemoveFromFavorite={handleRemoveFromFavorite}
+                    />
                   </SwiperSlide>
                 );
               })}
@@ -177,6 +207,11 @@ export function FeaturedProducts({ products, error }: FeaturedProductsProps) {
           </>
         )}
       </div>
+      <ProductDetailModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        product={selectedProduct as any}
+      />
     </div>
   );
 }

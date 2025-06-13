@@ -1,17 +1,10 @@
 import landingApiRequest from "@/api-request/landing";
 import { HeroImage } from "@/components/customer/layout/hero-image";
-import Spinner from "@/components/ui/spinner";
 import { shopInfo } from "@/constants/shop-info";
 import { GetLandingDataType } from "@/validation-schema/landing";
-import { ProductInListType } from "@/validation-schema/product";
 import { Metadata } from "next";
-import { Suspense } from "react";
-import { BestSellingProducts } from "./best-selling-products";
-import { CategoryWithProducts } from "./category-with-products";
-import { FeaturedCategories } from "./featured-categories";
-import { FeaturedProducts } from "./featured-products";
-import { OurSpecialServices } from "./our-special-services";
-import NewsSection from "./news-section";
+import { cookies } from "next/headers";
+import PageContent from "./page-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -24,8 +17,11 @@ export default async function CustomerHomePage() {
   let landingPageData: GetLandingDataType | undefined;
   let getProductError: string | undefined;
 
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+
   try {
-    const response = await landingApiRequest.getLandingData();
+    const response = await landingApiRequest.getLandingData(userId);
     landingPageData = response.payload?.data;
   } catch (err) {
     console.error("Có lỗi xảy ra khi lấy dữ liệu sản phẩm!", err);
@@ -35,41 +31,19 @@ export default async function CustomerHomePage() {
   return (
     <div className="flex flex-col items-center w-full">
       <HeroImage src="/images/breadcrumb.jpg"></HeroImage>
-      <div className="flex flex-col items-center gap-8 px-5 w-full max-w-screen-xl">
-        <Suspense fallback={<Spinner />}>
-          <FeaturedCategories
-            categories={landingPageData?.featuredCategories || []}
-            error={getProductError}
-          ></FeaturedCategories>
-        </Suspense>
-        <Suspense fallback={<Spinner />}>
-          <FeaturedProducts
-            products={
-              landingPageData?.bestSellerProducts as ProductInListType[]
-            }
-            error={getProductError}
-          ></FeaturedProducts>
-          <BestSellingProducts
-            products={
-              landingPageData?.bestSellerProducts as ProductInListType[]
-            }
-            error={getProductError}
-          ></BestSellingProducts>
-        </Suspense>
-        <Suspense fallback={<Spinner />}>
-          {landingPageData?.categoriesWithProducts.map((category) => (
-            <CategoryWithProducts
-              key={category.id}
-              category={category}
-              error={getProductError}
-            ></CategoryWithProducts>
-          ))}
-        </Suspense>
-
-        <OurSpecialServices></OurSpecialServices>
-      </div>
-      {/* News Section with mock data */}
-      <NewsSection news={landingPageData?.listNews || []} />
+      <PageContent
+        landingPageData={
+          landingPageData || {
+            bestSellerProducts: [],
+            featuredProducts: [],
+            featuredCategories: [], // TODO: add featured categories
+            categoriesWithProducts: [], // TODO: add categories with products
+            promotionalProducts: [], // TODO: add promotional products
+            listNews: [],
+          }
+        }
+        getProductError={getProductError || ""}
+      ></PageContent>
     </div>
   );
 }

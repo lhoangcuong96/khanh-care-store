@@ -1,8 +1,8 @@
 import { CartService } from '@/services/cart.service'
 
 export class CartController {
-  static async addProductToCart(productId: string, quantity: number, userId?: string) {
-    return CartService.addProductToCart(productId, quantity, userId)
+  static async addProductToCart(productId: string, quantity: number, variantId?: string | null, userId?: string) {
+    return CartService.addProductToCart(productId, quantity, variantId, userId)
   }
 
   static async getCart(userId?: string) {

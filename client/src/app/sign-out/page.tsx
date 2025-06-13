@@ -1,24 +1,33 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { authApiRequest } from "@/api-request/auth";
 import { routePath } from "@/constants/routes";
 import SessionStore from "@/helper/local-store/session-store";
-import { useHandleMessage } from "@/hooks/use-handle-message";
+import useCart from "@/hooks/modules/use-cart";
+import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 export default function Page() {
-  const { messageApi } = useHandleMessage();
   const router = useRouter();
+  const { toast } = useToast();
+  const { clearCart } = useCart();
   const signOut = async () => {
     try {
       await authApiRequest.logoutFromClientToNextServer({ forceLogout: true });
       SessionStore.clearTokens();
+      clearCart();
     } catch (error) {
-      messageApi.error({ error: error as Error });
+      toast({
+        title: "Lỗi",
+        description: "Lỗi khi đăng xuất",
+        variant: "destructive",
+        duration: 3000,
+      });
     } finally {
       router.replace(`${routePath.signIn}`);
-      // router.refresh();
+      router.refresh();
     }
   };
   useEffect(() => {

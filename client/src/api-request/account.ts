@@ -28,4 +28,26 @@ export const accountApiRequest = {
       isPrivate: true,
     });
   },
+  addToFavorite: async (id: string) => {
+    return http.post<MessageResponseType>(
+      `/account/favorite`,
+      {
+        productId: id,
+      },
+      {
+        isPrivate: true,
+      }
+    );
+  },
+  removeFromFavorite: async (id: string) => {
+    return http.delete<MessageResponseType>(
+      `/account/favorite`,
+      {
+        productId: id,
+      },
+      {
+        isPrivate: true,
+      }
+    );
+  },
 };

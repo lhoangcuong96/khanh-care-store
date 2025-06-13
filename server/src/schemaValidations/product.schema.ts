@@ -42,6 +42,7 @@ export const ProductSchema = z.object({
   promotionStart: z.union([z.string(), z.date()]).optional().nullable(),
   promotionEnd: z.union([z.string(), z.date()]).optional().nullable(),
   isPublished: z.boolean(),
+  isFavorite: z.boolean().optional().nullable(),
   image: ProductImageSchema,
   categoryId: z.string(),
   category: z.any(),
@@ -76,7 +77,13 @@ export const ProductInListSchema = ProductSchema.pick({
   promotionPercent: true,
   promotionStart: true,
   promotionEnd: true,
-  image: true
+  image: true,
+  isFavorite: true
+}).extend({
+  variants: z
+    .array(ProductVariantSchema.pick({ id: true, name: true, price: true, stock: true }))
+    .optional()
+    .nullable()
 })
 
 export const ProductListResSchema = z.object({

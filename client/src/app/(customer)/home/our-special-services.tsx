@@ -6,7 +6,7 @@ import Image from "next/image";
 export function OurSpecialServices() {
   return (
     <div className="max-w-full w-screen h-fit mt-5 relative z-50 mb-10">
-      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600">
+      <div className="flex flex-row justify-between mb-5 pb-4 border-b-[0.5px] border-b-slate-600 gap-4">
         <div>
           <h3 className=" text-slate-600 text-2xl font-bold flex flex-row items-center gap-2">
             ✨ Dịch vụ đặc biệt của chúng tôi 🚗

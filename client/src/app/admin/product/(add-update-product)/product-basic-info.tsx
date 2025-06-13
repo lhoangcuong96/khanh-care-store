@@ -449,6 +449,7 @@ export default function ProductBasicInfo() {
                       init={{
                         height: 400,
                         menubar: true,
+                        language: "vi",
                         plugins: [
                           "advlist",
                           "autolink",

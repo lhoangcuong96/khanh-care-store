@@ -40,8 +40,20 @@ export default function DesktopHeader() {
   const handleSearch = () => {
     if (searchRef.current) {
       const searchQuery = searchRef.current.value.trim();
+      const isFeatured = searchParams.get("isFeatured") === "true";
+      const isBestSeller = searchParams.get("isBestSeller") === "true";
+      const isPromotion = searchParams.get("isPromotion") === "true";
+      const category = searchParams.get("category") || "";
       if (searchQuery) {
-        router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+        router.push(
+          routePath.customer.products({
+            search: searchQuery,
+            isFeatured,
+            isBestSeller,
+            isPromotion,
+            category,
+          })
+        );
       }
     }
   };

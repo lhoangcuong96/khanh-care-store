@@ -67,3 +67,16 @@ export const UpdateShippingAddressBody = ShippingAddressSchema
 
 export type UpdateShippingAddressBodyType = z.TypeOf<typeof UpdateShippingAddressBody>
 /* Update shipping address */
+
+/*----------------Favorite---------------------*/
+export const AddFavoriteProductBodySchema = z.object({
+  productId: z.string()
+})
+
+export type AddFavoriteProductBodyType = z.TypeOf<typeof AddFavoriteProductBodySchema>
+
+export const RemoveFavoriteProductBodySchema = AddFavoriteProductBodySchema
+
+export type RemoveFavoriteProductBodyType = z.TypeOf<typeof RemoveFavoriteProductBodySchema>
+
+/*----------------End Favorite---------------------*/

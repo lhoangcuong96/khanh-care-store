@@ -44,6 +44,7 @@ export const routePath = {
     storeLocations: "/store-locations",
     productDetail: "/product-detail/",
     cart: "/cart",
+    privacyPolicy: "/privacy-policy",
     checkout: {
       deliveryInformation: "/checkout",
       orderConfirmation: (orderCode: string) =>

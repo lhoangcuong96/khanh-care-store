@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { InfoIcon } from "lucide-react";
+import { BiSolidDiscount } from "react-icons/bi";
 
 interface PromotionCode {
   code: string;
@@ -36,7 +37,7 @@ export function PromotionCodes() {
     <Card className="bg-[#f3fce8] p-4 mt-4">
       <h3 className="font-semibold mb-4 flex items-center gap-2">
         Mã khuyến mãi
-        <span className="text-slate-600">🍃</span>
+        <BiSolidDiscount className="w-5 h-5 text-red-600" />
       </h3>
       <div className="space-y-3">
         {promotionCodes.map((promo) => (

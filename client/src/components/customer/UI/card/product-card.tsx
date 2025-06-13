@@ -9,7 +9,17 @@ import { Heart, Search, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export function ProductCard({ product }: { product: ProductInListType }) {
+export function ProductCard({
+  product,
+  onSearchClick,
+  handleAddToFavorite,
+  handleRemoveFromFavorite,
+}: {
+  product: ProductInListType;
+  onSearchClick?: () => void;
+  handleAddToFavorite: (id: string) => void;
+  handleRemoveFromFavorite: (id: string) => void;
+}) {
   const { handleAddToCart } = useCart();
 
   const promotionalPrice = product?.promotionPercent
@@ -83,7 +93,13 @@ export function ProductCard({ product }: { product: ProductInListType }) {
           size="icon"
           variant="secondary"
           className="h-9 w-9 bg-slate-700 text-white hover:bg-slate-900 border border-slate-200 shadow-sm transition-colors"
-          onClick={() => handleAddToCart(product.id!)}
+          onClick={() => {
+            if (product.variants && product.variants.length > 0) {
+              onSearchClick?.();
+            } else {
+              handleAddToCart(product.id!);
+            }
+          }}
         >
           <ShoppingCart className="h-5 w-5" />
         </Button>
@@ -91,15 +107,27 @@ export function ProductCard({ product }: { product: ProductInListType }) {
           size="icon"
           variant="secondary"
           className="h-9 w-9 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 shadow-sm"
+          onClick={onSearchClick}
         >
-          <Search className="h-5 w-5" />
+          <Search className="h-9 w-5" />
         </Button>
         <Button
           size="icon"
           variant="secondary"
           className="h-9 w-9 bg-slate-100 text-slate-700 hover:bg-pink-100 border border-slate-200 shadow-sm"
+          onClick={() => {
+            if (product.isFavorite) {
+              handleRemoveFromFavorite(product.id!);
+            } else {
+              handleAddToFavorite(product.id!);
+            }
+          }}
         >
-          <Heart className="h-5 w-5" />
+          <Heart
+            className={`h-5 w-5 ${
+              product.isFavorite ? "text-pink-500 fill-pink-500" : ""
+            }`}
+          />
         </Button>
       </div>
     </Card>

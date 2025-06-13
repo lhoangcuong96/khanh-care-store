@@ -2,6 +2,7 @@ import prisma from '@/database'
 import { Order } from '@/schemaValidations/common.schema'
 import { ProductInListType, ProductListQueryType } from '@/schemaValidations/product.schema'
 import { Prisma } from '@prisma/client'
+import { removeVietnameseAccents } from '@/utils/string.utils'
 
 export class ProductService {
   async checkProductAvailability(productId: string, quantity: number) {
@@ -40,27 +41,23 @@ export class ProductService {
     const skip = (page - 1) * limit
     const take = limit
 
-    const categoryObj = category
-      ? await prisma.category.findFirst({
-          where: {
-            slug: category
-          },
-          select: {
-            id: true
-          }
-        })
-      : undefined
-    const categoryId = categoryObj?.id
     const where: Prisma.ProductWhereInput = {
       AND: [
-        categoryId
+        category
           ? {
               category: {
-                id: categoryId
+                id: category
               }
             }
           : {},
-        search ? { name: { contains: search, mode: Prisma.QueryMode.insensitive } } : {},
+        search
+          ? {
+              OR: [
+                { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
+                { name: { contains: removeVietnameseAccents(search), mode: Prisma.QueryMode.insensitive } }
+              ]
+            }
+          : {},
         isPromotion ? { isPromotion: true } : {},
         isBestSeller ? { isBestSeller: true } : {},
         isFeatured ? { isFeatured: true } : {},
@@ -70,7 +67,7 @@ export class ProductService {
       ]
     }
 
-    const select = {
+    const select: Prisma.ProductSelect = {
       id: true,
       name: true,
       price: true,
@@ -84,7 +81,15 @@ export class ProductService {
       promotionPercent: true,
       promotionStart: true,
       promotionEnd: true,
-      image: true
+      image: true,
+      variants: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          stock: true
+        }
+      }
     }
 
     let orderBy: { [x: string]: string } = {
@@ -209,7 +214,7 @@ export class ProductService {
 
       return {
         data: relativeProducts,
-        total: relativeProducts.length,
+        total: totalProducts,
         limit,
         page,
         totalPages

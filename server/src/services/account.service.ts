@@ -97,4 +97,36 @@ export class AccountService {
       }
     })
   }
+
+  static addFavoriteProduct = async (accountId: string, productId: string) => {
+    try {
+      await prisma.account.update({
+        where: { id: accountId },
+        data: {
+          favoriteProducts: { connect: { id: productId } }
+        }
+      })
+    } catch (error) {
+      throw new StatusError({
+        message: 'Lỗi khi thêm sản phẩm vào danh sách yêu thích',
+        status: 400
+      })
+    }
+  }
+
+  static removeFavoriteProduct = async (accountId: string, productId: string) => {
+    try {
+      await prisma.account.update({
+        where: { id: accountId },
+        data: {
+          favoriteProducts: { disconnect: { id: productId } }
+        }
+      })
+    } catch (error) {
+      throw new StatusError({
+        message: 'Lỗi khi xóa sản phẩm khỏi danh sách yêu thích',
+        status: 400
+      })
+    }
+  }
 }

@@ -44,6 +44,10 @@ model Product {
     promotionPercent Int?
     promotionStart   DateTime?
     promotionEnd     DateTime?
+
+    // Users who have favorited this product
+    favoritedBy    Account[] @relation("FavoriteProducts", fields: [favoritedByIds], references: [id])
+    favoritedByIds String[]  @db.ObjectId
 }
 
 model ProductVariant {

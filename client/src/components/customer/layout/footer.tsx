@@ -96,7 +96,7 @@ export function Footer() {
             </div>
             <div className="font-bold mt-5">
               <h3 className="inline-block text-slatee-600 uppercase">
-                Liên kết sàn
+                Liên kết
               </h3>
               <div className="flex flex-row gap-4 mt-3">
                 <Link

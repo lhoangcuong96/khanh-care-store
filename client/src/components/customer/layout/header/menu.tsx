@@ -53,6 +53,10 @@ export const menuItems: MenuProps[] = [
     path: routePath.customer.membershipPolicy,
     label: "Chính sách thành viên",
   },
+  {
+    path: routePath.customer.privacyPolicy,
+    label: "Chính sách bảo mật",
+  },
 ];
 
 interface ComponentState {
@@ -101,7 +105,7 @@ export default function Menu() {
                   </span>
                 </Link>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[200px]">
+              <DropdownMenuContent className="w-56 p-[1px] overflow-visible">
                 <ProductMenu />
               </DropdownMenuContent>
             </DropdownMenu>

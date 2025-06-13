@@ -17,9 +17,9 @@ const productRequestApi = {
     const url = `/products?${currentParams.toString()}`;
     return http.get<ProductListResType>(url);
   },
-  getRelatedProducts: (slug: string, params: ProductListQueryType) => {
+  getRelatedProducts: (productId: string, params: ProductListQueryType) => {
     const currentParams = new URLSearchParams(params as any);
-    const url = `/products/${slug}/related-products?${currentParams.toString()}`;
+    const url = `/products/${productId}/related-products?${currentParams.toString()}`;
     return http.get<ProductListResType>(url);
   },
 };

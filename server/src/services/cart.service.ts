@@ -1,18 +1,37 @@
 import prisma from '@/database'
 
 export class CartService {
-  static addProductToCart = async (productId: string, quantity: number, userId?: string) => {
+  static addProductToCart = async (productId: string, quantity: number, variantId?: string | null, userId?: string) => {
     if (!userId) {
       throw new Error('Không tìm thấy user')
     }
-    const product = await prisma.product.findUniqueOrThrow({
+    const product = await prisma.product.findUnique({
       where: {
-        id: productId
+        id: productId,
+        ...(variantId && {
+          variants: {
+            some: {
+              id: variantId
+            }
+          }
+        })
+      },
+      select: {
+        id: true,
+        stock: true,
+        variants: {
+          select: {
+            id: true,
+            stock: true
+          }
+        }
       }
     })
     if (!product) throw new Error('Không tìm thấy sản phẩm')
 
-    if (product.stock < quantity) {
+    const productStock =
+      (variantId ? product.variants.find((variant) => variant.id === variantId)?.stock : product.stock) || 0
+    if (productStock < quantity) {
       throw new Error('Sản phẩm đã hết hàng')
     }
 
@@ -29,7 +48,7 @@ export class CartService {
     const existingCartItem = cartItems.find((item) => item.productId === productId)
     if (existingCartItem) {
       cartItems = cartItems.map((item) => {
-        if (item.productId === productId) {
+        if (item.productId === productId && item.variantId === variantId) {
           return {
             ...item,
             quantity: item.quantity + quantity
@@ -40,6 +59,7 @@ export class CartService {
     } else {
       cartItems.push({
         productId,
+        variantId: variantId || null,
         quantity
       })
     }
@@ -103,10 +123,11 @@ export class CartService {
         }
       }
     })
-    const listProduct = await prisma.product.findMany({
+    const cartItems = account.cart.items
+    const getListProductPromise = prisma.product.findMany({
       where: {
         id: {
-          in: account.cart.items.map((item) => item.productId)
+          in: cartItems.map((item) => item.productId)
         }
       },
       select: {
@@ -121,18 +142,36 @@ export class CartService {
         }
       }
     })
+    const getListVariantPromise = prisma.productVariant.findMany({
+      where: {
+        id: {
+          in: cartItems.map((item) => item.variantId).filter((id): id is string => id !== null)
+        }
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true
+      }
+    })
+    const [listProduct, listVariant] = await Promise.all([getListProductPromise, getListVariantPromise])
+
+    const mapProductWithVariant = listProduct.map((product) => {
+      const cartItem = cartItems.find((item) => item.productId === product.id)
+      return {
+        ...product,
+        variant: listVariant.find((variant) => variant.id === cartItem?.variantId)
+      }
+    })
 
     const cartData = {
-      ...account.cart,
-      items: account.cart.items.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-        product: listProduct.find((product) => product.id === item.productId)
-      }))
+      items: cartItems.map((item) => ({
+        product: mapProductWithVariant.find((product) => product.id === item.productId),
+        quantity: item.quantity
+      })),
+      updatedAt: account.cart.updatedAt
     }
-
     console.log('cartData:', cartData)
-
     return cartData
   }
 

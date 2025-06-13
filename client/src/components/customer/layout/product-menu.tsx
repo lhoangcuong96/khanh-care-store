@@ -24,6 +24,8 @@ export function ProductMenu() {
     };
   }, []);
 
+  console.log(categories[openIdx || 0]);
+
   return (
     <Card className="rounded-sm p-0" ref={menuRef}>
       <div className="flex relative">
@@ -37,7 +39,7 @@ export function ProductMenu() {
               }`}
               onMouseMove={() => setOpenIdx(idx)}
             >
-              <span className="font-semibold">{cat.name}</span>
+              <span className="font-semibold text-sm">{cat.name}</span>
               {cat.children && cat.children.length > 0 && (
                 <span className="ml-2">
                   <MdOutlineArrowForwardIos />

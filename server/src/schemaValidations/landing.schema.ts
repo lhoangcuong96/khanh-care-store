@@ -19,6 +19,12 @@ export const CategoryWithProductsSchema = CategorySchema.pick({
   products: z.array(ProductInListSchema)
 })
 
+export const GetLandingBodySchema = z.object({
+  userId: z.string().optional().nullable()
+})
+
+export type GetLandingBodyType = z.infer<typeof GetLandingBodySchema>
+
 export const GetLandingDataSchema = z.object({
   featuredCategories: z.array(FeaturedCategoriesSchema),
   featuredProducts: z.array(ProductInListSchema),

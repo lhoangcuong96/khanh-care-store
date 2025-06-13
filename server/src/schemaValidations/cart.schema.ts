@@ -9,7 +9,14 @@ const CartItemSchema = z.object({
     slug: z.string(),
     image: z.object({
       thumbnail: z.string()
-    })
+    }),
+    variant: z
+      .object({
+        id: z.string(),
+        name: z.string(),
+        price: z.number().positive()
+      })
+      .optional()
   })
 })
 
@@ -28,9 +35,10 @@ export type GetCartResponseType = z.TypeOf<typeof GetCartResponseSchema>
 /* Get */
 
 /* Add */
-export const AddProductToCartSchema = z
+export const AddProductToCartBodySchema = z
   .object({
     productId: z.string(),
+    variantId: z.string().optional().nullable(),
     quantity: z.number().int().positive()
   })
   .strict()
@@ -40,13 +48,13 @@ export const AddProductToCartResponseSchema = z.object({
   message: z.string()
 })
 
-export type AddProductToCartType = z.TypeOf<typeof AddProductToCartSchema>
+export type AddProductToCartBodyType = z.TypeOf<typeof AddProductToCartBodySchema>
 export type AddProductToCartResponseType = z.TypeOf<typeof AddProductToCartResponseSchema>
 /* Add */
 
 /* Update */
 
-export const UpdateCartItemQuantityBodySchema = AddProductToCartSchema
+export const UpdateCartItemQuantityBodySchema = AddProductToCartBodySchema
 
 export type UpdateCartItemQuantityBodyType = z.TypeOf<typeof UpdateCartItemQuantityBodySchema>
 

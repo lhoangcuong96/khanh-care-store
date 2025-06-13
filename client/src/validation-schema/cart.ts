@@ -11,6 +11,11 @@ const CartItemSchema = z.object({
     image: z.object({
       thumbnail: z.string(),
     }),
+    variant: z.object({
+      id: z.string(),
+      name: z.string(),
+      price: z.number().positive(),
+    }),
   }),
 });
 
@@ -33,6 +38,7 @@ export const AddProductToCartSchema = z
   .object({
     productId: z.string(),
     quantity: z.number().int().positive(),
+    variantId: z.string().optional().nullable(),
   })
   .strict();
 
