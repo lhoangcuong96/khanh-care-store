@@ -27,7 +27,6 @@ export default function ProductDetailModal({
   const [currentPrice, setCurrentPrice] = useState<number>(product.price);
 
   useEffect(() => {
-    console.log("product.variants", product.variants);
     if (product.variants && product.variants.length > 0) {
       setSelectedVariant(product.variants[0].id);
       setCurrentPrice(product.variants[0].price);

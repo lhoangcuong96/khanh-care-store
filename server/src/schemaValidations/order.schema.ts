@@ -3,7 +3,14 @@ import z from 'zod'
 export const OrderDeliveryInformationSchema = z.object({
   recipientFullname: z.string(),
   recipientPhoneNumber: z.string(),
-  recipientEmail: z.string().email().optional().nullable(),
+  recipientEmail: z
+    .string()
+    .optional()
+    .nullable()
+    .refine((value) => {
+      if (!value) return true
+      return z.string().email('Email không hợp lệ').safeParse(value).success
+    }, 'Email không hợp lệ'),
   recipientAddress: z.object({
     address: z.string(),
     ward: z.string(),
@@ -16,12 +23,19 @@ export const OrderDeliveryInformationSchema = z.object({
   note: z.string().optional().nullable()
 })
 
+export const ProductVariantInfoSchema = z.object({
+  id: z.string().optional().nullable(),
+  name: z.string().optional().nullable(),
+  price: z.number().optional().nullable()
+})
+
 export const OrderItemSchema = z.object({
   productId: z.string(),
   productQuantity: z.number(),
   productPrice: z.number(),
   productName: z.string(),
-  productImage: z.string()
+  productImage: z.string(),
+  productVariant: ProductVariantInfoSchema.optional().nullable()
 })
 
 export const OrderSchema = z.object({
@@ -42,6 +56,7 @@ export const CreateOrderBodySchema = OrderSchema.pick({
   items: z.array(
     z.object({
       productId: z.string(),
+      variantId: z.string().optional().nullable(),
       quantity: z.number()
     })
   )

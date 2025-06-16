@@ -375,7 +375,6 @@ export function useHandleForm({
         }, {}),
       };
     });
-    console.log(variants);
     form.setValue("variants", variants);
   }, [categoryAttributeIds, productDetail, form]);
 

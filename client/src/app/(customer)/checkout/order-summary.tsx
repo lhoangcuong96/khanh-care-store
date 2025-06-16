@@ -35,6 +35,11 @@ export default function OrderSummary() {
               </div>
               <div className="flex-1">
                 <h3 className="font-medium">{item.product.name}</h3>
+                {item.product.variant && (
+                  <p className="text-sm text-gray-500">
+                    {item.product.variant.name}
+                  </p>
+                )}
                 <p className="mt-1">
                   {item.product.price.toLocaleString()}đ x {item.quantity}
                 </p>

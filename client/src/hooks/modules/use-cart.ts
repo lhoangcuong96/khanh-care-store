@@ -84,38 +84,8 @@ export default function useCart() {
     variantId?: string | null,
     quantity: number = 1
   ) => {
-    if (!account) {
-      router.push(`${routePath.signIn}?redirect=${location.pathname}`);
-      return;
-    }
-
-    try {
-      const resp = await cartRequestApis.addProductToCart({
-        productId: productId,
-        quantity,
-      });
-      const cart = resp.payload?.data;
-      if (!cart) {
-        throw new Error(
-          "Có lỗi xảy ra trong quá trình thêm sản phẩm vào giỏ hàng"
-        );
-      }
-      setCart(cart);
-      toast({
-        title: "Thành công",
-        description: "Thêm sản phẩm vào giỏ hàng thành công",
-        variant: "success",
-        duration: 1000,
-      });
-      router.push(`${routePath.customer.cart}`);
-    } catch (error) {
-      toast({
-        title: "Lỗi",
-        description: (error as Error).message,
-        variant: "destructive",
-        duration: 3000,
-      });
-    }
+    await handleAddToCart(productId, variantId, quantity);
+    router.push(`${routePath.customer.cart}`);
   };
 
   const handleUpdateCartItemQuantity = async ({

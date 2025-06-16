@@ -4,21 +4,13 @@ import { CgProfile } from "react-icons/cg";
 import { FaShoppingBasket, FaUserCircle } from "react-icons/fa";
 
 import { RiLoginBoxLine } from "react-icons/ri";
-import DefaultButton from "../UI/button/default-button";
 
 import { routePath } from "@/constants/routes";
 import { Account } from "@prisma/client";
 import Link from "next/link";
 import { MdOutlinePassword } from "react-icons/md";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import { JSX } from "react";
 interface MenuProps {
   label: JSX.Element;
@@ -105,28 +97,21 @@ export default function ProfileDropdown({
     ? loggedProfileItems
     : unLoggedProfileItems;
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <DefaultButton
-          suffix={<CgProfile className="!w-6 !h-6"></CgProfile>}
-          className="!font-semibold"
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {account && (
-          <>
-            <DropdownMenuLabel>Hi, {account.fullname}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-          </>
-        )}
-        {items?.map((item) => {
-          return (
-            <DropdownMenuItem key={item.key}>
+    <div className="w-[200px] bg-white rounded-lg shadow-lg font-semibold text-sm">
+      <p className="border-b border-gray-200 p-4">Hi, {account?.fullname}</p>
+      {items?.map((item) => {
+        return (
+          <div
+            key={item.key}
+            className="flex flex-col items-start gap-2 pt-2 px-4 pb-0 hover:bg-gray-100 cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
               {item.icon} {item.label}
-            </DropdownMenuItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            </div>
+            <Separator />
+          </div>
+        );
+      })}
+    </div>
   );
 }

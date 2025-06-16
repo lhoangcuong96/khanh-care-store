@@ -23,7 +23,6 @@ export default function DeliveryFormContent() {
     watch,
     control,
     getValues,
-    trigger,
   } = useFormContext();
 
   const province = watch("province");
@@ -38,9 +37,8 @@ export default function DeliveryFormContent() {
     const province = getValues("province");
     const district = getValues("district");
     const ward = getValues("ward");
-    const isValid = await trigger();
 
-    if (!address || !province || !district || !ward || !isValid) {
+    if (!address || !province || !district || !ward) {
       messageApi.error({
         error: "Vui lòng nhập đầy đủ thông tin địa chỉ",
       });
@@ -84,7 +82,7 @@ export default function DeliveryFormContent() {
         </div>
         <div>
           <Label className="mb-2 block" htmlFor="fullname">
-            Họ và tên
+            Họ và tên <span className="text-red-500">*</span>
           </Label>
           <Input
             id="fullname"
@@ -98,7 +96,9 @@ export default function DeliveryFormContent() {
           )}
         </div>
         <div>
-          <Label htmlFor="phoneNumber">Số điện thoại</Label>
+          <Label htmlFor="phoneNumber">
+            Số điện thoại <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="phoneNumber"
             {...register("phoneNumber")}
@@ -112,7 +112,7 @@ export default function DeliveryFormContent() {
         </div>
         <div>
           <Label className="mb-2 block" htmlFor="address">
-            Địa chỉ
+            Địa chỉ <span className="text-red-500">*</span>
           </Label>
           <Input
             id="address"
@@ -128,7 +128,7 @@ export default function DeliveryFormContent() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label className="mb-2 block" htmlFor="province">
-              Tỉnh thành
+              Tỉnh thành <span className="text-red-500">*</span>
             </Label>
             <Controller
               render={({ field }) => (
@@ -163,7 +163,7 @@ export default function DeliveryFormContent() {
           </div>
           <div>
             <Label className="mb-2 block" htmlFor="district">
-              Quận huyện
+              Quận huyện <span className="text-red-500">*</span>
             </Label>
             <Controller
               render={({ field }) => (
@@ -198,7 +198,7 @@ export default function DeliveryFormContent() {
           </div>
           <div>
             <Label className="mb-2 block" htmlFor="ward">
-              Phường xã
+              Phường xã <span className="text-red-500">*</span>
             </Label>
             <Controller
               render={({ field }) => (

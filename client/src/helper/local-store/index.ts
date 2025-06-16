@@ -3,6 +3,7 @@
 export enum STORE_KEYS {
   accessToken = "accessToken",
   refreshToken = "refreshToken",
+  userId = "userId",
   adminSidebarExpandList = "admin:sidebar-expand-list",
 }
 

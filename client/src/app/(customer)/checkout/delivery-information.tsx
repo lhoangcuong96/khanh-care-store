@@ -1,10 +1,9 @@
 "use client";
 
 import orderRequestApis from "@/api-request/order";
-import { locations, Period } from "@/constants/order";
+import { locations } from "@/constants/order";
 import { routePath } from "@/constants/routes";
 import useCart from "@/hooks/modules/use-cart";
-import { useHandleMessage } from "@/hooks/use-handle-message";
 import { useAppContext } from "@/provider/app-provider";
 import { CartType } from "@/validation-schema/cart";
 import { CreateOrderBodyType } from "@/validation-schema/order";
@@ -16,9 +15,17 @@ import { z } from "zod";
 import { Actions } from "./actions";
 import DeliveryFormContent from "./delivery-form-content";
 import OrderSummary from "./order-summary";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
+  email: z
+    .string()
+    .optional()
+    .nullable()
+    .refine((value) => {
+      if (!value) return true;
+      return z.string().email("Email không hợp lệ").safeParse(value).success;
+    }, "Email không hợp lệ"),
   fullname: z.string().trim().min(2, "Họ và tên phải có ít nhất 2 ký tự"),
   phoneNumber: z.string().refine((value) => {
     const phoneRegex = /^(\+84|0)\d{9,10}$/;
@@ -40,8 +47,8 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
 
   const { account } = useAppContext();
   const { setCart } = useCart();
-  const { messageApi } = useHandleMessage();
   const router = useRouter();
+  const { toast } = useToast();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -57,9 +64,10 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
         "",
       ward: account?.shippingAddress?.ward || "",
       // shippingDate: new Date(),
-      shippingPeriod: Period.MORNING,
+      // shippingPeriod: Period.MORNING,
       note: "",
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (data: FormData) => {
@@ -98,8 +106,10 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
         routePath.customer.checkout.orderConfirmation(order.orderCode)
       );
     } catch (error) {
-      messageApi.error({
-        error: (error as Error).message,
+      toast({
+        title: "Lỗi",
+        description: (error as Error).message,
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);

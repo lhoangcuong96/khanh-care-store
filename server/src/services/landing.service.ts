@@ -8,6 +8,7 @@ export default class LandingService {
   static async getLandingData(accountId?: string) {
     const productService = new ProductService()
     let favoriteProducts: string[] = []
+    console.log('accountId', accountId)
     if (accountId) {
       const account = await prisma.account.findUnique({
         where: { id: accountId },
@@ -17,10 +18,8 @@ export default class LandingService {
           }
         }
       })
-      console.log(account)
       if (account) {
         favoriteProducts = account.favoriteProducts.map((product) => product.id)
-        console.log(favoriteProducts)
       }
     }
 

@@ -1,6 +1,6 @@
 import prisma from '@/database'
 import { CreateOrderBodyType, OrderInListDataType, GetOrderDataType } from '@/schemaValidations/order.schema'
-import { Order, Prisma } from '@prisma/client'
+import { Order, OrderStatus, Prisma } from '@prisma/client'
 import { CartService } from './cart.service'
 
 export default class OrderService {
@@ -28,6 +28,7 @@ export default class OrderService {
 
     // Calculate total price
     const listProductIds = items.map((item) => item.productId)
+    const listVariantIds = items.map((item) => item.variantId).filter((id) => !!id) as string[]
     const products = await prisma.product.findMany({
       where: {
         id: {
@@ -38,21 +39,46 @@ export default class OrderService {
         id: true,
         price: true,
         name: true,
+        stock: true,
         image: {
           select: {
             thumbnail: true
           }
+        },
+        variants: {
+          select: {
+            id: true,
+            price: true,
+            name: true
+          },
+          where: {
+            id: {
+              in: listVariantIds
+            }
+          }
         }
       }
     })
+    const outOfStockProducts = products.filter((product) => product.stock === 0)
+
+    if (outOfStockProducts.length > 0) {
+      throw new Error('Các sản phẩm đã hết hàng: ' + outOfStockProducts.map((product) => product.name).join(', '))
+    }
+
     const mapItemsWithPrice = items.map((item) => {
       const product = products.find((product) => product.id === item.productId)
+      const variant = product?.variants.find((variant) => variant.id === item.variantId)
       return {
         productId: item.productId,
-        productPrice: product!.price || 0,
+        productPrice: variant?.price || product!.price || 0,
         productQuantity: item.quantity,
         productName: product!.name,
-        productImage: product!.image.thumbnail
+        productImage: product!.image.thumbnail,
+        productVariant: {
+          id: variant?.id,
+          name: variant?.name,
+          price: variant?.price
+        }
       }
     })
     const subtotal = mapItemsWithPrice.reduce((acc, item) => {
@@ -73,8 +99,8 @@ export default class OrderService {
           province: deliveryInformation.recipientAddress.province
         },
         shippingFee: 0,
-        shippingDate: deliveryInformation.shippingDate,
-        shippingPeriod: deliveryInformation.shippingPeriod,
+        // shippingDate: deliveryInformation.shippingDate,
+        // shippingPeriod: deliveryInformation.shippingPeriod,
         note: deliveryInformation.note
       },
       totalAmount: subtotal + deliveryInformation.shippingFee,
@@ -88,10 +114,20 @@ export default class OrderService {
       orderCode
     }
 
-    const order = await prisma.order.create({
-      data
-    })
-    return order
+    try {
+      const order = await prisma.order.create({
+        data
+      })
+      return order
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new Error('Đơn hàng đã tồn tại')
+        }
+      }
+      console.log(error)
+      throw new Error('Lỗi khi tạo đơn hàng')
+    }
   }
 
   static async createOrderWithTransaction(body: CreateOrderBodyType, accountId?: string): Promise<Order> {
@@ -99,8 +135,9 @@ export default class OrderService {
       throw new Error('Thông tin tài khoản không hợp lệ')
     }
     const order = await prisma.$transaction(async (prisma) => {
-      const data = await Promise.all([OrderService.createOrder(body, accountId), CartService.clearCart(accountId)])
-      return data[0]
+      const order = await this.createOrder(body, accountId)
+      await CartService.clearCart(accountId)
+      return order
     })
     return order
   }
@@ -150,12 +187,33 @@ export default class OrderService {
             productPrice: true,
             productQuantity: true,
             productName: true,
-            productImage: true
+            productImage: true,
+            productVariant: true
           }
         },
         createdAt: true
       }
     })
     return orders
+  }
+
+  static async cancelOrder(orderCode: string, accountId?: string): Promise<Order> {
+    if (!accountId) {
+      throw new Error('Thông tin tài khoản không hợp lệ')
+    }
+    const orderToCancel = await prisma.order.findFirst({
+      where: { orderCode, accountId }
+    })
+    if (!orderToCancel) {
+      throw new Error('Không tìm thấy đơn hàng')
+    }
+    if (orderToCancel.status !== OrderStatus.PENDING) {
+      throw new Error('Đơn hàng không thể hủy')
+    }
+    const order = await prisma.order.update({
+      where: { id: orderToCancel.id, accountId },
+      data: { status: OrderStatus.CANCELLED }
+    })
+    return orderToCancel
   }
 }

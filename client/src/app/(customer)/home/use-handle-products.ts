@@ -25,7 +25,6 @@ export default function useHandleProducts(landingPageData: GetLandingDataType) {
   const router = useRouter();
 
   const handleSetFavorite = (id: string, isFavorite: boolean) => {
-    console.log("handleSetFavorite", id, isFavorite);
     setBestSellerProducts((prev) =>
       prev.map((product) =>
         product.id === id ? { ...product, isFavorite } : product
@@ -58,7 +57,6 @@ export default function useHandleProducts(landingPageData: GetLandingDataType) {
   const handleAddToFavorite = async (id: string) => {
     try {
       await accountApiRequest.addToFavorite(id);
-      console.log("handleAddToFavorite", id);
       handleSetFavorite(id, true);
       toast({
         title: "Thêm vào yêu thích thành công",

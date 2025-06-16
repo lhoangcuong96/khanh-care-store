@@ -24,8 +24,6 @@ export function ProductMenu() {
     };
   }, []);
 
-  console.log(categories[openIdx || 0]);
-
   return (
     <Card className="rounded-sm p-0" ref={menuRef}>
       <div className="flex relative">

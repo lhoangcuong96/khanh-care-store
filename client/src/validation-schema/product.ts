@@ -113,6 +113,8 @@ export const ProductListQueryParamsSchema = z
     isFeatured: z.union([z.string(), z.boolean()]).optional(),
     isBestSeller: z.union([z.string(), z.boolean()]).optional(),
     isPromotion: z.union([z.string(), z.boolean()]).optional(),
+    isFavorite: z.union([z.string(), z.boolean()]).optional(),
+    accountId: z.string().optional().nullable(),
   })
   .strip();
 

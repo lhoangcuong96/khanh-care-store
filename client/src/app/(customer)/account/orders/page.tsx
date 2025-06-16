@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import OrdersTable from "./orders-table";
+import { Loader2 } from "lucide-react";
 
 export const generateMetadata = async (): Promise<Metadata> => {
   return {
@@ -20,7 +21,13 @@ export default async function Profile() {
         </p>
       </CardHeader>
       <CardContent>
-        <Suspense fallback="...Loading">
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-full">
+              <Loader2 className="w-4 h-4 animate-spin" />
+            </div>
+          }
+        >
           <OrdersTable></OrdersTable>
         </Suspense>
       </CardContent>

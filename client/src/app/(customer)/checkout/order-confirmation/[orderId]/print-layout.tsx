@@ -37,10 +37,10 @@ export default function PrintLayout({
       {/* Logo */}
       <div className="text-center mb-8">
         <Image
-          src="/images/logo-3.jpeg"
-          alt="Dola Organic Logo"
-          width={200}
-          height={60}
+          src="/images/logo.png"
+          alt="KCS Logo"
+          width={128}
+          height={128}
           className="mx-auto"
         />
       </div>
@@ -70,6 +70,11 @@ export default function PrintLayout({
             <div className="flex items-center gap-4">
               <div>
                 <div className="font-medium">{item.productName}</div>
+                {item.productVariant && (
+                  <div className="text-sm text-gray-500">
+                    {item.productVariant.name}
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-4">

@@ -1,4 +1,5 @@
 import z from "zod";
+
 export const OrderDeliveryInformationSchema = z.object({
   recipientFullname: z.string(),
   recipientPhoneNumber: z.string(),
@@ -15,12 +16,19 @@ export const OrderDeliveryInformationSchema = z.object({
   note: z.string().optional().nullable(),
 });
 
+export const ProductVariantInfoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  price: z.number(),
+});
+
 export const OrderItemSchema = z.object({
   productId: z.string(),
   productQuantity: z.number(),
   productPrice: z.number(),
   productName: z.string(),
   productImage: z.string(),
+  productVariant: ProductVariantInfoSchema.optional().nullable(),
 });
 
 export const OrderSchema = z.object({

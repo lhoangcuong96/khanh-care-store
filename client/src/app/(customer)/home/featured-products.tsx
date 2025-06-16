@@ -4,18 +4,17 @@ import DefaultButton from "@/components/customer/UI/button/default-button";
 import OutlineButton from "@/components/customer/UI/button/outline-button";
 import { ProductCard } from "@/components/customer/UI/card/product-card";
 import { ErrorMessage } from "@/components/customer/UI/error-message";
+import ProductDetailModal from "@/components/customer/UI/modal/product-detail-modal";
 import { routePath } from "@/constants/routes";
 import { ProductInListType } from "@/validation-schema/product";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { FaTools } from "react-icons/fa";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { A11y, Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
-import ProductDetailModal from "@/components/customer/UI/modal/product-detail-modal";
-import { useRouter } from "next/navigation";
-import useProduct from "@/hooks/modules/use-product";
 
 interface FeaturedProductsProps {
   products: ProductInListType[];

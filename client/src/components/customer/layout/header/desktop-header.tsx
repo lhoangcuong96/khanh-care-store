@@ -6,6 +6,7 @@ import { FaRegHeart } from "react-icons/fa";
 import {
   IoCartOutline,
   IoLocationOutline,
+  IoPersonOutline,
   IoSearchOutline,
 } from "react-icons/io5";
 
@@ -26,7 +27,7 @@ import {
 import { useAppContext } from "@/provider/app-provider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef } from "react";
-import ProfileDropdown from "../profile-dropdown";
+import ProfilePopup from "./profile-popup";
 import { CartPopup } from "./cart-popup";
 import Menu from "./menu";
 import { shopInfo } from "@/constants/shop-info";
@@ -89,6 +90,7 @@ export default function DesktopHeader() {
               onClick={() => {
                 return handleSearch();
               }}
+              title="Tìm kiếm"
             ></DefaultButton>
           }
         ></DefaultInput>
@@ -99,12 +101,31 @@ export default function DesktopHeader() {
                 <BiSolidPhoneCall className="!w-6 !h-6"></BiSolidPhoneCall>
               }
               className="!font-semibold"
+              title="Liên hệ chúng tôi"
             >
               {shopInfo.phone.label}
             </DefaultButton>
           </Link>
 
-          <ProfileDropdown account={account}></ProfileDropdown>
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link
+                  href={account ? routePath.customer.cart : routePath.signIn}
+                >
+                  <NavigationMenuTrigger>
+                    <IoPersonOutline className="!w-6 !h-6"></IoPersonOutline>
+                  </NavigationMenuTrigger>
+                </Link>
+                {account && (
+                  <NavigationMenuContent>
+                    <ProfilePopup account={account} />
+                  </NavigationMenuContent>
+                )}
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+          {/* <ProfileDropdown account={account}></ProfileDropdown> */}
           <Link href={routePath.customer.storeLocations}>
             <DefaultButton
               suffix={
@@ -116,12 +137,22 @@ export default function DesktopHeader() {
                 </div>
               }
               className="!font-semibold"
+              title="Địa điểm của chúng tôi"
             ></DefaultButton>
           </Link>
 
           <DefaultButton
             suffix={<FaRegHeart className="!w-6 !h-6"></FaRegHeart>}
             className="!font-semibold"
+            onClick={() => {
+              router.push(
+                routePath.customer.products({
+                  isFavorite: true,
+                  accountId: account?.id || "",
+                })
+              );
+            }}
+            title="Sản phẩm yêu thích"
           ></DefaultButton>
           <NavigationMenu>
             <NavigationMenuList>

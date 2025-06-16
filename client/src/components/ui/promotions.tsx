@@ -82,8 +82,6 @@ const reducer = (
 
 export default function Promotions() {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  console.log(state);
-
   const { messageApi } = useHandleMessage();
   const swiperRef = useRef<SwiperRef | null>(null);
 

@@ -157,7 +157,7 @@ export default function OrdersTable() {
                     {order.items.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <div className="flex flex-col md:flex-row gap-4 items-start">
+                          <div className="flex flex-col md:flex-row gap-4 items-center justify-start">
                             <Image
                               src={item.productImage || "/placeholder.svg"}
                               alt={item.productName}
@@ -165,8 +165,18 @@ export default function OrdersTable() {
                               height={60}
                               className="rounded-lg"
                             />
-                            <div className="font-medium h-fit">
-                              {item.productName}
+                            <div className="flex flex-col gap-2">
+                              <div className="font-medium h-fit">
+                                {item.productName}
+                              </div>
+                              {item.productVariant && (
+                                <div className="text-sm text-gray-500">
+                                  {item.productVariant.name}
+                                </div>
+                              )}
+                              <div className="text-sm text-gray-500">
+                                {item.productPrice.toLocaleString()}đ
+                              </div>
                             </div>
                           </div>
                         </TableCell>

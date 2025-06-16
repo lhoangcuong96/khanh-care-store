@@ -52,9 +52,9 @@ const CategoryList = ({
             {categories.map((category) => {
               const url = routePath.customer.products({
                 ...convertParams(params),
-                category: category.slug,
+                category: category.id,
               });
-              const isActive = params?.category === category.slug;
+              const isActive = params?.category === category.id;
               return (
                 <Link
                   href={url}

@@ -13,28 +13,24 @@ export const routePath = {
       isFeatured,
       isPromotion,
       search,
-      weight,
-      price,
+      isFavorite,
+      accountId,
     }: {
       category?: string;
       isBestSeller?: boolean;
       isFeatured?: boolean;
       isPromotion?: boolean;
       search?: string;
-      weight?: string | string[];
-      price?: string | string[];
+      isFavorite?: boolean;
+      accountId?: string;
     } = {}) => {
-      const weightValue = Array.isArray(weight)
-        ? weight.map((w) => `&weight=${w}`).join("")
-        : `&weight=${weight || ""}`;
-      const priceValue = Array.isArray(price)
-        ? price.map((p) => `&price=${p}`).join("")
-        : `&price=${price || ""}`;
       return `/products/?category=${category || ""}&isBestSeller=${
         isBestSeller || ""
       }&isFeatured=${isFeatured || ""}&isPromotion=${
         isPromotion || ""
-      }&search=${search || ""}${weightValue}${priceValue}`;
+      }&search=${search || ""}&isFavorite=${isFavorite || ""}&accountId=${
+        accountId || ""
+      }`;
     },
     news: "/news",
     promotionalProduct: "/product",

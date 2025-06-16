@@ -59,7 +59,6 @@ export default function AppProvider({
   const [account, setAccount] = useState<AccountType | undefined>(
     initialAccount
   );
-
   const [cart, setCart] = useState<CartType | undefined>(initialCart);
 
   const [categories, setCategories] = useState<CategoryInListType[]>(

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 import ChangePasswordForm from "./change-password-form";
+import { Loader2 } from "lucide-react";
 
 export default function ChangePassword() {
   return (
@@ -13,7 +14,13 @@ export default function ChangePassword() {
         </p>
       </CardHeader>
       <CardContent>
-        <Suspense fallback="...Loading">
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-full">
+              <Loader2 className="w-4 h-4 animate-spin" />
+            </div>
+          }
+        >
           <ChangePasswordForm />
         </Suspense>
       </CardContent>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { useAppContext } from "@/provider/app-provider";
 import { ProductListQueryType } from "@/validation-schema/product";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
@@ -44,6 +45,10 @@ const productTags = [
     label: "Sản phẩm bán chạy",
     value: "isBestSeller",
   },
+  {
+    label: "Sản phẩm yêu thích",
+    value: "isFavorite",
+  },
 ];
 
 export default function ProductFilter({
@@ -52,6 +57,7 @@ export default function ProductFilter({
   params?: ProductListQueryType;
 }) {
   const router = useRouter();
+  const { account } = useAppContext();
 
   // const handlePriceCheckboxChange = useCallback(
   //   (value: string) => {
@@ -102,6 +108,9 @@ export default function ProductFilter({
       const searchParams = new URLSearchParams(window.location.search);
       if (!searchParams) return;
       searchParams.set(value, searchParams.get(value) === "true" ? "" : "true");
+      if (value === "isFavorite") {
+        searchParams.set("accountId", account?.id || "");
+      }
       router.push(`/products?${searchParams.toString()}`);
     },
     [router]

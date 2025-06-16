@@ -26,6 +26,7 @@ export default async function OrderConfirmationPage({
     } else {
       orderDetails = response.payload.data;
     }
+    console.log(orderDetails);
   } catch (error) {
     errorMessage = "Có lỗi xảy ra khi tải dữ liệu";
     console.error(error);
@@ -58,8 +59,8 @@ export default async function OrderConfirmationPage({
                 <div className="container mx-auto px-4">
                   <div className="mb-8">
                     <Image
-                      src="/images/logo-3.jpeg"
-                      alt="Dola Organic Logo"
+                      src="/images/logo.png"
+                      alt="KCS Logo"
                       width={128}
                       height={128}
                       className="mx-auto"
@@ -174,6 +175,11 @@ export default async function OrderConfirmationPage({
                                   <h3 className="font-medium">
                                     {item.productName}
                                   </h3>
+                                  {item.productVariant && (
+                                    <p className="text-sm text-gray-500">
+                                      {item.productVariant.name}
+                                    </p>
+                                  )}
                                   <p className="mt-1">
                                     {item.productPrice.toLocaleString()}đ
                                   </p>

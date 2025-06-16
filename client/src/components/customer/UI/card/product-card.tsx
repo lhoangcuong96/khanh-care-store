@@ -8,6 +8,8 @@ import { ProductInListType } from "@/validation-schema/product";
 import { Heart, Search, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAppContext } from "@/provider/app-provider";
+import { useRouter } from "next/navigation";
 
 export function ProductCard({
   product,
@@ -21,6 +23,8 @@ export function ProductCard({
   handleRemoveFromFavorite: (id: string) => void;
 }) {
   const { handleAddToCart } = useCart();
+  const { account } = useAppContext();
+  const router = useRouter();
 
   const promotionalPrice = product?.promotionPercent
     ? product?.price - (product?.price * product?.promotionPercent) / 100
@@ -116,6 +120,10 @@ export function ProductCard({
           variant="secondary"
           className="h-9 w-9 bg-slate-100 text-slate-700 hover:bg-pink-100 border border-slate-200 shadow-sm"
           onClick={() => {
+            if (!account) {
+              router.push(routePath.signIn);
+              return;
+            }
             if (product.isFavorite) {
               handleRemoveFromFavorite(product.id!);
             } else {

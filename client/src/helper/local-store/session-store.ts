@@ -8,6 +8,7 @@ class SessionStore {
 
   private accessToken: string | null = null;
   private refreshToken: string | null = null;
+  private userId: string | null = null;
 
   private constructor() {
     // Private constructor to prevent direct instantiation
@@ -27,13 +28,16 @@ class SessionStore {
   private loadTokens(): void {
     this.accessToken = localStorage.getItem(STORE_KEYS.accessToken);
     this.refreshToken = localStorage.getItem(STORE_KEYS.refreshToken);
+    this.userId = localStorage.getItem(STORE_KEYS.userId);
   }
 
-  public setTokens(accessToken: string, refreshToken: string): void {
+  public setTokens(accessToken: string, refreshToken: string, userId: string): void {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
+    this.userId = userId;
     localStorage.setItem(STORE_KEYS.accessToken, accessToken);
     localStorage.setItem(STORE_KEYS.refreshToken, refreshToken);
+    localStorage.setItem(STORE_KEYS.userId, userId || "");
   }
 
   public getAccessToken(): string | null {
@@ -49,6 +53,7 @@ class SessionStore {
     this.refreshToken = null;
     localStorage.removeItem(STORE_KEYS.accessToken);
     localStorage.removeItem(STORE_KEYS.refreshToken);
+    localStorage.removeItem(STORE_KEYS.userId);
   }
 }
 

@@ -18,9 +18,15 @@ type DeliveryInformation {
     recipientEmail       String?
     recipientAddress     ShippingAddress
     shippingFee          Float
-    shippingDate         DateTime?
-    shippingPeriod       String?
+    // shippingDate         DateTime?
+    // shippingPeriod       String?
     note                 String?
+}
+
+type ProductVariantInfo {
+    id    String?
+    name  String?
+    price Float?
 }
 
 type OrderItem {
@@ -29,12 +35,17 @@ type OrderItem {
     productPrice    Float
     productImage    String
     productName     String
+    productVariant  ProductVariantInfo?
 }
 
 enum OrderStatus {
     PENDING
     PROCESSING
-    SHIPPED
-    DELIVERED
-    CANCELLED
+    SHIPPED // Order has been dispatched and is on the way.
+    DELIVERED // Order has been delivered to the customer.
+    CANCELLED // Order has been cancelled by the customer.
+    COMPLETED // Order has been completed.
+    FAILED // Order has failed.
+    REFUNDED // Order has been refunded.
+    RETURNED // Order has been returned.
 }

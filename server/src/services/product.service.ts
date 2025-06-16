@@ -36,10 +36,29 @@ export class ProductService {
       search,
       isPromotion = false,
       isBestSeller = false,
-      isFeatured = false
+      isFeatured = false,
+      isFavorite = false,
+      accountId
     } = queryParams
     const skip = (page - 1) * limit
     const take = limit
+
+    let favoriteProducts: string[] = []
+    if (isFavorite && accountId) {
+      const accounts = await prisma.account.findFirst({
+        where: {
+          id: accountId
+        },
+        select: {
+          favoriteProducts: {
+            select: {
+              id: true
+            }
+          }
+        }
+      })
+      favoriteProducts = accounts?.favoriteProducts.map((product) => product.id) || []
+    }
 
     const where: Prisma.ProductWhereInput = {
       AND: [
@@ -63,7 +82,8 @@ export class ProductService {
         isFeatured ? { isFeatured: true } : {},
         {
           isPublished: true
-        }
+        },
+        favoriteProducts.length > 0 ? { id: { in: favoriteProducts } } : {}
       ]
     }
 
@@ -115,7 +135,10 @@ export class ProductService {
 
     const [data, total] = await Promise.all([getProducts, getTotal])
     return {
-      data,
+      data: data.map((product) => ({
+        ...product,
+        isFavorite: favoriteProducts.includes(product.id)
+      })),
       total,
       limit,
       page,

@@ -92,7 +92,6 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
-  console.log(accessToken, account);
   if (account) {
     response.cookies.set("userId", account.id, {
       path: "/",
