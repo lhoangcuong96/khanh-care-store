@@ -59,14 +59,13 @@ export function ProductMenu() {
               </div>
               <ul className="space-y-1">
                 {categories[openIdx].children.map((child) => (
-                  <li key={child.id}>
-                    <Link
-                      href={`#`}
-                      className="hover:text-green-600 text-gray-700 text-sm"
-                    >
-                      {child.name}
-                    </Link>
-                  </li>
+                  <Link
+                    href={`#`}
+                    className="hover:text-green-600 text-gray-700 text-sm block w-full h-full p-1"
+                    key={child.id}
+                  >
+                    <li key={child.id}>{child.name}</li>
+                  </Link>
                 ))}
               </ul>
             </div>

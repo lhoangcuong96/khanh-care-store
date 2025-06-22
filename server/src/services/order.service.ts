@@ -1,6 +1,6 @@
 import prisma from '@/database'
 import { CreateOrderBodyType, OrderInListDataType, GetOrderDataType } from '@/schemaValidations/order.schema'
-import { Order, OrderStatus, Prisma } from '@prisma/client'
+import { Order, OrderStatus, Prisma, PrismaClient } from '@prisma/client'
 import { CartService } from './cart.service'
 
 export default class OrderService {
@@ -68,6 +68,7 @@ export default class OrderService {
     const mapItemsWithPrice = items.map((item) => {
       const product = products.find((product) => product.id === item.productId)
       const variant = product?.variants.find((variant) => variant.id === item.variantId)
+      console.log(variant, product?.variants, item)
       return {
         productId: item.productId,
         productPrice: variant?.price || product!.price || 0,
@@ -111,7 +112,8 @@ export default class OrderService {
           id: accountId
         }
       },
-      orderCode
+      orderCode,
+      status: OrderStatus.PENDING
     }
 
     try {
@@ -130,6 +132,47 @@ export default class OrderService {
     }
   }
 
+  static async updateProduct(prisma: PrismaClient, productId: string, variantId: string | null, quantity: number) {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId
+      }
+    })
+    if (!product) {
+      throw new Error('Không tìm thấy sản phẩm')
+    }
+    let variant
+    let stock = product.stock
+    if (variantId) {
+      variant = await prisma.productVariant.findUnique({
+        where: {
+          id: variantId
+        }
+      })
+      if (!variant) {
+        throw new Error('Không tìm thấy biến thể sản phẩm')
+      }
+      stock = variant.stock
+    }
+
+    const newStock = stock - quantity
+
+    if (newStock < 0) {
+      throw new Error('Sản phẩm đã hết hàng')
+    }
+    if (variantId) {
+      await prisma.productVariant.update({
+        where: { id: variantId },
+        data: { stock: newStock }
+      })
+    } else {
+      await prisma.product.update({
+        where: { id: productId },
+        data: { stock: newStock, sold: { increment: quantity } }
+      })
+    }
+  }
+
   static async createOrderWithTransaction(body: CreateOrderBodyType, accountId?: string): Promise<Order> {
     if (!accountId) {
       throw new Error('Thông tin tài khoản không hợp lệ')
@@ -137,6 +180,14 @@ export default class OrderService {
     const order = await prisma.$transaction(async (prisma) => {
       const order = await this.createOrder(body, accountId)
       await CartService.clearCart(accountId)
+      for (const item of order.items) {
+        await this.updateProduct(
+          prisma as PrismaClient,
+          item.productId,
+          item.productVariant?.id || null,
+          item.productQuantity
+        )
+      }
       return order
     })
     return order

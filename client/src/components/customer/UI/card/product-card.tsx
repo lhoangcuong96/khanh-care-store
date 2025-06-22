@@ -33,7 +33,7 @@ export function ProductCard({
     <Card className="w-full max-w-64 md:max-w-64 p-3 rounded-xl relative gap-2 m-[2px] shadow-lg hover:shadow-2xl hover:scale-[1.025] transition-all duration-200 bg-white border border-slate-100">
       <Link
         className="w-full flex flex-col gap-2"
-        href={`${routePath.customer.productDetail}/${product?.slug}`}
+        href={routePath.customer.productDetail(product?.slug)}
       >
         <div
           className="relative w-full flex items-center justify-center bg-slate-100 rounded-lg overflow-hidden"

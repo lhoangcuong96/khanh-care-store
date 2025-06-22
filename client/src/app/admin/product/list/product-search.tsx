@@ -24,7 +24,6 @@ export function ProductSearch() {
   const initialpriceFrom = searchParams.get("priceFrom") || "";
   const initialpriceTo = searchParams.get("priceTo") || "";
   const initialStock = searchParams.get("stock") || "all";
-  const initialCreatedAt = searchParams.get("createdAt") || "all";
 
   // State for form fields
   const [search, setSearch] = useState(initialSearch);
@@ -32,7 +31,6 @@ export function ProductSearch() {
   const [priceFrom, setpriceFrom] = useState(initialpriceFrom);
   const [priceTo, setpriceTo] = useState(initialpriceTo);
   const [stockStatus, setStockStatus] = useState(initialStock);
-  const [createdAt, setCreatedAt] = useState(initialCreatedAt);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Debounce search to avoid excessive updates
@@ -76,7 +74,6 @@ export function ProductSearch() {
       priceFrom: priceFrom || null,
       priceTo: priceTo || null,
       stockStatus: stockStatus === "all" ? null : stockStatus,
-      createdAt: createdAt === "all" ? null : createdAt,
     });
     setIsSubmitting(false);
   };
@@ -88,7 +85,6 @@ export function ProductSearch() {
     setpriceFrom("");
     setpriceTo("");
     setStockStatus("all");
-    setCreatedAt("all");
 
     // Update URL to remove all filter params
     const params = new URLSearchParams();
@@ -166,22 +162,6 @@ export function ProductSearch() {
               <SelectItem value="in_stock">Còn hàng</SelectItem>
               <SelectItem value="low_stock">Sắp hết hàng</SelectItem>
               <SelectItem value="out_of_stock">Hết hàng</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium mb-1 block">Ngày tạo</label>
-          <Select value={createdAt} onValueChange={setCreatedAt}>
-            <SelectTrigger>
-              <SelectValue placeholder="Ngày tạo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả</SelectItem>
-              <SelectItem value="today">Hôm nay</SelectItem>
-              <SelectItem value="this_week">Tuần này</SelectItem>
-              <SelectItem value="this_month">Tháng này</SelectItem>
-              <SelectItem value="this_year">Năm nay</SelectItem>
             </SelectContent>
           </Select>
         </div>

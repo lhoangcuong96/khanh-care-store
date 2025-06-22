@@ -15,12 +15,13 @@ export const authApiRequest = {
   register: (data: SignUpRequestDataType) =>
     http.post<SignUpResponseDataType>("/auth/register", data),
   // lấy token từ server nodejs gửi lên server nextjs để set cookie
-  setToken: (accessToken: string, refreshToken: string) =>
+  setToken: (accessToken: string, refreshToken: string, userId: string) =>
     http.post(
       "/api/auth",
       {
         accessToken,
         refreshToken,
+        userId,
       },
       {
         baseUrl: "",

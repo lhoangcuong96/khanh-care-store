@@ -47,8 +47,16 @@ export function SignInForm() {
       }
 
       // Send token to client server to set cookie
-      await authApiRequest.setToken(accessToken, refreshToken);
-      SessionStore.setTokens(accessToken, refreshToken);
+      await authApiRequest.setToken(
+        accessToken,
+        refreshToken,
+        response.payload?.data.account.id || ""
+      );
+      SessionStore.setTokens(
+        accessToken,
+        refreshToken,
+        response.payload?.data.account.id || ""
+      );
       const getMeResponse = await accountApiRequest.getMe();
       const account = getMeResponse.payload?.data;
       if (!account) {

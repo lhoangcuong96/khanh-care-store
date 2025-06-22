@@ -3,6 +3,7 @@
 import productRequestApi from "@/api-request/product";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { routePath } from "@/constants/routes";
 import { ProductListResType } from "@/validation-schema/product";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
@@ -93,7 +94,7 @@ export function Recommendations({ productId }: { productId: string }) {
         {res?.data?.map((product) => (
           <Card key={product.id} className="p-4">
             <div className="flex gap-4">
-              <Link href={`/product/${product.slug}`}>
+              <Link href={routePath.customer.productDetail(product.slug)}>
                 <Image
                   src={product.image.thumbnail}
                   alt={product.name}
@@ -104,7 +105,7 @@ export function Recommendations({ productId }: { productId: string }) {
               </Link>
 
               <div className="flex-1">
-                <Link href={`/product/${product.slug}`}>
+                <Link href={routePath.customer.productDetail(product.slug)}>
                   <h3 className="text-sm font-medium line-clamp-2 hover:underline">
                     {product.name}
                   </h3>

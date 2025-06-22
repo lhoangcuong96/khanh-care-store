@@ -1,16 +1,32 @@
 import prisma from '@/database'
 import { GetListOrdersQueryType, OrderInListDataType } from '@/schemaValidations/admin/admin-order-schema'
 import { Order } from '@/schemaValidations/common.schema'
-import { OrderStatus } from '@prisma/client'
+import { OrderStatus, Prisma } from '@prisma/client'
 
 export default class AdminOrderService {
-  static async getOrders(params: GetListOrdersQueryType): Promise<OrderInListDataType[]> {
+  static async getOrders(params: GetListOrdersQueryType) {
     const page = params.page ? parseInt(params.page) : 1
     const limit = params.limit ? parseInt(params.limit) : 10
     const skip = (page - 1) * limit
-    const where = {
-      status: params.status ? (params.status as OrderStatus) : undefined,
-      orderCode: params.search ? { contains: params.search } : undefined
+    const where: Prisma.OrderWhereInput = {
+      AND: [
+        params.search
+          ? {
+              OR: [
+                { orderCode: { contains: params.search, mode: Prisma.QueryMode.insensitive } },
+                {
+                  account: {
+                    OR: [
+                      { fullname: { contains: params.search, mode: Prisma.QueryMode.insensitive } },
+                      { email: { contains: params.search, mode: Prisma.QueryMode.insensitive } }
+                    ]
+                  }
+                }
+              ]
+            }
+          : {},
+        params.status ? { status: params.status as OrderStatus } : {}
+      ]
     }
     let orderBy: { [x: string]: string } = {
       createdAt: 'desc'
@@ -20,7 +36,7 @@ export default class AdminOrderService {
         [params.sort]: params.order === Order.Asc ? 'asc' : 'desc'
       }
     }
-    const orders = await prisma.order.findMany({
+    const getOrdersPromise = prisma.order.findMany({
       where,
       take: limit,
       skip,
@@ -36,7 +52,14 @@ export default class AdminOrderService {
             productPrice: true,
             productQuantity: true,
             productName: true,
-            productImage: true
+            productImage: true,
+            productVariant: {
+              select: {
+                id: true,
+                name: true,
+                price: true
+              }
+            }
           }
         },
         createdAt: true,
@@ -45,14 +68,44 @@ export default class AdminOrderService {
             recipientFullname: true,
             recipientPhoneNumber: true,
             recipientAddress: true,
-            shippingDate: true,
+            // shippingDate: true,
             shippingFee: true,
-            shippingPeriod: true,
+            // shippingPeriod: true,
             note: true
           }
         }
       }
     })
-    return orders
+    const totalPromise = prisma.order.count({
+      where
+    })
+    const [orders, total] = await Promise.all([getOrdersPromise, totalPromise])
+    return {
+      data: orders,
+      total,
+      totalPages: Math.ceil(total / limit),
+      page,
+      limit
+    }
+  }
+
+  static async changeStatus(orderId: string, status: OrderStatus) {
+    const order = await prisma.order.findUnique({
+      where: {
+        id: orderId
+      }
+    })
+    if (!order) {
+      throw new Error('Order not found')
+    }
+    const updatedOrder = await prisma.order.update({
+      where: {
+        id: orderId
+      },
+      data: {
+        status
+      }
+    })
+    return updatedOrder
   }
 }

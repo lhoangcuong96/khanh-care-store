@@ -48,9 +48,9 @@ export function Footer() {
           <h3 className="text-slatee-600 font-bold text-xl mb-5 ">
             Hình thức thanh toán
           </h3>
-          <Link href="#" className="font-semibold hover:text-slatee-600">
+          {/* <Link href="#" className="font-semibold hover:text-slatee-600">
             Chính sách thành viên
-          </Link>
+          </Link> */}
           <Link href="#" className="font-semibold hover:text-slatee-600">
             Chính sách thanh toán
           </Link>

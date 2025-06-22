@@ -1,6 +1,6 @@
-import { TokenType } from "@/constants/types";
+import { CookieType } from "@/constants/types";
 
-export type TokenTypeValue = (typeof TokenType)[keyof typeof TokenType];
+export type CookieTypeValue = (typeof CookieType)[keyof typeof CookieType];
 
 export interface AccountJwtPayload {
   id: string;
@@ -13,7 +13,7 @@ export interface AccountJwtPayload {
 
 export interface TokenPayload {
   account: AccountJwtPayload;
-  tokenType: TokenTypeValue;
+  tokenType: CookieTypeValue;
   exp: number;
   iat: number;
 }

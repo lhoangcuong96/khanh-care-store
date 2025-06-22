@@ -78,6 +78,7 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
           cart?.items.map((item) => ({
             productId: item.product.id,
             quantity: item.quantity,
+            variantId: item.product.variant?.id || "",
           })) || [],
         deliveryInformation: {
           recipientFullname: data.fullname,
@@ -98,13 +99,13 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
       const response = await orderRequestApis.createOrder(body);
       if (!response.payload) throw new Error("Có lỗi xảy ra khi tạo đơn hàng");
       const order = response.payload.data;
+      router.push(
+        routePath.customer.checkout.orderConfirmation(order.orderCode)
+      );
       setCart({
         items: [],
         updatedAt: new Date(),
       });
-      router.push(
-        routePath.customer.checkout.orderConfirmation(order.orderCode)
-      );
     } catch (error) {
       toast({
         title: "Lỗi",

@@ -1,4 +1,4 @@
-import { TokenType } from "@/constants/types";
+import { CookieType } from "@/constants/types";
 import envConfig from "@/envConfig";
 import SessionStore from "@/helper/local-store/session-store";
 import { Account } from "@prisma/client";
@@ -96,7 +96,7 @@ export const request = async <T>(
     if (typeof window === "undefined") {
       const { cookies } = await import("next/headers");
       const cookieStore = await cookies();
-      accessToken = cookieStore.get(TokenType.AccessToken)?.value;
+      accessToken = cookieStore.get(CookieType.AccessToken)?.value;
     } else {
       accessToken = SessionStore.getAccessToken();
     }

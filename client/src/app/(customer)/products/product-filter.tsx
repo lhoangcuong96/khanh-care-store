@@ -1,6 +1,7 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { routePath } from "@/constants/routes";
 import { useAppContext } from "@/provider/app-provider";
 import { ProductListQueryType } from "@/validation-schema/product";
 import { useRouter } from "next/navigation";
@@ -109,7 +110,12 @@ export default function ProductFilter({
       if (!searchParams) return;
       searchParams.set(value, searchParams.get(value) === "true" ? "" : "true");
       if (value === "isFavorite") {
-        searchParams.set("accountId", account?.id || "");
+        if (account?.id) {
+          searchParams.set("accountId", account?.id);
+        } else {
+          router.push(routePath.signIn);
+          return;
+        }
       }
       router.push(`/products?${searchParams.toString()}`);
     },

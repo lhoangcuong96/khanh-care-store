@@ -98,7 +98,9 @@ export default function ProfileDropdown({
     : unLoggedProfileItems;
   return (
     <div className="w-[200px] bg-white rounded-lg shadow-lg font-semibold text-sm">
-      <p className="border-b border-gray-200 p-4">Hi, {account?.fullname}</p>
+      {account && (
+        <p className="border-b border-gray-200 p-4">Hi, {account?.fullname}</p>
+      )}
       {items?.map((item) => {
         return (
           <div

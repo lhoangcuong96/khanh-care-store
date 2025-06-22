@@ -41,7 +41,10 @@ export default function CallButton() {
   }, [isOpen]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-[60]" ref={containerRef}>
+    <div
+      className="fixed bottom-6 right-6 z-[60] block print:hidden"
+      ref={containerRef}
+    >
       {/* Contact options popover */}
       <div
         className={cn(

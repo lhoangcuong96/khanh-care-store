@@ -49,10 +49,10 @@ export const menuItems: MenuProps[] = [
     path: routePath.customer.contact,
     label: "Liên hệ",
   },
-  {
-    path: routePath.customer.membershipPolicy,
-    label: "Chính sách thành viên",
-  },
+  // {
+  //   path: routePath.customer.membershipPolicy,
+  //   label: "Chính sách thành viên",
+  // },
   {
     path: routePath.customer.privacyPolicy,
     label: "Chính sách bảo mật",

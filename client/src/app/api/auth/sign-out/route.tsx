@@ -1,5 +1,5 @@
 import { authApiRequest } from "@/api-request/auth";
-import { TokenType } from "@/constants/types";
+import { CookieType } from "@/constants/types";
 import { HttpError } from "@/lib/http";
 import { cookies } from "next/headers";
 
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       + 2 là hết hạn phiên đăng nhập => forceLogout = true
   */
   const forceLogout = requestBody.forceLogout as boolean | undefined;
-  const accessToken = cookieStore.get(TokenType.AccessToken);
+  const accessToken = cookieStore.get(CookieType.AccessToken);
   if (!accessToken || !accessToken.value) {
     return Response.json(
       {
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
   const headers = new Headers();
   headers.append("Set-Cookie", "accessToken=; Path=/; HttpOnly");
   headers.append("Set-Cookie", "refreshToken=; Path=/; HttpOnly");
+  headers.append("Set-Cookie", "userId=; Path=/; HttpOnly");
   if (forceLogout) {
     return Response.json(
       {

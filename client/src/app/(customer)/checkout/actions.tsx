@@ -10,7 +10,7 @@ export function Actions({ isLoading }: { isLoading: boolean }) {
   return (
     <Card className="p-6">
       <Button
-        className="w-full mb-4"
+        className="w-full mb-4 max-w-[330px]"
         size="lg"
         type="submit"
         disabled={isLoading}

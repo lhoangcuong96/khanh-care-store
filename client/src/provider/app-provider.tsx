@@ -9,8 +9,8 @@ import { isTokenExpired } from "@/utils/auth";
 import { AccountType } from "@/validation-schema/account";
 import { CartType } from "@/validation-schema/cart";
 import { CategoryInListType } from "@/validation-schema/category";
-import { redirect } from "next/navigation";
 import ms from "ms";
+import { redirect } from "next/navigation";
 import {
   createContext,
   Dispatch,
@@ -73,10 +73,14 @@ export default function AppProvider({
         throw new Error("Token không hợp lệ");
       }
       const { accessToken, refreshToken } = res.payload.data;
-      await authApiRequest.setToken(accessToken, refreshToken);
-      SessionStore.setTokens(accessToken, refreshToken);
+      await authApiRequest.setToken(
+        accessToken,
+        refreshToken,
+        account?.id || ""
+      );
+      SessionStore.setTokens(accessToken, refreshToken, account?.id || "");
     } catch (error) {
-      console.error(error);
+      console.error("error", error);
       redirect(routePath.signOut);
     }
   };
@@ -89,11 +93,7 @@ export default function AppProvider({
       }, ms(envConfig?.NEXT_PUBLIC_ACCESS_TOKEN_EXPIRES_IN || "1d"));
       return () => clearInterval(interval);
     }
-  }, []);
-
-  useEffect(() => {
-    setAccount(initialAccount);
-  }, [initialAccount]);
+  }, [account]);
 
   return (
     <AppContext.Provider

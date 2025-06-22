@@ -1,4 +1,4 @@
-import { TokenType } from "@/constants/types";
+import { CookieType } from "@/constants/types";
 import { z } from "zod";
 
 export const signInSchema = z.object({
@@ -71,8 +71,8 @@ export const signUpResponseType = z.object({
 // client gửi accessToken và refreshToken lên server để set lại cookie
 export const setCookieSchema = z
   .object({
-    [TokenType.AccessToken]: z.string(),
-    [TokenType.RefreshToken]: z.string(),
+    [CookieType.AccessToken]: z.string(),
+    [CookieType.RefreshToken]: z.string(),
   })
   .strict();
 

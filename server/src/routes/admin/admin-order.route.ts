@@ -12,10 +12,14 @@ const AdminOrderRoutes = async (fastify: FastifyInstance, options: FastifyPlugin
     },
     async (request: FastifyRequest<{ Querystring: GetListOrdersQueryType }>, reply) => {
       const params = request.query
-      const orders = await AdminOrderController.list(params)
+      const response = await AdminOrderController.list(params)
       reply.send({
         message: 'Lấy danh sách đơn hàng thành công',
-        data: orders
+        data: response.data,
+        total: response.total,
+        totalPages: response.totalPages,
+        page: response.page,
+        limit: response.limit
       })
     }
   )

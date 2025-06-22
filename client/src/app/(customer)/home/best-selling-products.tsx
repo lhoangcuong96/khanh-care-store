@@ -93,7 +93,7 @@ export function BestSellingProducts({
       setSelectedProduct(product);
       setModalOpen(true);
     } else {
-      router.push(`${routePath.customer.productDetail}/${product.slug}`);
+      router.push(routePath.customer.productDetail(product.slug));
     }
   };
 

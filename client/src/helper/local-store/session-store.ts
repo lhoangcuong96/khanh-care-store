@@ -31,7 +31,11 @@ class SessionStore {
     this.userId = localStorage.getItem(STORE_KEYS.userId);
   }
 
-  public setTokens(accessToken: string, refreshToken: string, userId: string): void {
+  public setTokens(
+    accessToken: string,
+    refreshToken: string,
+    userId: string
+  ): void {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.userId = userId;
@@ -51,6 +55,7 @@ class SessionStore {
   public clearTokens(): void {
     this.accessToken = null;
     this.refreshToken = null;
+    this.userId = null;
     localStorage.removeItem(STORE_KEYS.accessToken);
     localStorage.removeItem(STORE_KEYS.refreshToken);
     localStorage.removeItem(STORE_KEYS.userId);

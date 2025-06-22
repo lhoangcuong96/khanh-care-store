@@ -5,10 +5,10 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { authApiRequest } from "./api-request/auth";
+import { PayloadJWT } from "./app/api/auth/route";
 import { routePath } from "./constants/routes";
 import { isTokenExpired } from "./utils/auth";
 import { jwtDecode } from "jwt-decode";
-import { PayloadJWT } from "./app/api/auth/route";
 const privateRoutes = ["account", "admin", "cart", "checkout"];
 const authRoutes = ["sign-in", "sign-up"];
 
@@ -86,20 +86,12 @@ export async function middleware(request: NextRequest) {
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
   let account: PayloadJWT["account"] | undefined;
+
+  const response = NextResponse.next();
+
   if (accessToken) {
     const tokenPayload = jwtDecode<PayloadJWT>(accessToken);
     account = tokenPayload?.account;
-  }
-
-  const response = NextResponse.next();
-  if (account) {
-    response.cookies.set("userId", account.id, {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-      // You can add maxAge or expires if you want the cookie to expire
-      // maxAge: 60 * 60 * 24, // 24 hours
-    });
   }
 
   if (isIndex(pathname)) {
@@ -116,10 +108,8 @@ export async function middleware(request: NextRequest) {
   }
 
   if (accessToken && isAdminRoute(pathname) && !isAdminRole(account)) {
-    {
-      const previousUrl = request.headers.get("referer") || "/";
-      return NextResponse.redirect(new URL(previousUrl));
-    }
+    console.log("account", account);
+    return NextResponse.redirect(new URL(routePath.customer.home, request.url));
   }
 
   // unauthorized

@@ -45,6 +45,22 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    label: "Quản lý giao hàng",
+    key: "delivery",
+    subItems: [
+      {
+        label: "Tất cả giao hàng",
+        url: routePath.admin.delivery.list,
+        key: "delivery-list",
+      },
+      {
+        label: "Tạo giao hàng mới",
+        url: routePath.admin.delivery.add,
+        key: "delivery-add",
+      },
+    ],
+  },
+  {
     label: "Quản lý sản phẩm",
     key: "products",
     subItems: [

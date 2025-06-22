@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import AppBreadcrumb from "@/components/customer/layout/breadcrumb";
 import { routePath } from "@/constants/routes";
 import { shopInfo } from "@/constants/shop-info";
+import Image from "next/image";
 
 export async function generateMetadata() {
   return {
@@ -32,27 +33,24 @@ export default function ContactPage() {
         <div className="container mx-auto p-4 grid gap-6 md:grid-cols-2 lg:gap-12 py-8">
           {/* Contact Information */}
           <div className="space-y-6">
-            <div className="bg-[#f8ffed] p-6 rounded-lg">
-              <h2 className="text-[#588c1d] text-2xl font-semibold mb-6 flex items-center gap-2">
-                Cửa hàng heo sạch nhà Thoa
-                <span className="inline-block w-5 h-5">🌿</span>
+            <div className="bg-slate-100 p-6 rounded-lg">
+              <h2 className="text-slate-700 text-2xl font-semibold mb-6 flex items-center gap-2">
+                Cửa hàng
               </h2>
 
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="bg-[#588c1d] p-2 rounded-full">
+                  <div className="bg-slate-700 p-2 rounded-full">
                     <MapPin className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Địa chỉ</h3>
-                    <p className="text-gray-600">
-                      Tân Hiệp, Biên Hoà, Đồng Nai
-                    </p>
+                    <p className="text-gray-600">{shopInfo.address}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-[#588c1d] p-2 rounded-full">
+                  <div className="bg-slate-700 p-2 rounded-full">
                     <Clock className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -63,7 +61,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-[#588c1d] p-2 rounded-full">
+                  <div className="bg-slate-700 p-2 rounded-full">
                     <Phone className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -73,7 +71,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-[#588c1d] p-2 rounded-full">
+                  <div className="bg-slate-700 p-2 rounded-full">
                     <Mail className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -85,10 +83,15 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Form */}
-            <div className="bg-[#f8ffed] p-6 rounded-lg">
-              <h2 className="text-[#588c1d] text-2xl font-semibold mb-6 flex items-center gap-2">
+            <div className="bg-slate-100 p-6 rounded-lg">
+              <h2 className="text-slate-700 text-2xl font-semibold mb-6 flex items-center gap-2">
                 Liên hệ với chúng tôi
-                <span className="inline-block w-5 h-5">🌿</span>
+                <Image
+                  src="/images/logo.png"
+                  alt="logo"
+                  width={100}
+                  height={100}
+                />
               </h2>
 
               <p className="text-gray-600 mb-6">
@@ -104,7 +107,7 @@ export default function ContactPage() {
                   placeholder="Nội dung"
                   className="bg-white min-h-[120px]"
                 />
-                <Button className="bg-[#588c1d] hover:bg-[#466f17] text-white w-full md:w-auto">
+                <Button className="bg-slate-700 hover:bg-slate-600 text-white w-full md:w-auto">
                   Gửi thông tin
                 </Button>
               </form>

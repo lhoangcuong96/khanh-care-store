@@ -189,7 +189,14 @@ export default function MobileHeader() {
                         Hệ thống cửa hàng
                       </Link>
                       <Link
-                        href="/san-pham-yeu-thich"
+                        href={
+                          account?.id
+                            ? routePath.customer.products({
+                                isFavorite: true,
+                                accountId: account?.id || "",
+                              })
+                            : routePath.signIn
+                        }
                         className="flex items-center py-2"
                       >
                         Sản phẩm yêu thích

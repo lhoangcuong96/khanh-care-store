@@ -1,4 +1,4 @@
-import { TokenType } from "@/constants/types";
+import { CookieType } from "@/constants/types";
 import { SetCookieRequestDataType } from "@/validation-schema/auth";
 import { jwtDecode } from "jwt-decode";
 import { RoleType } from "@prisma/client";
@@ -16,9 +16,9 @@ export type PayloadJWT = {
 // set cookie trả về cho client
 export async function POST(request: Request) {
   const res: SetCookieRequestDataType = await request.json();
-  const accessToken = res[TokenType.AccessToken];
-  const refreshToken = res[TokenType.RefreshToken];
-
+  const accessToken = res[CookieType.AccessToken];
+  const refreshToken = res[CookieType.RefreshToken];
+  const userId = res[CookieType.UserId];
   if (!accessToken || !refreshToken) {
     return Response.json(
       {
@@ -43,12 +43,13 @@ export async function POST(request: Request) {
   const headers = new Headers();
   headers.append(
     "Set-Cookie",
-    `${TokenType.AccessToken}=${accessToken}; Path=/; HttpOnly; Expires=${accessTokenExpiredTime}`
+    `${CookieType.AccessToken}=${accessToken}; Path=/; HttpOnly; Expires=${accessTokenExpiredTime}`
   );
   headers.append(
     "Set-Cookie",
-    `${TokenType.RefreshToken}=${refreshToken}; Path=/; HttpOnly; Expires=${refreshTokenExpiredTime}`
+    `${CookieType.RefreshToken}=${refreshToken}; Path=/; HttpOnly; Expires=${refreshTokenExpiredTime}`
   );
+  headers.append("Set-Cookie", `userId=${userId}; Path=/; HttpOnly`);
   return Response.json(
     { message: "Đăng nhập thành công" },
     {

@@ -52,10 +52,10 @@ const menuItems = [
     path: routePath.customer.contact,
     label: "Liên hệ",
   },
-  {
-    path: routePath.customer.membershipPolicy,
-    label: "Chính sách thành viên",
-  },
+  // {
+  //   path: routePath.customer.membershipPolicy,
+  //   label: "Chính sách thành viên",
+  // },
 ];
 
 interface MobileMenuProps {

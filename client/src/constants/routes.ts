@@ -38,7 +38,7 @@ export const routePath = {
     contact: "/contact-us",
     membershipPolicy: "/membership-policy",
     storeLocations: "/store-locations",
-    productDetail: "/product-detail/",
+    productDetail: (slug: string) => `/product-detail/${slug}`,
     cart: "/cart",
     privacyPolicy: "/privacy-policy",
     checkout: {
@@ -78,6 +78,12 @@ export const routePath = {
     },
     order: {
       list: "/admin/order/list",
+    },
+    delivery: {
+      list: "/admin/delivery/list",
+      add: "/admin/delivery/add-new",
+      edit: (id: string) => `/admin/delivery/${id}/edit`,
+      detail: (id: string) => `/admin/delivery/${id}`,
     },
     debtManagement: {
       debtOverview: "/admin/debt-management/debt-overview",

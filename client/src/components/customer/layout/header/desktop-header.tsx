@@ -117,11 +117,9 @@ export default function DesktopHeader() {
                     <IoPersonOutline className="!w-6 !h-6"></IoPersonOutline>
                   </NavigationMenuTrigger>
                 </Link>
-                {account && (
-                  <NavigationMenuContent>
-                    <ProfilePopup account={account} />
-                  </NavigationMenuContent>
-                )}
+                <NavigationMenuContent>
+                  <ProfilePopup account={account} />
+                </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>

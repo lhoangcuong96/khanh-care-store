@@ -2,6 +2,7 @@
 
 import {
   AlertCircle,
+  ArrowLeftRight,
   CheckCircle2,
   ChevronDown,
   ChevronFirst,
@@ -15,11 +16,11 @@ import {
   RefreshCw,
   Search,
   ShoppingBag,
+  Truck,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -48,19 +49,130 @@ import {
 } from "@/components/ui/table";
 import { OrderInListDataType } from "@/validation-schema/admin/order";
 import { formatDate } from "date-fns";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+
+enum OrderStatus {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  SHIPPED = "SHIPPED",
+  DELIVERED = "DELIVERED",
+  CANCELLED = "CANCELLED",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+  RETURNED = "RETURNED",
+}
+
+const orderStatuses = [
+  {
+    value: OrderStatus.PENDING,
+    label: (
+      <div className="flex items-center gap-2">
+        <Clock className="h-4 w-4 text-yellow-500" />
+        <span>Chờ xác nhận</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.PROCESSING,
+    label: (
+      <div className="flex items-center gap-2">
+        <RefreshCw className="h-4 w-4 text-blue-500" />
+        <span>Đang xử lý</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.SHIPPED,
+    label: (
+      <div className="flex items-center gap-2">
+        <Truck className="h-4 w-4 text-blue-500" />
+        <span>Đang vận chuyển</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.DELIVERED,
+    label: (
+      <div className="flex items-center gap-2">
+        <CheckCircle2 className="h-4 w-4 text-green-500" />
+        <span>Đã giao</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.CANCELLED,
+    label: (
+      <div className="flex items-center gap-2">
+        <XCircle className="h-4 w-4 text-red-500" />
+        <span>Đã hủy</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.COMPLETED,
+    label: (
+      <div className="flex items-center gap-2">
+        <CheckCircle2 className="h-4 w-4 text-green-500" />
+        <span>Đã hoàn thành</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.FAILED,
+    label: (
+      <div className="flex items-center gap-2">
+        <AlertCircle className="h-4 w-4 text-red-500" />
+        <span>Đã thất bại</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.REFUNDED,
+    label: (
+      <div className="flex items-center gap-2">
+        <ArrowLeftRight className="h-4 w-4 text-gray-500" />
+        <span>Đã hoàn trả</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.RETURNED,
+    label: (
+      <div className="flex items-center gap-2">
+        <ArrowLeftRight className="h-4 w-4 text-gray-500" />
+        <span>Đã trả lại</span>
+      </div>
+    ),
+  },
+];
 
 export default function AdminOrdersTable({
+  searchTerm,
+  statusFilter,
   orders,
   errorMessage,
+  total,
+  page,
+  limit,
+  totalPages,
 }: {
+  searchTerm: string;
+  statusFilter: string;
   orders: OrderInListDataType[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
   errorMessage?: string;
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const searchParams = useSearchParams();
+
+  const [search, setSearch] = useState(searchTerm);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const router = useRouter();
 
   // Toggle expanded row
   const toggleRowExpanded = (orderId: string) => {
@@ -85,21 +197,24 @@ export default function AdminOrdersTable({
 
   // Calculate pagination
   // const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
-  const totalPages = 1;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // const totalPages = 1;
+  const indexOfLastItem = Number(page) * Number(limit);
+  const indexOfFirstItem = indexOfLastItem - Number(limit);
   // const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
 
   // Handle page changes
   const goToPage = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    // setCurrentPage(pageNumber);
     // Close any expanded rows when changing pages
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNumber.toString());
+    router.push(`?${params.toString()}`);
     setExpandedRows({});
   };
 
   const goToFirstPage = () => goToPage(1);
-  const goToPreviousPage = () => goToPage(Math.max(1, currentPage - 1));
-  const goToNextPage = () => goToPage(Math.min(totalPages, currentPage + 1));
+  const goToPreviousPage = () => goToPage(Math.max(1, Number(page) - 1));
+  const goToNextPage = () => goToPage(Math.min(totalPages, Number(page) + 1));
   const goToLastPage = () => goToPage(totalPages);
 
   // Generate page numbers to display
@@ -117,16 +232,16 @@ export default function AdminOrdersTable({
       pageNumbers.push(1);
 
       // Calculate start and end of page range
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      let startPage = Math.max(2, Number(page) - 1);
+      let endPage = Math.min(totalPages - 1, Number(page) + 1);
 
       // Adjust if we're near the beginning
-      if (currentPage <= 3) {
+      if (Number(page) <= 3) {
         endPage = Math.min(totalPages - 1, 4);
       }
 
       // Adjust if we're near the end
-      if (currentPage >= totalPages - 2) {
+      if (Number(page) >= totalPages - 2) {
         startPage = Math.max(2, totalPages - 3);
       }
 
@@ -152,34 +267,10 @@ export default function AdminOrdersTable({
     return pageNumbers;
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case "processing":
-        return <RefreshCw className="h-4 w-4 text-blue-500" />;
-      case "pending":
-        return <Clock className="h-4 w-4 text-yellow-500" />;
-      case "cancelled":
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <AlertCircle className="h-4 w-4 text-gray-500" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "processing":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "cancelled":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-    }
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set("search", search);
+    router.push(`?${params.toString()}`);
   };
 
   return (
@@ -197,24 +288,47 @@ export default function AdminOrdersTable({
               <div className="relative w-full sm:w-[300px]">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  type="search"
+                  type="text"
                   placeholder="Tìm kiếm đơn hàng..."
                   className="pl-8 w-full"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="ml-2 bg-slate-700 text-white hover:bg-slate-800 hover:text-white h-8 w-8 p-0 absolute right-0 top-1/2 -translate-y-1/2"
+                  onClick={() => {
+                    handleSearch();
+                  }}
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
               </div>
               <div className="w-full sm:w-[200px]">
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) => {
+                    const params = new URLSearchParams(searchParams);
+                    params.set("status", value === "all" ? "" : value);
+                    router.push(`?${params.toString()}`);
+                  }}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder="Status" />
+                    <SelectValue placeholder="Trạng thái" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                    <SelectItem value="completed">Đã hoàng thành</SelectItem>
-                    <SelectItem value="processing">Đang xử lý</SelectItem>
-                    <SelectItem value="pending">Đang chờ</SelectItem>
-                    <SelectItem value="cancelled">Đã huỷ</SelectItem>
+                    {orderStatuses.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -261,7 +375,7 @@ export default function AdminOrdersTable({
                       colSpan={9}
                       className="text-center py-8 text-muted-foreground"
                     >
-                      No orders found matching your criteria
+                      Không tìm thấy đơn hàng
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -300,16 +414,29 @@ export default function AdminOrdersTable({
                           {formatDate(order.createdAt, "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(order.status)}
-                            <Badge
-                              className={getStatusColor(order.status)}
-                              variant="outline"
-                            >
-                              {order.status.charAt(0).toUpperCase() +
-                                order.status.slice(1)}
-                            </Badge>
-                          </div>
+                          <Select
+                            value={order.status}
+                            onValueChange={(value) => {
+                              console.log(value);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">
+                                Tất cả trạng thái
+                              </SelectItem>
+                              {orderStatuses.map((status) => (
+                                <SelectItem
+                                  key={status.value}
+                                  value={status.value}
+                                >
+                                  {status.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         {/* <TableCell className="hidden lg:table-cell">
                           {order.payment}
@@ -375,8 +502,22 @@ export default function AdminOrdersTable({
                                   <TableBody>
                                     {order.items?.map((item) => (
                                       <TableRow key={item.productId}>
-                                        <TableCell className="font-medium">
-                                          {item.productName}
+                                        <TableCell className="font-medium flex items-center gap-2">
+                                          <Image
+                                            src={item.productImage}
+                                            alt={item.productName}
+                                            width={60}
+                                            height={60}
+                                            className="rounded-md"
+                                          />
+                                          <div className="flex flex-col">
+                                            {item.productName}
+                                            {item.productVariant && (
+                                              <span className="text-sm text-muted-foreground">
+                                                {item.productVariant.name}
+                                              </span>
+                                            )}
+                                          </div>
                                         </TableCell>
                                         <TableCell className="text-right">
                                           {item.productPrice.toLocaleString()}đ
@@ -423,10 +564,11 @@ export default function AdminOrdersTable({
                 Số mục mỗi trang
               </span>
               <Select
-                value={itemsPerPage.toString()}
+                value={limit.toString()}
                 onValueChange={(value) => {
-                  setItemsPerPage(Number(value));
-                  setCurrentPage(1); // Reset to first page when changing items per page
+                  const params = new URLSearchParams(searchParams);
+                  params.set("limit", value);
+                  router.push(`?${params.toString()}`);
                 }}
               >
                 <SelectTrigger className="w-[70px]">
@@ -440,7 +582,8 @@ export default function AdminOrdersTable({
                 </SelectContent>
               </Select>
               <span className="text-sm text-muted-foreground">
-                Đang hiển thị {indexOfFirstItem + 1}-
+                Đang hiển thị {indexOfFirstItem + 1}-{indexOfLastItem} trên{" "}
+                {total} đơn hàng
                 {/* {Math.min(indexOfLastItem, filteredOrders.length)} trên{" "}
                 {filteredOrders.length} đơn hàng */}
               </span>
@@ -452,7 +595,7 @@ export default function AdminOrdersTable({
                 size="icon"
                 className="h-8 w-8"
                 onClick={goToFirstPage}
-                disabled={currentPage === 1}
+                disabled={page === 1}
               >
                 <ChevronFirst className="h-4 w-4" />
                 <span className="sr-only">First page</span>
@@ -462,7 +605,7 @@ export default function AdminOrdersTable({
                 size="icon"
                 className="h-8 w-8"
                 onClick={goToPreviousPage}
-                disabled={currentPage === 1}
+                disabled={page === 1}
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Previous page</span>
@@ -486,7 +629,7 @@ export default function AdminOrdersTable({
                 return (
                   <Button
                     key={pageNumber}
-                    variant={currentPage === pageNumber ? "default" : "outline"}
+                    variant={page === pageNumber ? "default" : "outline"}
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => goToPage(pageNumber as number)}
@@ -502,7 +645,7 @@ export default function AdminOrdersTable({
                 size="icon"
                 className="h-8 w-8"
                 onClick={goToNextPage}
-                disabled={currentPage === totalPages}
+                disabled={page === totalPages}
               >
                 <ChevronRight className="h-4 w-4" />
                 <span className="sr-only">Next page</span>
@@ -512,7 +655,7 @@ export default function AdminOrdersTable({
                 size="icon"
                 className="h-8 w-8"
                 onClick={goToLastPage}
-                disabled={currentPage === totalPages}
+                disabled={page === totalPages}
               >
                 <ChevronLast className="h-4 w-4" />
                 <span className="sr-only">Last page</span>

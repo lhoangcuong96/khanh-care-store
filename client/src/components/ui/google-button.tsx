@@ -68,8 +68,16 @@ export default function GoogleLoginButton() {
       if (!accessToken || !refreshToken) {
         throw new Error("Token không hợp lệ");
       }
-      await authApiRequest.setToken(accessToken, refreshToken);
-      sessionStore.setTokens(accessToken, refreshToken);
+      await authApiRequest.setToken(
+        accessToken,
+        refreshToken,
+        res.payload?.data.account.id || ""
+      );
+      sessionStore.setTokens(
+        accessToken,
+        refreshToken,
+        res.payload?.data.account.id || ""
+      );
       messageApi.success({ description: "Đăng nhập thành công" });
       router.push(routePath.customer.home);
     } catch (_error) {

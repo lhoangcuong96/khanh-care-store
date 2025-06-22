@@ -18,8 +18,8 @@ export const OrderDeliveryInformationSchema = z.object({
     province: z.string()
   }),
   shippingFee: z.number(),
-  shippingDate: z.union([z.string(), z.date()]).optional().nullable(),
-  shippingPeriod: z.string().optional().nullable(),
+  // shippingDate: z.union([z.string(), z.date()]).optional().nullable(),
+  // shippingPeriod: z.string().optional().nullable(),
   note: z.string().optional().nullable()
 })
 

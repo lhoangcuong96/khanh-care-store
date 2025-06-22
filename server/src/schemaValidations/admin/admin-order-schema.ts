@@ -33,6 +33,10 @@ export const GetListOrderDataSchema = OrderSchema.pick({
 
 export const GetListOrdersResponseSchema = z.object({
   data: z.array(GetListOrderDataSchema),
+  total: z.number(),
+  totalPages: z.number(),
+  page: z.number(),
+  limit: z.number(),
   message: z.string()
 })
 

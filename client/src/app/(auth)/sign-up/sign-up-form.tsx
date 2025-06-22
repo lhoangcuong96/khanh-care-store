@@ -52,11 +52,19 @@ export function SignUpForm() {
         throw new Error("Token không hợp lệ");
       }
       // Send token to client server to set cookie
-      await authApiRequest.setToken(accessToken, refreshToken);
+      await authApiRequest.setToken(
+        accessToken,
+        refreshToken,
+        response.payload?.data.account.id || ""
+      );
       messageApi.success({
         description: "Đăng kí thành công",
       });
-      SessionStore.setTokens(accessToken, refreshToken);
+      SessionStore.setTokens(
+        accessToken,
+        refreshToken,
+        response.payload?.data.account.id || ""
+      );
       const getMeResponse = await accountApiRequest.getMe();
       const account = getMeResponse.payload?.data;
       if (!account) {
