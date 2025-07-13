@@ -17,10 +17,20 @@ const orderRequestApis = {
       isPrivate: true,
     });
   },
-  getListOrders: () => {
-    return http.get<GetListOrdersResponseType>("/order/list", {
-      isPrivate: true,
-    });
+  getListOrders: (searchTerm?: string, status?: string) => {
+    const queryParams = new URLSearchParams();
+    if (searchTerm) {
+      queryParams.set("search", searchTerm);
+    }
+    if (status) {
+      queryParams.set("status", status);
+    }
+    return http.get<GetListOrdersResponseType>(
+      `/order/list?${queryParams.toString()}`,
+      {
+        isPrivate: true,
+      }
+    );
   },
 };
 

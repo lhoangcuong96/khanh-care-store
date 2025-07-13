@@ -68,7 +68,6 @@ export default class OrderService {
     const mapItemsWithPrice = items.map((item) => {
       const product = products.find((product) => product.id === item.productId)
       const variant = product?.variants.find((variant) => variant.id === item.variantId)
-      console.log(variant, product?.variants, item)
       return {
         productId: item.productId,
         productPrice: variant?.price || product!.price || 0,
@@ -99,7 +98,7 @@ export default class OrderService {
           district: deliveryInformation.recipientAddress.district,
           province: deliveryInformation.recipientAddress.province
         },
-        shippingFee: 0,
+        shippingFee: deliveryInformation.shippingFee || 0,
         // shippingDate: deliveryInformation.shippingDate,
         // shippingPeriod: deliveryInformation.shippingPeriod,
         note: deliveryInformation.note
@@ -219,13 +218,26 @@ export default class OrderService {
     return order
   }
 
-  static async getOrders(accountId?: string): Promise<OrderInListDataType[]> {
+  static async getOrders(
+    accountId?: string,
+    {
+      search,
+      status
+    }: {
+      search?: string
+      status?: OrderStatus
+    } = {}
+  ): Promise<OrderInListDataType[]> {
     if (!accountId) {
       throw new Error('Thông tin tài khoản không hợp lệ')
     }
     const orders = await prisma.order.findMany({
       where: {
-        accountId
+        AND: [
+          { accountId },
+          search ? { orderCode: { contains: search, mode: 'insensitive' } } : {},
+          status ? { status } : {}
+        ]
       },
       select: {
         id: true,
@@ -242,9 +254,11 @@ export default class OrderService {
             productVariant: true
           }
         },
+        deliveryInformation: true,
         createdAt: true
       }
     })
+    console.log(orders)
     return orders
   }
 

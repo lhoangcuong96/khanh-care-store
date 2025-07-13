@@ -40,12 +40,13 @@ export default async function OrderPage({
   } catch (error) {
     errorMessage = (error as Error).message || "Có lỗi xảy ra";
   }
+
   return (
     <div className="p-4">
       <OrderTable
         searchTerm={search}
         statusFilter={status}
-        orders={orders}
+        initialOrders={orders}
         errorMessage={errorMessage}
         total={total}
         page={page}

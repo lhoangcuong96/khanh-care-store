@@ -104,6 +104,7 @@ export const GetListOrderDataSchema = OrderSchema.pick({
   items: true,
   totalAmount: true,
   createdAt: true,
+  deliveryInformation: true,
 });
 
 export const GetListOrdersResponseSchema = z.object({

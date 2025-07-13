@@ -5,11 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import useCart from "@/hooks/modules/use-cart";
 import Image from "next/image";
+import { Controller, useFormContext } from "react-hook-form";
 
 export default function OrderSummary() {
-  const deliveryCost = 0;
+  // TODO: get delivery cost from backend
 
   const { cart, total, countItems } = useCart();
+  const { control, watch } = useFormContext();
 
   return (
     <div>
@@ -60,12 +62,23 @@ export default function OrderSummary() {
               <span>{total.toLocaleString()}đ</span>
             </div>
             <div className="flex justify-between">
+              <Controller
+                control={control}
+                name="shippingFee"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Phí vận chuyển"
+                    className="hidden"
+                  />
+                )}
+              />
               <span>Phí vận chuyển</span>
-              <span>{deliveryCost.toLocaleString()}đ</span>
+              <span>{watch("shippingFee").toLocaleString()}đ</span>
             </div>
             <div className="flex justify-between font-semibold pt-2 border-t">
               <span>Tổng cộng</span>
-              <span>{(total + deliveryCost).toLocaleString()}đ</span>
+              <span>{(total + watch("shippingFee")).toLocaleString()}đ</span>
             </div>
           </div>
         </div>

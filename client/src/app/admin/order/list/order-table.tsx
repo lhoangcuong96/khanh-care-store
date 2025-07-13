@@ -19,7 +19,7 @@ import {
   Truck,
   XCircle,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,6 +51,8 @@ import { OrderInListDataType } from "@/validation-schema/admin/order";
 import { formatDate } from "date-fns";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { adminOrderRequestApi } from "@/api-request/admin/order";
+import { useToast } from "@/hooks/use-toast";
 
 enum OrderStatus {
   PENDING = "PENDING",
@@ -64,7 +66,49 @@ enum OrderStatus {
   RETURNED = "RETURNED",
 }
 
-const orderStatuses = [
+const finalOrderStatusOptions = [
+  {
+    value: OrderStatus.CANCELLED,
+    label: (
+      <div className="flex items-center gap-2">
+        <XCircle className="h-4 w-4 text-red-500" />
+        <span>Đã hủy</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.COMPLETED,
+    label: (
+      <div className="flex items-center gap-2">
+        <CheckCircle2 className="h-4 w-4 text-green-500" />
+        <span>Đã hoàn thành</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.RETURNED,
+    label: (
+      <div className="flex items-center gap-2">
+        <ArrowLeftRight className="h-4 w-4 text-gray-500" />
+        <span>Đã hoàn tiền</span>
+      </div>
+    ),
+  },
+  {
+    value: OrderStatus.REFUNDED,
+    label: (
+      <div className="flex items-center gap-2">
+        <ArrowLeftRight className="h-4 w-4 text-gray-500" />
+        <span>Đã trả lại</span>
+      </div>
+    ),
+  },
+];
+
+const activeOrderStatusOptions: {
+  value: OrderStatus;
+  label: React.ReactNode;
+}[] = [
   {
     value: OrderStatus.PENDING,
     label: (
@@ -102,24 +146,6 @@ const orderStatuses = [
     ),
   },
   {
-    value: OrderStatus.CANCELLED,
-    label: (
-      <div className="flex items-center gap-2">
-        <XCircle className="h-4 w-4 text-red-500" />
-        <span>Đã hủy</span>
-      </div>
-    ),
-  },
-  {
-    value: OrderStatus.COMPLETED,
-    label: (
-      <div className="flex items-center gap-2">
-        <CheckCircle2 className="h-4 w-4 text-green-500" />
-        <span>Đã hoàn thành</span>
-      </div>
-    ),
-  },
-  {
     value: OrderStatus.FAILED,
     label: (
       <div className="flex items-center gap-2">
@@ -128,30 +154,12 @@ const orderStatuses = [
       </div>
     ),
   },
-  {
-    value: OrderStatus.REFUNDED,
-    label: (
-      <div className="flex items-center gap-2">
-        <ArrowLeftRight className="h-4 w-4 text-gray-500" />
-        <span>Đã hoàn trả</span>
-      </div>
-    ),
-  },
-  {
-    value: OrderStatus.RETURNED,
-    label: (
-      <div className="flex items-center gap-2">
-        <ArrowLeftRight className="h-4 w-4 text-gray-500" />
-        <span>Đã trả lại</span>
-      </div>
-    ),
-  },
 ];
 
 export default function AdminOrdersTable({
   searchTerm,
   statusFilter,
-  orders,
+  initialOrders,
   errorMessage,
   total,
   page,
@@ -160,7 +168,7 @@ export default function AdminOrdersTable({
 }: {
   searchTerm: string;
   statusFilter: string;
-  orders: OrderInListDataType[];
+  initialOrders: OrderInListDataType[];
   total: number;
   page: number;
   limit: number;
@@ -171,8 +179,14 @@ export default function AdminOrdersTable({
 
   const [search, setSearch] = useState(searchTerm);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [disabledChangeStatus, setDisabledChangeStatus] = useState<
+    Record<string, boolean>
+  >({});
+
+  const [orders, setOrders] = useState<OrderInListDataType[]>([]);
 
   const router = useRouter();
+  const { toast } = useToast();
 
   // Toggle expanded row
   const toggleRowExpanded = (orderId: string) => {
@@ -272,6 +286,41 @@ export default function AdminOrdersTable({
     params.set("search", search);
     router.push(`?${params.toString()}`);
   };
+  const handleChangeStatus = async (orderId: string, status: OrderStatus) => {
+    try {
+      setDisabledChangeStatus((prev) => ({
+        ...prev,
+        [orderId]: true,
+      }));
+      await adminOrderRequestApi.changeStatus({ orderId }, { status });
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status } : order
+        )
+      );
+      toast({
+        title: "Cập nhật trạng thái đơn hàng thành công",
+        variant: "success",
+        duration: 1000,
+      });
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Cập nhật trạng thái đơn hàng thất bại",
+        variant: "destructive",
+        duration: 1000,
+      });
+    } finally {
+      setDisabledChangeStatus((prev) => ({
+        ...prev,
+        [orderId]: false,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    setOrders(initialOrders);
+  }, [initialOrders]);
 
   return (
     <Card>
@@ -316,6 +365,7 @@ export default function AdminOrdersTable({
                   onValueChange={(value) => {
                     const params = new URLSearchParams(searchParams);
                     params.set("status", value === "all" ? "" : value);
+                    params.set("page", "1");
                     router.push(`?${params.toString()}`);
                   }}
                 >
@@ -324,7 +374,10 @@ export default function AdminOrdersTable({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                    {orderStatuses.map((status) => (
+                    {[
+                      ...activeOrderStatusOptions,
+                      ...finalOrderStatusOptions,
+                    ].map((status) => (
                       <SelectItem key={status.value} value={status.value}>
                         {status.label}
                       </SelectItem>
@@ -379,181 +432,207 @@ export default function AdminOrdersTable({
                     </TableCell>
                   </TableRow>
                 ) : (
-                  orders.map((order) => (
-                    <>
-                      <TableRow
-                        key={order.id}
-                        className={expandedRows[order.id] ? "border-b-0" : ""}
-                      >
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 p-0"
-                            onClick={() => toggleRowExpanded(order.id)}
-                          >
-                            {expandedRows[order.id] ? (
-                              <ChevronDown className="h-4 w-4" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {order.orderCode}
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            {order.deliveryInformation.recipientFullname}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {order.deliveryInformation.recipientPhoneNumber}
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          {formatDate(order.createdAt, "dd/MM/yyyy")}
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={order.status}
-                            onValueChange={(value) => {
-                              console.log(value);
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">
-                                Tất cả trạng thái
-                              </SelectItem>
-                              {orderStatuses.map((status) => (
-                                <SelectItem
-                                  key={status.value}
-                                  value={status.value}
-                                >
-                                  {status.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        {/* <TableCell className="hidden lg:table-cell">
-                          {order.payment}
-                        </TableCell> */}
-                        <TableCell className="hidden md:table-cell">
-                          {order.items.length}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {order.totalAmount.toLocaleString()}đ
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem>View details</DropdownMenuItem>
-                              <DropdownMenuItem>Edit order</DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem>Update status</DropdownMenuItem>
-                              <DropdownMenuItem>
-                                Contact customer
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem>Print invoice</DropdownMenuItem>
-                              <DropdownMenuItem className="text-red-600">
-                                Cancel order
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                      {expandedRows[order.id] && (
-                        <TableRow className="bg-muted/50">
-                          <TableCell colSpan={9} className="p-0">
-                            <div className="px-4 py-3">
-                              <div className="flex items-center gap-2 mb-2">
-                                <ShoppingBag className="h-4 w-4" />
-                                <h4 className="font-medium">
-                                  Sản phẩm trong đơn hàng
-                                </h4>
-                              </div>
-                              <div className="rounded-md border bg-background">
-                                <Table>
-                                  <TableHeader>
-                                    <TableRow>
-                                      <TableHead>Sản phẩm</TableHead>
-                                      <TableHead className="text-right">
-                                        Giá
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        Số lượng
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        Tổng tiền sản phẩm
-                                      </TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {order.items?.map((item) => (
-                                      <TableRow key={item.productId}>
-                                        <TableCell className="font-medium flex items-center gap-2">
-                                          <Image
-                                            src={item.productImage}
-                                            alt={item.productName}
-                                            width={60}
-                                            height={60}
-                                            className="rounded-md"
-                                          />
-                                          <div className="flex flex-col">
-                                            {item.productName}
-                                            {item.productVariant && (
-                                              <span className="text-sm text-muted-foreground">
-                                                {item.productVariant.name}
-                                              </span>
-                                            )}
-                                          </div>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                          {item.productPrice.toLocaleString()}đ
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                          {item.productQuantity}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                          {(
-                                            item.productPrice *
-                                            item.productQuantity
-                                          ).toLocaleString()}
-                                          đ
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                    <TableRow>
-                                      <TableCell
-                                        colSpan={3}
-                                        className="text-right font-medium"
-                                      >
-                                        Tổng:
-                                      </TableCell>
-                                      <TableCell className="text-right font-medium">
-                                        {order.totalAmount.toLocaleString()}đ
-                                      </TableCell>
-                                    </TableRow>
-                                  </TableBody>
-                                </Table>
-                              </div>
+                  orders.map((order) => {
+                    const disabledActiveStatus = finalOrderStatusOptions.some(
+                      (status) => status.value === order.status
+                    );
+
+                    return (
+                      <>
+                        <TableRow
+                          key={order.id}
+                          className={expandedRows[order.id] ? "border-b-0" : ""}
+                        >
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 p-0"
+                              onClick={() => toggleRowExpanded(order.id)}
+                            >
+                              {expandedRows[order.id] ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {order.orderCode}
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              {order.deliveryInformation.recipientFullname}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {order.deliveryInformation.recipientPhoneNumber}
                             </div>
                           </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            {formatDate(order.createdAt, "dd/MM/yyyy")}
+                          </TableCell>
+                          <TableCell>
+                            <Select
+                              value={order.status}
+                              onValueChange={(value) => {
+                                handleChangeStatus(
+                                  order.id,
+                                  value as OrderStatus
+                                );
+                              }}
+                              disabled={disabledChangeStatus[order.id]}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">
+                                  Tất cả trạng thái
+                                </SelectItem>
+                                {activeOrderStatusOptions.map((status) => (
+                                  <SelectItem
+                                    key={status.value}
+                                    value={status.value}
+                                    disabled={disabledActiveStatus}
+                                  >
+                                    {status.label}
+                                  </SelectItem>
+                                ))}
+                                {finalOrderStatusOptions.map((status) => (
+                                  <SelectItem
+                                    key={status.value}
+                                    value={status.value}
+                                  >
+                                    {status.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          {/* <TableCell className="hidden lg:table-cell">
+                              {order.payment}
+                            </TableCell> */}
+                          <TableCell className="hidden md:table-cell">
+                            {order.items.length}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            {order.totalAmount.toLocaleString()}đ
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <span className="sr-only">Open menu</span>
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem>
+                                  View details
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>Edit order</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                  Update status
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  Contact customer
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                  Print invoice
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-red-600">
+                                  Cancel order
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
                         </TableRow>
-                      )}
-                    </>
-                  ))
+                        {expandedRows[order.id] && (
+                          <TableRow className="bg-muted/50">
+                            <TableCell colSpan={9} className="p-0">
+                              <div className="px-4 py-3">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <ShoppingBag className="h-4 w-4" />
+                                  <h4 className="font-medium">
+                                    Sản phẩm trong đơn hàng
+                                  </h4>
+                                </div>
+                                <div className="rounded-md border bg-background">
+                                  <Table>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead>Sản phẩm</TableHead>
+                                        <TableHead className="text-right">
+                                          Giá
+                                        </TableHead>
+                                        <TableHead className="text-right">
+                                          Số lượng
+                                        </TableHead>
+                                        <TableHead className="text-right">
+                                          Tổng tiền sản phẩm
+                                        </TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {order.items?.map((item) => (
+                                        <TableRow key={item.productId}>
+                                          <TableCell className="font-medium flex items-center gap-2">
+                                            <Image
+                                              src={item.productImage}
+                                              alt={item.productName}
+                                              width={60}
+                                              height={60}
+                                              className="rounded-md"
+                                            />
+                                            <div className="flex flex-col">
+                                              {item.productName}
+                                              {item.productVariant && (
+                                                <span className="text-sm text-muted-foreground">
+                                                  {item.productVariant.name}
+                                                </span>
+                                              )}
+                                            </div>
+                                          </TableCell>
+                                          <TableCell className="text-right">
+                                            {item.productPrice.toLocaleString()}
+                                            đ
+                                          </TableCell>
+                                          <TableCell className="text-right">
+                                            {item.productQuantity}
+                                          </TableCell>
+                                          <TableCell className="text-right">
+                                            {(
+                                              item.productPrice *
+                                              item.productQuantity
+                                            ).toLocaleString()}
+                                            đ
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                      <TableRow>
+                                        <TableCell
+                                          colSpan={3}
+                                          className="text-right font-medium"
+                                        >
+                                          Tổng:
+                                        </TableCell>
+                                        <TableCell className="text-right font-medium">
+                                          {order.totalAmount.toLocaleString()}đ
+                                        </TableCell>
+                                      </TableRow>
+                                    </TableBody>
+                                  </Table>
+                                </div>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>

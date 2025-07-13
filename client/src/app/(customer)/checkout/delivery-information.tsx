@@ -38,6 +38,7 @@ const formSchema = z.object({
   note: z.string().optional(),
   // shippingDate: z.date().optional().nullable(),
   shippingPeriod: z.string().optional().nullable(),
+  shippingFee: z.number(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -66,6 +67,7 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
       // shippingDate: new Date(),
       // shippingPeriod: Period.MORNING,
       note: "",
+      shippingFee: 30000,
     },
     mode: "onChange",
   });
@@ -90,9 +92,9 @@ export default function DeliveryInformation({ cart }: { cart: CartType }) {
             district: data.district,
             province: data.province,
           },
-          shippingFee: 0,
           // shippingDate: data.shippingDate,
           shippingPeriod: data.shippingPeriod,
+          shippingFee: data.shippingFee,
           note: data.note,
         },
       };

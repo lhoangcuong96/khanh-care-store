@@ -4,11 +4,14 @@ import {
   CreateOrderBodySchema,
   CreateOrderBodyType,
   CreateOrderResponseSchema,
+  GetListOrdersQuerySchema,
+  GetListOrdersQueryType,
   GetListOrdersResponseSchema,
   GetOrderParamSchema,
   GetOrderResponseSchema
 } from '@/schemaValidations/order.schema'
 import { FastifyAuthPluginOptions } from '@fastify/auth'
+import { OrderStatus } from '@prisma/client'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
 export default function OrderRoutes(fastify: FastifyInstance, options: FastifyAuthPluginOptions) {
@@ -59,14 +62,20 @@ export default function OrderRoutes(fastify: FastifyInstance, options: FastifyAu
     '/list',
     {
       schema: {
+        querystring: GetListOrdersQuerySchema,
         response: {
           200: GetListOrdersResponseSchema
         }
       }
     },
-    async (request: FastifyRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest<{ Querystring: GetListOrdersQueryType }>, reply: FastifyReply) => {
       const accountId = request.account?.id
-      const orders = await OrderController.getOrders(accountId)
+      const { search, status } = request.query
+      console.log(search, status)
+      const orders = await OrderController.getOrders(accountId, {
+        search: search || undefined,
+        status: status ? (status as OrderStatus) : undefined
+      })
       reply.send({
         data: orders,
         message: 'Lấy danh sách đơn hàng thành công'

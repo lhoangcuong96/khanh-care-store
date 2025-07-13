@@ -26,7 +26,6 @@ export default async function OrderConfirmationPage({
     } else {
       orderDetails = response.payload.data;
     }
-    console.log(orderDetails);
   } catch (error) {
     errorMessage = "Có lỗi xảy ra khi tải dữ liệu";
     console.error(error);

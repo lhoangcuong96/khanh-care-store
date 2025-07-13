@@ -17,7 +17,7 @@ export const OrderDeliveryInformationSchema = z.object({
     district: z.string(),
     province: z.string()
   }),
-  shippingFee: z.number(),
+  shippingFee: z.number().positive('Phí vận chuyển không hợp lệ'),
   // shippingDate: z.union([z.string(), z.date()]).optional().nullable(),
   // shippingPeriod: z.string().optional().nullable(),
   note: z.string().optional().nullable()
@@ -98,8 +98,8 @@ export type GetOrderResponseType = z.TypeOf<typeof GetOrderResponseSchema>
 /* Get List Orders */
 export const GetListOrdersQuerySchema = z
   .object({
-    page: z.string().optional().nullable(),
-    limit: z.string().optional().nullable()
+    search: z.string().optional().nullable(),
+    status: z.string().optional().nullable()
   })
   .strip()
 
@@ -109,7 +109,8 @@ export const GetListOrderDataSchema = OrderSchema.pick({
   status: true,
   items: true,
   totalAmount: true,
-  createdAt: true
+  createdAt: true,
+  deliveryInformation: true
 }).strip()
 
 export const GetListOrdersResponseSchema = z.object({

@@ -1,5 +1,6 @@
 import { CreateOrderBodyType } from '@/schemaValidations/order.schema'
 import OrderService from '@/services/order.service'
+import { OrderStatus } from '@prisma/client'
 
 export default class OrderController {
   static createOrder = async (body: CreateOrderBodyType, accountId?: string) => {
@@ -9,7 +10,7 @@ export default class OrderController {
     return OrderService.getOrderDetails(orderCode, accountId)
   }
 
-  static getOrders = async (accountId?: string) => {
-    return OrderService.getOrders(accountId)
+  static getOrders = async (accountId?: string, { search, status }: { search?: string; status?: OrderStatus } = {}) => {
+    return OrderService.getOrders(accountId, { search, status })
   }
 }

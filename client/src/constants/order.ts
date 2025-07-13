@@ -128,8 +128,11 @@ export const periodOptions = [
 export const orderStatusEnum = {
   PENDING: "Đang chờ xử lý",
   PROCESSING: "Đang xử lý",
-  DELIVERING: "Đang giao hàng",
-  DELIVERED: "Đang giao hàng",
+  SHIPPED: "Đang giao hàng",
+  DELIVERED: "Đã giao hàng",
   CANCELLED: "Đã hủy",
   COMPLETED: "Đã hoàn thành",
+  FAILED: "Đã hủy",
+  REFUNDED: "Đã hoàn thành",
+  RETURNED: "Đã hoàn thành",
 };

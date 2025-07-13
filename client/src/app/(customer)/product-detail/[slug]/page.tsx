@@ -33,7 +33,7 @@ export async function generateMetadata({
       openGraph: {
         ...sharedOpenGraph,
         title: product?.name || "Không tìm thấy sản phẩm",
-        description: product?.description || "Không tìm thấy sản phẩm",
+        // description: product?.description || "Không tìm thấy sản phẩm",
         url: url,
         images: [
           {
