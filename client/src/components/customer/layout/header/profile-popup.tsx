@@ -1,7 +1,7 @@
 "use client";
 
 import { CgProfile } from "react-icons/cg";
-import { FaShoppingBasket, FaUserCircle } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 
 import { RiLoginBoxLine } from "react-icons/ri";
 
@@ -11,6 +11,9 @@ import Link from "next/link";
 import { MdOutlinePassword } from "react-icons/md";
 
 import { Separator } from "@/components/ui/separator";
+import { FiShoppingBag } from "react-icons/fi";
+import { GrUserSettings } from "react-icons/gr";
+
 import { JSX } from "react";
 interface MenuProps {
   label: JSX.Element;
@@ -71,13 +74,13 @@ const loggedProfileItems: MenuProps[] = [
         className="flex flex-col items-start gap-2 pt-2 px-4 pb-0 hover:bg-gray-100 cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <FaShoppingBasket className="!text-lg" />
+          <FiShoppingBag className="!text-lg" />
           <p>Đơn hàng của tôi</p>
         </div>
         <Separator />
       </Link>
     ),
-    key: routePath.admin.home,
+    key: routePath.customer.account.orders,
   },
   {
     label: (
@@ -134,7 +137,7 @@ const adminProfileItems: MenuProps[] = [
         className="flex flex-col items-start gap-2 pt-2 px-4 pb-0 hover:bg-gray-100 cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <FaShoppingBasket className="!text-lg" />
+          <GrUserSettings className="!text-lg" />
           <p>Quản lý shop</p>
         </div>
         <Separator />
@@ -149,13 +152,13 @@ const adminProfileItems: MenuProps[] = [
         className="flex flex-col items-start gap-2 pt-2 px-4 pb-0 hover:bg-gray-100 cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <FaShoppingBasket className="!text-lg" />
+          <FiShoppingBag className="!text-lg" />
           <p>Đơn hàng của tôi</p>
         </div>
         <Separator />
       </Link>
     ),
-    key: routePath.admin.home,
+    key: routePath.customer.account.orders,
   },
   {
     label: (
