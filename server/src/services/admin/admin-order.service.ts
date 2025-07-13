@@ -96,8 +96,31 @@ export default class AdminOrderService {
       }
     })
     if (!order) {
-      throw new Error('Order not found')
+      throw new Error('Không tìm thấy đơn hàng')
     }
+
+    // Validation: Prevent status changes from CANCELED, RETURNED, REFUNDED, COMPLETED to active statuses
+    const finalStatuses: OrderStatus[] = [
+      OrderStatus.CANCELLED,
+      OrderStatus.RETURNED,
+      OrderStatus.REFUNDED,
+      OrderStatus.COMPLETED
+    ]
+    const activeStatuses: OrderStatus[] = [
+      OrderStatus.PENDING,
+      OrderStatus.PROCESSING,
+      OrderStatus.SHIPPED,
+      OrderStatus.DELIVERED,
+      OrderStatus.FAILED
+    ]
+
+    // Allow changes between final statuses, but prevent changes from final statuses to active statuses
+    if (finalStatuses.includes(order.status) && activeStatuses.includes(status)) {
+      throw new Error(
+        `Không thể thay đổi trạng thái từ ${order.status} sang ${status}. Đơn hàng đã ở trạng thái cuối cùng.`
+      )
+    }
+
     const updatedOrder = await prisma.order.update({
       where: {
         id: orderId

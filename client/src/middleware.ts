@@ -108,7 +108,6 @@ export async function middleware(request: NextRequest) {
   }
 
   if (accessToken && isAdminRoute(pathname) && !isAdminRole(account)) {
-    console.log("account", account);
     return NextResponse.redirect(new URL(routePath.customer.home, request.url));
   }
 

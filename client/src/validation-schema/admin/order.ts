@@ -47,3 +47,27 @@ export type GetListOrdersResponseType = z.TypeOf<
 >;
 
 /* Get List Orders */
+export const UpdateOrderStatusBodySchema = z.object({
+  status: z.enum([
+    "PENDING",
+    "PROCESSING",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+    "COMPLETED",
+    "FAILED",
+    "REFUNDED",
+    "RETURNED",
+  ]),
+});
+
+export const UpdateOrderStatusParamsSchema = z.object({
+  orderId: z.string(),
+});
+
+export type UpdateOrderStatusBodyType = z.TypeOf<
+  typeof UpdateOrderStatusBodySchema
+>;
+export type UpdateOrderStatusParamsType = z.TypeOf<
+  typeof UpdateOrderStatusParamsSchema
+>;

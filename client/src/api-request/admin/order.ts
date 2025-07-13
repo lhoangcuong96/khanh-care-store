@@ -2,6 +2,8 @@ import { http } from "@/lib/http";
 import {
   GetListOrdersQueryType,
   GetListOrdersResponseType,
+  UpdateOrderStatusBodyType,
+  UpdateOrderStatusParamsType,
 } from "@/validation-schema/admin/order";
 
 export const adminOrderRequestApi = {
@@ -28,6 +30,17 @@ export const adminOrderRequestApi = {
     const queryString = queryParams.toString();
     const url = `/admin/orders?${queryString}`;
     return http.get<GetListOrdersResponseType>(url, {
+      isAdminRequest: true,
+      isPrivate: true,
+    });
+  },
+
+  changeStatus: (
+    params: UpdateOrderStatusParamsType,
+    body: UpdateOrderStatusBodyType
+  ) => {
+    const url = `/admin/orders/${params.orderId}/status`;
+    return http.put(url, body, {
       isAdminRequest: true,
       isPrivate: true,
     });

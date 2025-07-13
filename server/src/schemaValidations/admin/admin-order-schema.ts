@@ -1,5 +1,6 @@
 import z from 'zod'
 import { OrderDeliveryInformationSchema, OrderSchema } from '../order.schema'
+import { OrderStatus } from '@prisma/client'
 
 /* Get List Orders */
 
@@ -43,5 +44,17 @@ export const GetListOrdersResponseSchema = z.object({
 export type GetListOrdersQueryType = z.TypeOf<typeof GetListOrdersQuerySchema>
 export type OrderInListDataType = z.TypeOf<typeof GetListOrderDataSchema>
 export type GetListOrdersResponseType = z.TypeOf<typeof GetListOrdersResponseSchema>
+
+/* Update Order Status */
+export const UpdateOrderStatusBodySchema = z.object({
+  status: z.enum(Object.values(OrderStatus) as [string, ...string[]])
+})
+
+export const UpdateOrderStatusParamsSchema = z.object({
+  orderId: z.string()
+})
+
+export type UpdateOrderStatusBodyType = z.TypeOf<typeof UpdateOrderStatusBodySchema>
+export type UpdateOrderStatusParamsType = z.TypeOf<typeof UpdateOrderStatusParamsSchema>
 
 /* Get List Orders */
