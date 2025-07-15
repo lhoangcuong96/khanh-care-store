@@ -258,7 +258,6 @@ export default class OrderService {
         createdAt: true
       }
     })
-    console.log(orders)
     return orders
   }
 

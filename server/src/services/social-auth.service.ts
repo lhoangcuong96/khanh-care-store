@@ -3,7 +3,12 @@ import RedisPlugin from '@/provider/redis'
 import { StatusError } from '@/utils/errors'
 import { createPairTokens } from '@/utils/jwt'
 import { Account, Session, SocialEnum } from '@prisma/client'
-import { OAuth2Client } from 'google-auth-library'
+import {
+  google, // The top level object used to access services
+  drive_v3, // For every service client, there is an exported namespace
+  Auth, // Namespace for auth related types
+  Common // General types used throughout the library
+} from 'googleapis'
 
 export class SocialAuthServiceFactory {
   static registry: Record<string, any> = {}
@@ -88,27 +93,45 @@ export abstract class SocialAuthService {
   }
 }
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+const client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_REDIRECT_URI
+)
 
 export class GoogleAuthService extends SocialAuthService {
-  async authenticate(token: string) {
+  async authenticate(authorizationCode: string) {
+    console.log(authorizationCode)
     try {
+      // First, exchange the authorization code for tokens
+      const tokenResponse = await client.getToken(authorizationCode)
+
+      const { id_token } = tokenResponse.tokens
+
+      if (!id_token) {
+        throw new StatusError({ message: 'No ID token received from Google', status: 400 })
+      }
+
+      // Now verify the ID token
       const ticket = await client.verifyIdToken({
-        idToken: token,
+        idToken: id_token,
         audience: process.env.GOOGLE_CLIENT_ID
       })
+
       const payload = ticket.getPayload()
       const email = payload?.email
       const name = payload?.name
       const avatar = payload?.picture
+
       const account = await this.handleAccount({ email: email!, fullname: name!, avatar: avatar! })
       const session = await this.createSession(account)
+
       return {
         account,
         session
       }
     } catch (e) {
-      console.error('Error during Google token verification:', e)
+      console.error('Error during Google authentication:', e)
       throw new StatusError({ message: 'Có lỗi xảy ra', status: 500 })
     }
   }

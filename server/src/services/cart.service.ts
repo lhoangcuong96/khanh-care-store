@@ -171,7 +171,6 @@ export class CartService {
       })),
       updatedAt: account.cart.updatedAt
     }
-    console.log('cartData:', cartData)
     return cartData
   }
 

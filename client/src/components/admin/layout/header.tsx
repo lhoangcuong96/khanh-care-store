@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   Search,
+  Menu,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,34 +26,63 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Sidebar } from "@/app/admin/sidebar";
 
 export function Header() {
   const { account } = useAppContext();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/admin/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsMobileSearchOpen(false);
     }
   };
 
+  // const handleMobileSearch = () => {
+  //   setIsMobileSearchOpen(true);
+  // };
+
   return (
     <header className="border-b sticky top-0 z-50 bg-slate-600">
-      <div className="flex h-16 items-center px-4">
-        <div className="w-64 px-2">
+      <div className="flex h-16 items-center px-2 sm:px-4">
+        {/* Sidebar Toggle Button (Mobile Only) */}
+        <button
+          type="button"
+          className="sm:hidden mr-2 p-2 rounded-md hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-white"
+          onClick={() => setIsSidebarOpen(true)}
+          aria-label="Open sidebar"
+        >
+          <Menu className="h-6 w-6 text-white" />
+        </button>
+        {/* Logo Section */}
+        <div className="flex-shrink-0 w-32 sm:w-48 lg:w-64 px-1 sm:px-2 m-auto">
           <Link href={routePath.admin.home}>
             <Image
               src="/images/logo.png"
               width="124"
               height="39"
               alt="logo"
-            ></Image>
+              className="w-auto h-8 sm:h-10"
+            />
           </Link>
         </div>
 
-        <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-4">
+        {/* Search Section */}
+        <form
+          onSubmit={handleSearch}
+          className="flex-1 max-w-2xl mx-2 sm:mx-4 hidden sm:block"
+        >
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -64,22 +94,47 @@ export function Header() {
           </div>
         </form>
 
-        <div className="ml-auto flex items-center space-x-4 text-white">
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
+        {/* Mobile Search Button */}
+        {/* <div className="sm:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white"
+            onClick={handleMobileSearch}
+          >
+            <Search className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon">
-            <HelpCircle className="h-5 w-5" />
-          </Button>
+        </div> */}
+
+        {/* Right Section */}
+        <div className="flex items-center space-x-1 text-white">
+          {/* Notification and Help - Hidden on mobile */}
+          <div className="hidden sm:flex items-center space-x-1">
+            <Button variant="ghost" size="icon">
+              <Bell className="h-5 w-5" />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <HelpCircle className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* User Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2">
-                <Avatar className="h-8 w-8">
+              <Button
+                variant="ghost"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3"
+              >
+                <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
                   <AvatarImage src="/placeholder-avatar.jpg" alt="@username" />
-                  <AvatarFallback className="text-slate-600">UN</AvatarFallback>
+                  <AvatarFallback className="text-slate-600 text-xs sm:text-sm">
+                    {account?.fullname?.charAt(0)?.toUpperCase() || "U"}
+                  </AvatarFallback>
                 </Avatar>
-                <span>{account?.fullname}</span>
-                <ChevronDown className="h-4 w-4" />
+                <span className="hidden sm:block text-sm lg:text-base">
+                  {account?.fullname}
+                </span>
+                <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
@@ -117,6 +172,47 @@ export function Header() {
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Mobile Sidebar Dialog */}
+      <Dialog open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        <DialogContent className="p-0 max-w-xs w-fit h-full rounded-none md:hidden translate-x-0 translate-y-0 top-0 left-0">
+          <Image
+            src="/images/logo.png"
+            alt="logo"
+            width={50}
+            height={50}
+            className="w-auto h-10 object-contain mt-8 ml-6"
+          />
+          <Sidebar
+            className="w-64 h-full overflow-y-scroll"
+            onClose={() => setIsSidebarOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Mobile Search Dialog */}
+      <Dialog open={isMobileSearchOpen} onOpenChange={setIsMobileSearchOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Tìm kiếm</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSearch} className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Tìm kiếm sản phẩm, đơn hàng, khách hàng..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Tìm kiếm
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

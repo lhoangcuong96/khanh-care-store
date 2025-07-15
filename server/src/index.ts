@@ -24,9 +24,26 @@ import LandingRoutes from './routes/landing.route'
 import OrderRoutes from './routes/order.route'
 import StorageRoutes from './routes/storage.route'
 import { NewsRoutes } from './routes/news.route'
+import fs from 'fs'
 
+const isDev = process.env.NODE_ENV !== 'production'
+
+/*
+  Create cert:
+  - choco install mkcert
+  - mkcert -install
+  - mkcert localhost 127.0.0.1 ::1
+*/
 const fastify = Fastify({
-  logger: true
+  logger: true,
+  ...(isDev && {
+    http2: true,
+    https: {
+      allowHTTP1: true,
+      key: fs.readFileSync(path.join(__dirname, '..', 'localhost+1-key.pem')),
+      cert: fs.readFileSync(path.join(__dirname, '..', 'localhost+1.pem'))
+    }
+  })
 })
 
 // Run the server!

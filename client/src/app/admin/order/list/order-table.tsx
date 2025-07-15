@@ -515,8 +515,15 @@ export default function AdminOrdersTable({
                           <TableCell className="hidden md:table-cell">
                             {order.items.length}
                           </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {order.totalAmount.toLocaleString()}đ
+                          <TableCell className="text-right">
+                            <div className="text-sm text-muted-foreground">
+                              Phí vận chuyển:{" "}
+                              {order.deliveryInformation.shippingFee.toLocaleString()}
+                              đ
+                            </div>
+                            <div className="font-medium">
+                              {order.totalAmount.toLocaleString()}đ
+                            </div>
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>
@@ -554,6 +561,127 @@ export default function AdminOrdersTable({
                           <TableRow className="bg-muted/50">
                             <TableCell colSpan={9} className="p-0">
                               <div className="px-4 py-3">
+                                {/* Shipping Information */}
+                                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Truck className="h-4 w-4" />
+                                    <h4 className="font-medium">
+                                      Thông tin giao hàng
+                                    </h4>
+                                  </div>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div className="space-y-1">
+                                      <div className="flex justify-between">
+                                        <span className="text-muted-foreground">
+                                          Người nhận:
+                                        </span>
+                                        <span className="font-medium">
+                                          {
+                                            order.deliveryInformation
+                                              .recipientFullname
+                                          }
+                                        </span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span className="text-muted-foreground">
+                                          Số điện thoại:
+                                        </span>
+                                        <span>
+                                          {
+                                            order.deliveryInformation
+                                              .recipientPhoneNumber
+                                          }
+                                        </span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span className="text-muted-foreground">
+                                          Phí vận chuyển:
+                                        </span>
+                                        <span>
+                                          {order.deliveryInformation.shippingFee.toLocaleString()}
+                                          đ
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                      <div className="flex justify-between">
+                                        <span className="text-muted-foreground">
+                                          Địa chỉ:
+                                        </span>
+                                        <span className="text-right max-w-[200px]">
+                                          {
+                                            order.deliveryInformation
+                                              .recipientAddress.address
+                                          }
+                                          ,{" "}
+                                          {
+                                            order.deliveryInformation
+                                              .recipientAddress.ward
+                                          }
+                                          ,{" "}
+                                          {
+                                            order.deliveryInformation
+                                              .recipientAddress.district
+                                          }
+                                          ,{" "}
+                                          {
+                                            order.deliveryInformation
+                                              .recipientAddress.province
+                                          }
+                                        </span>
+                                      </div>
+                                      {order.deliveryInformation
+                                        .shippingDate && (
+                                        <div className="flex justify-between">
+                                          <span className="text-muted-foreground">
+                                            Ngày giao hàng:
+                                          </span>
+                                          <span>
+                                            {formatDate(
+                                              new Date(
+                                                order.deliveryInformation.shippingDate
+                                              ),
+                                              "dd/MM/yyyy"
+                                            )}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {order.deliveryInformation
+                                        .shippingPeriod && (
+                                        <div className="flex justify-between">
+                                          <span className="text-muted-foreground">
+                                            Thời gian giao:
+                                          </span>
+                                          <span>
+                                            {order.deliveryInformation
+                                              .shippingPeriod === "morning"
+                                              ? "Sáng (8h-12h)"
+                                              : order.deliveryInformation
+                                                  .shippingPeriod ===
+                                                "afternoon"
+                                              ? "Chiều (13h-17h)"
+                                              : order.deliveryInformation
+                                                  .shippingPeriod === "evening"
+                                              ? "Tối (18h-22h)"
+                                              : order.deliveryInformation
+                                                  .shippingPeriod}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {order.deliveryInformation.note && (
+                                        <div className="flex justify-between">
+                                          <span className="text-muted-foreground">
+                                            Ghi chú:
+                                          </span>
+                                          <span className="text-right max-w-[200px] italic">
+                                            {order.deliveryInformation.note}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+
                                 <div className="flex items-center gap-2 mb-2">
                                   <ShoppingBag className="h-4 w-4" />
                                   <h4 className="font-medium">

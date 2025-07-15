@@ -206,16 +206,20 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
+type SidebarProps = React.HTMLAttributes<HTMLDivElement> & {
+  onClose?: () => void;
+};
 
 const SidebarItem = ({
   isExpand,
   item,
   handleExpand,
+  onClose,
 }: {
   isExpand: boolean;
   item: MenuItem;
   handleExpand: (value: string) => void;
+  onClose?: () => void;
 }) => {
   return (
     <div>
@@ -246,7 +250,13 @@ const SidebarItem = ({
         {item.subItems && isExpand && (
           <div className="ml-6 mb-2 ">
             {item.subItems.map((subItem) => {
-              return <SidebarSubItem key={subItem.key} item={subItem} />;
+              return (
+                <SidebarSubItem
+                  key={subItem.key}
+                  item={subItem}
+                  onClose={onClose}
+                />
+              );
             })}
           </div>
         )}
@@ -255,8 +265,16 @@ const SidebarItem = ({
   );
 };
 
-const SidebarSubItem = ({ item }: { item: MenuSubItem }) => {
-  const isActive = window.location.pathname.includes(item.key);
+const SidebarSubItem = ({
+  item,
+  onClose,
+}: {
+  item: MenuSubItem;
+  onClose?: () => void;
+}) => {
+  const isActive =
+    typeof window !== "undefined" &&
+    window.location.pathname.includes(item.key);
   return (
     <Link
       key={item.url}
@@ -265,13 +283,14 @@ const SidebarSubItem = ({ item }: { item: MenuSubItem }) => {
         "block px-4 py-2 rounded-lg mb-1 text-sm text-gray-600 hover:text-slate-600",
         isActive && "text-slatee-600"
       )}
+      onClick={onClose}
     >
       {item.label}
     </Link>
   );
 };
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, onClose }: SidebarProps) {
   const [expandedItem, setExpandedItem] = useState<string[]>(() => {
     const expandList = LocalStore?.getKey(STORE_KEYS.adminSidebarExpandList);
     return expandList?.split(",") || [];
@@ -307,6 +326,7 @@ export function Sidebar({ className }: SidebarProps) {
                 isExpand={isExpand}
                 item={item}
                 handleExpand={handleExpand}
+                onClose={onClose}
               ></SidebarItem>
             );
           })}

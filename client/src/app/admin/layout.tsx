@@ -10,8 +10,11 @@ export default function Layout({ children }: LayoutProps) {
     <div className="flex min-h-screen flex-col font-semibold">
       <Header />
       <div className="flex flex-1">
-        <Sidebar className="w-64 border-r" />
-        <main className="flex-1">{children}</main>
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block">
+          <Sidebar className="w-64 border-r h-full" />
+        </div>
+        <main className="flex-1 min-w-0">{children}</main>
       </div>
     </div>
   );

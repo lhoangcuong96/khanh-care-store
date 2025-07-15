@@ -4,3 +4,15 @@ uploads/
 
 
 .env*
+cert.pem
+key.pem
+*.key
+*.crt
+*.pem
+*.csr
+*.key
+*.crt
+*.pem
+*.csr
+*.key
+*.crt

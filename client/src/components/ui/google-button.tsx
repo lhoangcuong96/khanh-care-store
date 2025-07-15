@@ -3,11 +3,10 @@
 import { authApiRequest } from "@/api-request/auth";
 import { Button } from "@/components/ui/button";
 import { routePath } from "@/constants/routes";
-import envConfig from "@/envConfig";
 import sessionStore from "@/helper/local-store/session-store";
-import { useHandleMessage } from "@/hooks/use-handle-message";
+import { useToast } from "@/hooks/use-toast";
+import { CodeResponse, useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { FaGoogle } from "react-icons/fa6";
 
 declare global {
@@ -17,52 +16,33 @@ declare global {
 }
 
 export default function GoogleLoginButton() {
-  const { messageApi } = useHandleMessage();
+  const { toast } = useToast();
   const router = useRouter();
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => handleGoogleResponse(codeResponse),
+    onError: () => {
+      toast({
+        title: "Đăng nhập thất bại",
+        description: "Vui lòng thử lại",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+    flow: "auth-code",
+  });
 
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  const handleGoogleLogin = () => {
+  const handleGoogleResponse = async (
+    credentialResponse: Omit<
+      CodeResponse,
+      "error" | "error_description" | "error_uri"
+    >
+  ) => {
     try {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: envConfig?.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-          callback: handleGoogleResponse,
-          ux_mode: "popup",
-        });
-
-        window.google.accounts.id.prompt((notification: any) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // The Google Sign-In popup was closed or skipped
-            if (notification.getSkippedReason() === "unknown_reason") {
-              messageApi.error({
-                error:
-                  "Google Sign-In đã bị chặn, hãy vui lòng click icon dấu chấm than bên cạnh thanh địa chỉ và nhấn reset permission để có thể đăng nhập",
-              });
-            }
-          }
-        });
-      }
-    } catch (error) {
-      messageApi.error({ error: (error as Error).message });
-    }
-  };
-
-  const handleGoogleResponse = async (response: any) => {
-    const { credential } = response;
-
-    try {
-      const res = await authApiRequest.authenticateWithGoogle(credential);
+      console.log(credentialResponse);
+      const res = await authApiRequest.authenticateWithGoogle(
+        credentialResponse.code
+      );
       const accessToken = res.payload?.data.accessToken;
       const refreshToken = res.payload?.data.refreshToken;
       if (!accessToken || !refreshToken) {
@@ -78,11 +58,21 @@ export default function GoogleLoginButton() {
         refreshToken,
         res.payload?.data.account.id || ""
       );
-      messageApi.success({ description: "Đăng nhập thành công" });
+      toast({
+        title: "Đăng nhập thành công",
+        description: "Đăng nhập thành công",
+        variant: "success",
+        duration: 3000,
+      });
       router.push(routePath.customer.home);
     } catch (_error) {
       console.error(_error);
-      messageApi.error({ error: "Đăng nhập thất bại" });
+      toast({
+        title: "Đăng nhập thất bại",
+        description: "Vui lòng thử lại",
+        variant: "destructive",
+        duration: 3000,
+      });
     }
   };
 
@@ -90,7 +80,7 @@ export default function GoogleLoginButton() {
     <Button
       className="w-16 h-16 rounded-3xl bg-red-100 text-red-600 hover:bg-red-200"
       type="button"
-      onClick={handleGoogleLogin}
+      onClick={login}
     >
       <FaGoogle />
     </Button>
