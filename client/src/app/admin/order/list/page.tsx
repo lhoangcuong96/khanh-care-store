@@ -2,6 +2,13 @@ import { adminOrderRequestApi } from "@/api-request/admin/order";
 import { OrderInListDataType } from "@/validation-schema/admin/order";
 import OrderTable from "./order-table";
 import { Order } from "@/validation-schema/common";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+} from "@/components/ui/breadcrumb";
+import { routePath } from "@/constants/routes";
+import { ChevronRight } from "lucide-react";
 
 export default async function OrderPage({
   searchParams,
@@ -43,6 +50,25 @@ export default async function OrderPage({
 
   return (
     <div className="p-4">
+      <Breadcrumb className="mb-4 mt-4">
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            href={routePath.admin.home}
+            className="text-sm text-muted-foreground"
+          >
+            Trang chủ
+          </BreadcrumbLink>
+          <ChevronRight className="w-4 h-4" />
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            href={routePath.admin.order.list}
+            className="text-sm text-muted-foreground"
+          >
+            Danh sách đơn hàng
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
       <OrderTable
         searchTerm={search}
         statusFilter={status}

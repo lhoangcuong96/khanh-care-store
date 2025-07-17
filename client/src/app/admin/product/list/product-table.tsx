@@ -211,213 +211,344 @@ export function ProductTable({ products }: { products: ProductInListType }) {
         </div>
       )}
       <div className={selectedProducts.length > 0 ? "pb-16" : ""}>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={selectedProducts.length === products.length}
-                  onCheckedChange={handleSelectAll}
-                />
-              </TableHead>
-              <TableHead>Tên sản phẩm</TableHead>
-              <TableHead>Doanh số</TableHead>
-              <TableHead>Giá</TableHead>
-              <TableHead>Kho hàng</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead>Nổi bật</TableHead>
-              <TableHead>Bán chạy</TableHead>
-              <TableHead>Có khuyến mãi</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>
+        {/* Desktop Table View */}
+        <div className="hidden md:block">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[50px]">
                   <Checkbox
-                    checked={selectedProducts.includes(product.id)}
-                    onCheckedChange={(checked) =>
-                      handleSelectProduct(product.id, checked as boolean)
-                    }
+                    checked={selectedProducts.length === products.length}
+                    onCheckedChange={handleSelectAll}
                   />
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={product.image.thumbnail || ""}
-                      alt={product.name}
-                      width={40}
-                      height={40}
-                      className="rounded-md"
+                </TableHead>
+                <TableHead>Tên sản phẩm</TableHead>
+                <TableHead>Doanh số</TableHead>
+                <TableHead>Giá</TableHead>
+                <TableHead>Kho hàng</TableHead>
+                <TableHead>Trạng thái</TableHead>
+                <TableHead>Nổi bật</TableHead>
+                <TableHead>Bán chạy</TableHead>
+                <TableHead>Có khuyến mãi</TableHead>
+                <TableHead className="text-right">Thao tác</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {products.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedProducts.includes(product.id)}
+                      onCheckedChange={(checked) =>
+                        handleSelectProduct(product.id, checked as boolean)
+                      }
                     />
-                    <p>{product.name}</p>
-                    {/* <div>
-                      <div>{product.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        SKU: {product.sku}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={product.image.thumbnail || ""}
+                        alt={product.name}
+                        width={40}
+                        height={40}
+                        className="rounded-md"
+                      />
+                      <p>{product.name}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>{product.sold || 0}</TableCell>
+                  <TableCell>{product.price.toLocaleString()}đ</TableCell>
+                  <TableCell>
+                    {product.stock ? (
+                      product.stock.toLocaleString()
+                    ) : (
+                      <Button variant="link" className="text-slate-600">
+                        Cập nhật
+                      </Button>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          product.isPublished ? "bg-green-500" : "bg-gray-400"
+                        }`}
+                      />
+                      <span className="text-sm">
+                        {product.isPublished ? "Đã đăng" : "Chưa đăng"}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox checked={product.isFeatured} />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox checked={product.isBestSeller} />
+                  </TableCell>
+                  <TableCell>
+                    {product.isPromotion ? (
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          {product.promotionPercent}% giảm giá
+                        </div>
                       </div>
-                    </div> */}
+                    ) : (
+                      "X"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-end gap-2">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link
+                              href={routePath.admin.product.update(
+                                product.slug
+                              )}
+                            >
+                              <Button variant="ghost" size="icon">
+                                <Edit className="h-4 w-4 text-slate-600" />
+                                <span className="sr-only">Sửa sản phẩm</span>
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Sửa sản phẩm</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link href="#">
+                              <Button variant="ghost" size="icon">
+                                <Eye className="h-4 w-4 text-slate-600" />
+                                <span className="sr-only">Xem sản phẩm</span>
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Xem sản phẩm</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link href="#">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  if (product.isPublished) {
+                                    unpublishProduct(product.id);
+                                  } else {
+                                    publishProduct(product.id);
+                                  }
+                                }}
+                              >
+                                {product.isPublished ? (
+                                  <ArrowDownCircle className="h-4 w-4 text-orange-600" />
+                                ) : (
+                                  <ArrowUpCircle className="h-4 w-4 text-blue-600" />
+                                )}
+                                <span className="sr-only">
+                                  {product.isPublished
+                                    ? "Ẩn sản phẩm"
+                                    : "Đẩy sản phẩm"}
+                                </span>
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              {product.isPublished
+                                ? "Ẩn sản phẩm"
+                                : "Đẩy sản phẩm"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <Trash className="h-4 w-4 text-red-600" />
+                                  <span className="sr-only">Xoá sản phẩm</span>
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Xác nhận xóa sản phẩm
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Bạn có chắc chắn muốn xóa sản phẩm này? Hành
+                                    động này không thể hoàn tác.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => deleteProduct(product.id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Xóa
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Xoá sản phẩm</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        {/* Mobile Card View */}
+        <div className="md:hidden space-y-4">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="border rounded-lg bg-white p-4 flex flex-col gap-2 shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  checked={selectedProducts.includes(product.id)}
+                  onCheckedChange={(checked) =>
+                    handleSelectProduct(product.id, checked as boolean)
+                  }
+                />
+                <Image
+                  src={product.image.thumbnail || ""}
+                  alt={product.name}
+                  width={48}
+                  height={48}
+                  className="rounded-md"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">{product.name}</div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    SKU: {product.sku}
                   </div>
-                </TableCell>
-                <TableCell>{product.sold || 0}</TableCell>
-                <TableCell>{product.price.toLocaleString()}đ</TableCell>
-                <TableCell>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 text-xs mt-1">
+                <span className="bg-gray-100 px-2 py-1 rounded">
+                  Giá: {product.price.toLocaleString()}đ
+                </span>
+                <span className="bg-gray-100 px-2 py-1 rounded">
+                  Kho:{" "}
                   {product.stock ? (
                     product.stock.toLocaleString()
                   ) : (
-                    <Button variant="link" className="text-slate-600">
-                      Cập nhật
-                    </Button>
+                    <span className="text-orange-600">Cập nhật</span>
                   )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-2 h-2 rounded-full ${
-                        product.isPublished ? "bg-green-500" : "bg-gray-400"
-                      }`}
-                    />
-                    <span className="text-sm">
-                      {product.isPublished ? "Đã đăng" : "Chưa đăng"}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Checkbox checked={product.isFeatured} />
-                </TableCell>
-                <TableCell>
-                  <Checkbox checked={product.isBestSeller} />
-                </TableCell>
-                <TableCell>
-                  {product.isPromotion ? (
-                    <div>
-                      <div className="text-sm text-muted-foreground">
-                        {product.promotionPercent}% giảm giá
-                      </div>
-                    </div>
+                </span>
+                <span className="bg-gray-100 px-2 py-1 rounded">
+                  Đã bán: {product.sold || 0}
+                </span>
+                {product.isPromotion && (
+                  <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded">
+                    {product.promotionPercent}% giảm giá
+                  </span>
+                )}
+                {product.isFeatured && (
+                  <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
+                    Nổi bật
+                  </span>
+                )}
+                {product.isBestSeller && (
+                  <span className="bg-green-100 text-green-700 px-2 py-1 rounded">
+                    Bán chạy
+                  </span>
+                )}
+                <span
+                  className={`px-2 py-1 rounded ${
+                    product.isPublished
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  {product.isPublished ? "Đã đăng" : "Chưa đăng"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <Link href={routePath.admin.product.update(product.slug)}>
+                  <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4 text-slate-600" />
+                    <span className="sr-only">Sửa sản phẩm</span>
+                  </Button>
+                </Link>
+                <Link href="#">
+                  <Button variant="ghost" size="icon">
+                    <Eye className="h-4 w-4 text-slate-600" />
+                    <span className="sr-only">Xem sản phẩm</span>
+                  </Button>
+                </Link>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    if (product.isPublished) {
+                      unpublishProduct(product.id);
+                    } else {
+                      publishProduct(product.id);
+                    }
+                  }}
+                >
+                  {product.isPublished ? (
+                    <ArrowDownCircle className="h-4 w-4 text-orange-600" />
                   ) : (
-                    "X"
+                    <ArrowUpCircle className="h-4 w-4 text-blue-600" />
                   )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center justify-end gap-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link
-                            href={routePath.admin.product.update(product.slug)}
-                          >
-                            <Button variant="ghost" size="icon">
-                              <Edit className="h-4 w-4 text-slate-600" />
-                              <span className="sr-only">Sửa sản phẩm</span>
-                            </Button>
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Sửa sản phẩm</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link href="#">
-                            <Button variant="ghost" size="icon">
-                              <Eye className="h-4 w-4 text-slate-600" />
-                              <span className="sr-only">Xem sản phẩm</span>
-                            </Button>
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Xem sản phẩm</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link href="#">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                if (product.isPublished) {
-                                  unpublishProduct(product.id);
-                                } else {
-                                  publishProduct(product.id);
-                                }
-                              }}
-                            >
-                              {product.isPublished ? (
-                                <ArrowDownCircle className="h-4 w-4 text-orange-600" />
-                              ) : (
-                                <ArrowUpCircle className="h-4 w-4 text-blue-600" />
-                              )}
-                              <span className="sr-only">
-                                {product.isPublished
-                                  ? "Ẩn sản phẩm"
-                                  : "Đẩy sản phẩm"}
-                              </span>
-                            </Button>
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            {product.isPublished
-                              ? "Ẩn sản phẩm"
-                              : "Đẩy sản phẩm"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <Trash className="h-4 w-4 text-red-600" />
-                                <span className="sr-only">Xoá sản phẩm</span>
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Xác nhận xóa sản phẩm
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Bạn có chắc chắn muốn xóa sản phẩm này? Hành
-                                  động này không thể hoàn tác.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Hủy</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => deleteProduct(product.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  Xóa
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Xoá sản phẩm</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  <span className="sr-only">
+                    {product.isPublished ? "Ẩn sản phẩm" : "Đẩy sản phẩm"}
+                  </span>
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Trash className="h-4 w-4 text-red-600" />
+                      <span className="sr-only">Xoá sản phẩm</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Xác nhận xóa sản phẩm</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Bạn có chắc chắn muốn xóa sản phẩm này? Hành động này
+                        không thể hoàn tác.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Hủy</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteProduct(product.id)}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        Xóa
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -101,7 +101,6 @@ const client = new google.auth.OAuth2(
 
 export class GoogleAuthService extends SocialAuthService {
   async authenticate(authorizationCode: string) {
-    console.log(authorizationCode)
     try {
       // First, exchange the authorization code for tokens
       const tokenResponse = await client.getToken(authorizationCode)

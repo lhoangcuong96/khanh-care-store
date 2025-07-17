@@ -17,6 +17,12 @@ import { ProductTable } from "./product-table";
 import { SortFilter } from "./sort-filter";
 import { StatusFilter } from "./status-filter";
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+} from "@/components/ui/breadcrumb";
+
 export default async function ProductList({
   searchParams,
 }: {
@@ -151,11 +157,25 @@ export default async function ProductList({
 
   return (
     <div className="p-4">
-      <div className="flex items-center gap-1 text-sm text-gray-500 mb-4">
-        <span>Quản lý sản phẩm</span>
-        <ChevronRight className="h-4 w-4" />
-        <span className="font-medium text-gray-700">Tất cả sản phẩm</span>
-      </div>
+      <Breadcrumb className="mb-4 mt-4">
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            href={routePath.admin.home}
+            className="text-sm text-muted-foreground"
+          >
+            Trang chủ
+          </BreadcrumbLink>
+          <ChevronRight className="w-4 h-4" />
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            href={routePath.admin.product.list}
+            className="text-sm text-muted-foreground"
+          >
+            Danh sách sản phẩm
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
       <div className="space-y-4 p-8">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Tất cả sản phẩm</h2>

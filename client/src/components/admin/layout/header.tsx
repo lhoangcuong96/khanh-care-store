@@ -55,25 +55,28 @@ export function Header() {
 
   return (
     <header className="border-b sticky top-0 z-50 bg-slate-600">
-      <div className="flex h-16 items-center px-2 sm:px-4">
+      <div className="flex justify-between h-16 items-center px-2 sm:px-4">
         {/* Sidebar Toggle Button (Mobile Only) */}
         <button
           type="button"
-          className="sm:hidden mr-2 p-2 rounded-md hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-white"
+          className="md:hidden mr-2 p-2 rounded-md hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-white"
           onClick={() => setIsSidebarOpen(true)}
           aria-label="Open sidebar"
         >
           <Menu className="h-6 w-6 text-white" />
         </button>
         {/* Logo Section */}
-        <div className="flex-shrink-0 w-32 sm:w-48 lg:w-64 px-1 sm:px-2 m-auto">
-          <Link href={routePath.admin.home}>
+        <div className="flex-shrink-0 w-32 md:w-48 lg:w-64 px-1 md:px-2 m-auto lg:m-0">
+          <Link
+            href={routePath.admin.home}
+            className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 md:relative md:top-0 md:left-0 md:translate-x-0"
+          >
             <Image
               src="/images/logo.png"
               width="124"
               height="39"
               alt="logo"
-              className="w-auto h-8 sm:h-10"
+              className="w-auto h-8 md:h-10"
             />
           </Link>
         </div>
@@ -81,7 +84,7 @@ export function Header() {
         {/* Search Section */}
         <form
           onSubmit={handleSearch}
-          className="flex-1 max-w-2xl mx-2 sm:mx-4 hidden sm:block"
+          className="flex-1 max-w-2xl mx-2 md:mx-4 hidden md:block"
         >
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -109,7 +112,7 @@ export function Header() {
         {/* Right Section */}
         <div className="flex items-center space-x-1 text-white">
           {/* Notification and Help - Hidden on mobile */}
-          <div className="hidden sm:flex items-center space-x-1">
+          <div className="flex items-center space-x-1">
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
@@ -123,18 +126,18 @@ export function Header() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3"
+                className="flex items-center gap-1 md:gap-2 px-2 md:px-3"
               >
-                <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
+                <Avatar className="h-7 w-7 md:h-8 md:w-8">
                   <AvatarImage src="/placeholder-avatar.jpg" alt="@username" />
-                  <AvatarFallback className="text-slate-600 text-xs sm:text-sm">
+                  <AvatarFallback className="text-slate-600 text-xs md:text-sm">
                     {account?.fullname?.charAt(0)?.toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden sm:block text-sm lg:text-base">
+                <span className="hidden md:block text-sm lg:text-base">
                   {account?.fullname}
                 </span>
-                <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
