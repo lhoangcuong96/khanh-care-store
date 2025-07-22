@@ -162,6 +162,70 @@ export function NewsList({
       ? "false"
       : "all";
 
+  // Card rendering for mobile
+  const renderNewsCard = (news: NewsInListType) => (
+    <div
+      key={news.id}
+      className="bg-white rounded-lg shadow p-4 mb-4 border flex flex-col gap-2"
+    >
+      <div className="flex flex-col sm:flex-row gap-3 items-start">
+        <div className="relative h-20 w-32 min-w-[80px] overflow-hidden rounded-md border">
+          <Image
+            src={news.image.thumbnail}
+            alt={news.title}
+            width={128}
+            height={80}
+            className="object-cover w-full h-full"
+          />
+        </div>
+        <div className="flex-1">
+          <p className="font-medium text-base line-clamp-2">{news.title}</p>
+          <p className="text-xs text-muted-foreground line-clamp-2 mb-1">
+            <p dangerouslySetInnerHTML={{ __html: news.summary }}></p>
+          </p>
+          <div className="flex flex-wrap gap-1 mb-1">
+            {news.tags.map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+            <span>Tác giả: {news.author}</span>
+            <span>
+              Ngày: {formatDate(new Date(news.publishedAt || news.createdAt))}
+            </span>
+            <span>Lượt xem: {news.viewCount.toLocaleString()}</span>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {news.isPublished && <Badge variant="secondary">Đã đăng</Badge>}
+            {news.isFeatured && (
+              <Badge variant="default">
+                <Star className="mr-1 h-3 w-3" />
+                Nổi bật
+              </Badge>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-end gap-2 mt-2">
+        <Button variant="outline" size="icon" asChild>
+          <Link href={`/news/${news.slug}`} target="_blank">
+            <Eye className="h-4 w-4" />
+          </Link>
+        </Button>
+        <Button variant="outline" size="icon" asChild>
+          <Link href={routePath.admin.news.edit(news.id)}>
+            <Edit className="h-4 w-4" />
+          </Link>
+        </Button>
+        <Button variant="outline" size="icon" className="text-red-600">
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -199,154 +263,164 @@ export function NewsList({
         </div>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[300px]">Tiêu đề</TableHead>
-            <TableHead>Tác giả</TableHead>
-            <TableHead>Tags</TableHead>
-            <TableHead>Ngày đăng</TableHead>
-            <TableHead>Lượt xem</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead className="text-right">Thao tác</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {error ? (
+      {/* Table for desktop/tablet */}
+      <div className="hidden sm:block">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8">
-                {error}
-              </TableCell>
+              <TableHead className="w-[300px]">Tiêu đề</TableHead>
+              <TableHead>Tác giả</TableHead>
+              <TableHead>Tags</TableHead>
+              <TableHead>Ngày đăng</TableHead>
+              <TableHead>Lượt xem</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead className="text-right">Thao tác</TableHead>
             </TableRow>
-          ) : null}
-          {!error && news.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center py-8">
-                Không có bài viết nào
-              </TableCell>
-            </TableRow>
-          )}
-          {!error &&
-            news.length > 0 &&
-            news.map((news) => (
-              <TableRow key={news.id}>
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-3">
-                    <div className="relative contents h-10 w-16 overflow-hidden rounded-md">
-                      <Image
-                        src={news.image.thumbnail}
-                        alt={news.title}
-                        width={64}
-                        height={40}
-                        className="object-contain w-10 h-16"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="line-clamp-1">{news.title}</p>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        {news.summary}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>{news.author}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {news.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {formatDate(new Date(news.publishedAt || news.createdAt))}
-                </TableCell>
-                <TableCell>{news.viewCount.toLocaleString()}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {news.isPublished && (
-                      <Badge variant="secondary">Đã đăng</Badge>
-                    )}
-                    {news.isFeatured && (
-                      <Badge variant="default">
-                        <Star className="mr-1 h-3 w-3" />
-                        Nổi bật
-                      </Badge>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="icon" asChild>
-                      <Link href={`/news/${news.slug}`} target="_blank">
-                        <Eye className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="icon" asChild>
-                      <Link href={routePath.admin.news.edit(news.id)}>
-                        <Edit className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+          </TableHeader>
+          <TableBody>
+            {error ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8">
+                  {error}
                 </TableCell>
               </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-
-      {totalPages > 0 && (
-        <div className="flex items-center justify-between px-2">
-          <div className="text-sm text-muted-foreground">
-            Hiển thị {(currentPage - 1) * limit + 1} đến{" "}
-            {Math.min(currentPage * limit, total)} của {total} bài viết
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <div className="flex items-center gap-1">
-              {pageNumbers.map((page, index) =>
-                page === "..." ? (
-                  <span key={`ellipsis-${index}`} className="px-2">
-                    ...
-                  </span>
-                ) : (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handlePageChange(page as number)}
-                    className="h-8 w-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                )
-              )}
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+            ) : null}
+            {!error && news.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8">
+                  Không có bài viết nào
+                </TableCell>
+              </TableRow>
+            )}
+            {news.length > 0 &&
+              news.map((news) => (
+                <TableRow key={news.id}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-3">
+                      <div className="relative contents h-10 w-16 overflow-hidden rounded-md">
+                        <Image
+                          src={news.image.thumbnail}
+                          alt={news.title}
+                          width={64}
+                          height={40}
+                          className="object-contain w-10 h-16"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="line-clamp-1">{news.title}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {news.summary}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{news.author}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {news.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {formatDate(new Date(news.publishedAt || news.createdAt))}
+                  </TableCell>
+                  <TableCell>{news.viewCount.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {news.isPublished && (
+                        <Badge variant="secondary">Đã đăng</Badge>
+                      )}
+                      {news.isFeatured && (
+                        <Badge variant="default">
+                          <Star className="mr-1 h-3 w-3" />
+                          Nổi bật
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="icon" asChild>
+                        <Link href={`/news/${news.slug}`} target="_blank">
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="icon" asChild>
+                        <Link href={routePath.admin.news.edit(news.id)}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </div>
+      {/* Cards for mobile */}
+      <div className="block sm:hidden">
+        {error ? (
+          <div className="text-center py-8">{error}</div>
+        ) : news.length === 0 ? (
+          <div className="text-center py-8">Không có bài viết nào</div>
+        ) : (
+          news.map((news) => renderNewsCard(news))
+        )}
+      </div>
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row items-center justify-between px-2 gap-2">
+        <div className="text-sm text-muted-foreground w-full sm:w-auto text-center sm:text-left">
+          Hiển thị {(currentPage - 1) * limit + 1} đến{" "}
+          {Math.min(currentPage * limit, total)} của {total} bài viết
         </div>
-      )}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center gap-1">
+            {pageNumbers.map((page, index) =>
+              page === "..." ? (
+                <span key={`ellipsis-${index}`} className="px-2">
+                  ...
+                </span>
+              ) : (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePageChange(page as number)}
+                  className="h-8 w-8 p-0"
+                >
+                  {page}
+                </Button>
+              )
+            )}
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || totalPages === 0}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -33,7 +33,7 @@ export default async function CartPage() {
         ]}
       ></AppBreadcrumb>
       <div className="w-screen p-8 flex items-center justify-center h-full">
-        <div className="max-w-full lg:max-w-7xl mx-auto p-4 md:p-6">
+        <div className="max-w-full lg:max-w-7xl mx-auto">
           {errorMessage && (
             <div className="text-center">
               <h2 className="text-2xl font-semibold">Lỗi</h2>

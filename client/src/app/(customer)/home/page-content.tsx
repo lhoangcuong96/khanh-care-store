@@ -62,9 +62,9 @@ export default function PageContent({
         </Suspense>
 
         <OurSpecialServices></OurSpecialServices>
+        <NewsSection news={landingPageData?.listNews || []} />
       </div>
       {/* News Section with mock data */}
-      <NewsSection news={landingPageData?.listNews || []} />
     </>
   );
 }

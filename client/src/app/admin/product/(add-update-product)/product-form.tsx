@@ -29,9 +29,9 @@ export function ProductForm({
   });
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row w-full">
       <FormProvider {...form}>
-        <div className="flex-1 p-6">
+        <div className="flex-1mx-auto w-full">
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
@@ -49,17 +49,22 @@ export function ProductForm({
               categoryAttributes={categoryAttributes}
               selectedCategory={selectedCategory}
             />
-            <div className="flex justify-end gap-4 py-7 px-3 sticky bottom-0 bg-white shadow-xl col-span-2">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 py-4 px-2 sm:px-3 sticky bottom-0 bg-white shadow-xl w-full mx-auto z-10">
               <Link href={routePath.admin.product.list}>
-                <Button type="button" variant="outline" disabled={isSubmitting}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto"
+                >
                   Hủy
                 </Button>
               </Link>
-
               <Button
                 type="submit"
                 variant="secondary"
                 disabled={isSubmitting}
+                className="w-full sm:w-auto"
                 onClick={() => {
                   form.setValue("isPublished", false);
                   form.handleSubmit(onSubmit)();
@@ -70,6 +75,7 @@ export function ProductForm({
               <Button
                 type="submit"
                 disabled={isSubmitting}
+                className="w-full sm:w-auto"
                 onClick={() => {
                   form.setValue("isPublished", true);
                   form.handleSubmit(onSubmit)();

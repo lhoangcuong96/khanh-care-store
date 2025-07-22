@@ -257,17 +257,129 @@ export default function CategoriesPage() {
     );
   };
 
-  return (
-    <div className="container p-8">
-      <div className="mx-auto">
-        <div className="flex items-center justify-between mb-8">
+  // Card rendering for mobile
+  const renderCategoryCard = (
+    category: AdminCategoryInListType,
+    level = 0
+  ): JSX.Element => {
+    const hasChildren = category?.children
+      ? category.children.length > 0
+      : false;
+    const childCategories = category?.children || [];
+    const hasAttributes = category.attributes && category.attributes.length > 0;
+    return (
+      <div
+        key={category.id}
+        className="bg-white rounded-lg shadow p-4 mb-4 border"
+      >
+        <div className="flex items-center gap-3">
+          {category.image.thumbnail && (
+            <div className="w-12 h-12 rounded-md overflow-hidden border">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={category.image.thumbnail || "/placeholder.svg"}
+                alt={category.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
           <div>
-            <h1 className="text-3xl font-bold">Quản lý danh mục</h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="font-medium text-base">{category.name}</p>
+            <p className="text-xs text-muted-foreground">{category.slug}</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-4 mt-3 text-sm">
+          <div>
+            <span className="font-medium">Thuộc tính:</span>{" "}
+            {category.attributes?.length || 0}
+          </div>
+          <div>
+            <span className="font-medium">Danh mục con:</span>{" "}
+            {category.children?.length || 0}
+          </div>
+          <div>
+            <span className="font-medium">Sản phẩm:</span>{" "}
+            {category.totalProduct || 0}
+          </div>
+        </div>
+        {hasAttributes && (
+          <div className="mt-2">
+            <h4 className="text-xs font-medium mb-1">Thuộc tính:</h4>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {category.attributes?.map((attr, index) => (
+                <div key={index} className="text-xs p-1 bg-muted/30 rounded-md">
+                  <span className="font-medium">{attr.attribute.name}</span>
+                  {attr.attribute.options &&
+                    attr.attribute.options.length > 0 && (
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {attr.attribute.options
+                          .slice(0, 3)
+                          .map((value: any, vIndex: number) => (
+                            <span
+                              key={vIndex}
+                              className="text-xs bg-muted/50 px-1 rounded"
+                            >
+                              {value.name}
+                            </span>
+                          ))}
+                        {attr.attribute.options.length > 3 && (
+                          <span className="text-xs text-muted-foreground">
+                            +{attr.attribute.options.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="flex items-center justify-end gap-2 mt-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              router.push(routePath.admin.category.edit(category.id))
+            }
+          >
+            <Edit className="h-4 w-4" />
+            <span className="sr-only">Edit</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDeleteCategory(category.id)}
+          >
+            <Trash className="h-4 w-4" />
+            <span className="sr-only">Delete</span>
+          </Button>
+        </div>
+        {/* Render children recursively */}
+        {hasChildren && (
+          <div className="ml-4 mt-2 border-l-2 border-muted pl-2">
+            {childCategories.map((child) =>
+              renderCategoryCard(child, level + 1)
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="container px-2 sm:px-8 py-4">
+      <div className="mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">Quản lý danh mục</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Quản lý danh mục sản phẩm và thuộc tính
             </p>
           </div>
-          <Button onClick={() => router.push(routePath.admin.category.add)}>
+          <Button
+            className="w-full sm:w-auto"
+            onClick={() => router.push(routePath.admin.category.add)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Thêm danh mục
           </Button>
@@ -275,17 +387,19 @@ export default function CategoriesPage() {
 
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <CardTitle>Danh sách danh mục</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg sm:text-xl">
+                  Danh sách danh mục
+                </CardTitle>
+                <CardDescription className="text-sm sm:text-base">
                   Quản lý tất cả danh mục sản phẩm trong hệ thống
                 </CardDescription>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Input
                   placeholder="Tìm kiếm danh mục..."
-                  className="w-[300px]"
+                  className="w-full sm:w-[300px]"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -301,35 +415,68 @@ export default function CategoriesPage() {
                 </p>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Tên danh mục</TableHead>
-                    <TableHead>Số thuộc tính</TableHead>
-                    <TableHead>Số danh mục con</TableHead>
-                    <TableHead>Số sản phẩm</TableHead>
-                    <TableHead className="text-right">Thao tác</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rootCategories.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
-                        <div className="flex flex-col items-center justify-center">
-                          <FolderTree className="h-12 w-12 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">
-                            Không tìm thấy danh mục nào
-                          </p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+              <>
+                {/* Table for desktop/tablet */}
+                <div className="w-full overflow-x-auto hidden sm:block">
+                  <Table className="min-w-[600px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Tên danh mục</TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Số thuộc tính
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Số danh mục con
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Số sản phẩm
+                        </TableHead>
+                        <TableHead className="text-right">Thao tác</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {rootCategories.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8">
+                            <div className="flex flex-col items-center justify-center">
+                              <FolderTree className="h-12 w-12 text-muted-foreground mb-2" />
+                              <p className="text-muted-foreground">
+                                Không tìm thấy danh mục nào
+                              </p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        rootCategories.map((category) =>
+                          renderCategoryRow(category)
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+                {/* Cards for mobile */}
+                <div className="block sm:hidden">
+                  {isLoading ? (
+                    <div className="flex flex-col items-center justify-center py-8">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                      <p className="mt-4 text-sm text-muted-foreground">
+                        Đang tải danh mục...
+                      </p>
+                    </div>
+                  ) : rootCategories.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-8">
+                      <FolderTree className="h-12 w-12 text-muted-foreground mb-2" />
+                      <p className="text-muted-foreground">
+                        Không tìm thấy danh mục nào
+                      </p>
+                    </div>
                   ) : (
                     rootCategories.map((category) =>
-                      renderCategoryRow(category)
+                      renderCategoryCard(category)
                     )
                   )}
-                </TableBody>
-              </Table>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

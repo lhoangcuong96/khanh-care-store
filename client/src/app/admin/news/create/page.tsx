@@ -24,7 +24,7 @@ import * as z from "zod";
 import { useState, useRef, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, X, Upload } from "lucide-react";
+import { Loader2, X, Upload, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import useHandleStore from "@/hooks/use-handle-store";
 import { useRouter } from "next/navigation";
@@ -184,9 +184,13 @@ export default function CreateNewsPage() {
   }
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
+    <div className="flex-1 space-y-4 p-2 pt-6">
+      <div className="flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-2">
         <h2 className="text-3xl font-bold tracking-tight">Tạo Bài Viết Mới</h2>
+        <Button variant="outline" onClick={() => router.back()}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Quay lại
+        </Button>
       </div>
       <Card>
         <CardHeader>
@@ -234,7 +238,55 @@ export default function CreateNewsPage() {
                   <FormItem>
                     <FormLabel>Tóm tắt</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nhập tóm tắt bài viết" {...field} />
+                      <div className="relative">
+                        {isEditorLoading && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
+                            <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+                          </div>
+                        )}
+                        <Editor
+                          apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
+                          init={{
+                            height: 500,
+                            menubar: true,
+                            plugins: [
+                              "advlist",
+                              "autolink",
+                              "lists",
+                              "link",
+                              "image",
+                              "charmap",
+                              "preview",
+                              "anchor",
+                              "searchreplace",
+                              "visualblocks",
+                              "code",
+                              "fullscreen",
+                              "insertdatetime",
+                              "media",
+                              "table",
+                              "code",
+                              "help",
+                              "wordcount",
+                            ],
+                            toolbar:
+                              "undo redo | blocks | " +
+                              "bold italic forecolor | alignleft aligncenter " +
+                              "alignright alignjustify | bullist numlist outdent indent | " +
+                              "removeformat | help",
+                            content_style:
+                              "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                            setup: (editor: any) => {
+                              editor.on("init", () => {
+                                setIsEditorLoading(false);
+                              });
+                            },
+                          }}
+                          onEditorChange={(content) => {
+                            field.onChange(content);
+                          }}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

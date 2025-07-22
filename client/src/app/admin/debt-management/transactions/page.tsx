@@ -19,7 +19,7 @@ import { routePath } from "@/constants/routes";
 
 export default function TransactionsPage() {
   return (
-    <div className="space-y-4 p-8">
+    <div className="space-y-4 p-2">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight">Giao dịch</h2>
         <div className="flex items-center space-x-2">

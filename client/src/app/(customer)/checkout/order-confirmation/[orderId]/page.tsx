@@ -49,8 +49,8 @@ export default async function OrderConfirmationPage({
             },
           ]}
         ></AppBreadcrumb>
-        <div className="w-screen p-8 flex items-center justify-center h-full">
-          <div className="max-w-7xl mx-auto p-4 md:p-6">
+        <div className="w-screen p-5 flex items-center justify-center h-full">
+          <div className="max-w-7xl mx-auto">
             {errorMessage ? (
               <div className="text-center text-red-500">{errorMessage}</div>
             ) : (

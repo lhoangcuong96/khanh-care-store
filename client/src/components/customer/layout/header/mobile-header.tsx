@@ -26,6 +26,8 @@ export default function MobileHeader() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const isAdmin = account?.role === "ADMIN";
+
   const handleSearch = () => {
     if (searchRef.current) {
       const searchQuery = searchRef.current.value.trim();
@@ -50,11 +52,15 @@ export default function MobileHeader() {
   return (
     <header className="max-w-screen-xl w-full h-fit mt-5 relative z-50 font-medium block lg:hidden">
       <div className="border-b bg-white">
-        <div className="container mx-auto px-4 h-24">
+        <div className="container mx-auto h-24">
           <div className="flex items-center justify-between h-16">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-slate-600">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-600 p-0"
+                >
                   <Menu className="!h-6 !w-6" />
                 </Button>
               </SheetTrigger>
@@ -140,7 +146,9 @@ export default function MobileHeader() {
                                 {categories.map((category) => (
                                   <div key={category.id} className="py-1">
                                     <Link
-                                      href={`/products?category=${category.id}`}
+                                      href={routePath.customer.products({
+                                        category: category.id,
+                                      })}
                                       className="block"
                                       onClick={() => setIsOpen(false)}
                                     >
@@ -152,7 +160,11 @@ export default function MobileHeader() {
                                           {category.children.map((child) => (
                                             <Link
                                               key={child.id}
-                                              href={`/products?category=${child.id}`}
+                                              href={routePath.customer.products(
+                                                {
+                                                  category: child.id,
+                                                }
+                                              )}
                                               className="block py-1 text-sm text-gray-600"
                                               onClick={() => setIsOpen(false)}
                                             >
@@ -180,10 +192,31 @@ export default function MobileHeader() {
                       })}
                     </nav>
                   </div>
+                  {account && (
+                    <div className="p-4 border-b">
+                      {isAdmin && (
+                        <nav className="space-y-2">
+                          <Link
+                            href={routePath.admin.home}
+                            className="flex items-center py-2"
+                          >
+                            Quản lý shop
+                          </Link>
+                          <Link
+                            href={routePath.customer.account.orders}
+                            className="flex items-center py-2"
+                          >
+                            Đơn hàng của tôi
+                          </Link>
+                        </nav>
+                      )}
+                    </div>
+                  )}
+
                   <div className="p-4">
                     <nav className="space-y-2">
                       <Link
-                        href="/he-thong-cua-hang"
+                        href={routePath.customer.account.profile}
                         className="flex items-center py-2"
                       >
                         Hệ thống cửa hàng
@@ -235,7 +268,7 @@ export default function MobileHeader() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto py-4">
         <div className="relative">
           <Input
             placeholder="Bạn muốn tìm gì..."

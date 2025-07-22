@@ -125,7 +125,7 @@ export default function NewCustomerPage() {
   ];
 
   return (
-    <div className="space-y-4 p-8">
+    <div className="space-y-4 p-2">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight">Thêm đối tác mới</h2>
       </div>

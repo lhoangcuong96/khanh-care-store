@@ -173,9 +173,9 @@ export default function ProductBasicInfo() {
   };
 
   return (
-    <div className="grid grid-cols-[2fr_1fr] gap-5">
+    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5">
       <div className="rounded-lg border bg-white p-6 flex flex-col gap-6">
-        <h2 className="mb-4 text-lg font-medium">Thông tin cơ bản</h2>
+        <h2 className="mb-4 text-lg font-bold">Thông tin cơ bản</h2>
 
         <FormField
           control={form.control}
@@ -189,8 +189,8 @@ export default function ProductBasicInfo() {
               url = URL.createObjectURL(thumbnail);
             }
             return (
-              <FormItem className="grid grid-cols-[max-content_auto] gap-2">
-                <FormLabel className="w-36 pt-2">
+              <FormItem className="grid grid-cols-1 md:grid-cols-[max-content_auto] gap-2">
+                <FormLabel className="w-36 pt-2 font-bold">
                   Hình ảnh sản phẩm (Hình ảnh hiển thị trong danh sách sản phẩm)
                   <span className="text-destructive">*</span>
                 </FormLabel>
@@ -278,8 +278,8 @@ export default function ProductBasicInfo() {
           render={({ field }) => {
             const images = field.value || [];
             return (
-              <FormItem className="grid grid-cols-[max-content_auto] gap-2">
-                <FormLabel className="w-36 pt-2">
+              <FormItem className="grid grid-cols-1 md:grid-cols-[max-content_auto] gap-2">
+                <FormLabel className="w-36 pt-2 font-bold">
                   Hình ảnh slide sản phẩm
                 </FormLabel>
                 <div className="!m-0 h-auto">
@@ -376,8 +376,8 @@ export default function ProductBasicInfo() {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-[max-content_auto] gap-2">
-              <FormLabel className="w-36 pt-2">
+            <FormItem className="grid grid-cols-1 md:grid-cols-[max-content_auto] gap-2">
+              <FormLabel className="w-36 pt-2 font-bold">
                 Tên sản phẩm <span className="text-destructive">*</span>
               </FormLabel>
               <div className="!m-0">
@@ -399,8 +399,8 @@ export default function ProductBasicInfo() {
           control={form.control}
           name="category"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-[max-content_auto] gap-2">
-              <FormLabel className="w-36 pt-2">
+            <FormItem className="grid grid-cols-1 md:grid-cols-[max-content_auto] gap-2">
+              <FormLabel className="w-36 pt-2 font-bold">
                 Loại sản phẩm <span className="text-destructive">*</span>
               </FormLabel>
               <div className="!m-0">
@@ -426,8 +426,8 @@ export default function ProductBasicInfo() {
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-[max-content_auto] gap-2">
-              <FormLabel className="w-36 pt-2">
+            <FormItem className="grid grid-cols-1 md:grid-cols-[max-content_auto] gap-2">
+              <FormLabel className="w-36 pt-2 font-bold">
                 Mô tả sản phẩm <span className="text-destructive">*</span>
               </FormLabel>
               <div className="!m-0">
@@ -505,14 +505,14 @@ export default function ProductBasicInfo() {
         )}
       </div>
       <div className="rounded-lg border bg-white p-6 flex flex-col gap-6">
-        <h2 className="mb-4 text-lg font-medium">Thông tin bán hàng</h2>
+        <h2 className="mb-4 text-lg font-bold">Thông tin bán hàng</h2>
 
         <FormField
           control={form.control}
           name="price"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="grid grid-cols-1 md:grid-cols-[max-content_auto] gap-2">
+              <FormLabel className="font-bold">
                 Giá bán(đ) <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
@@ -536,8 +536,8 @@ export default function ProductBasicInfo() {
           control={form.control}
           name="stock"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="grid grid-cols-1 md:grid-cols-[max-content_auto] gap-2">
+              <FormLabel className="font-bold">
                 Số lượng <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
@@ -560,8 +560,8 @@ export default function ProductBasicInfo() {
           control={form.control}
           name="isFeatured"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center gap-3">
-              <FormLabel>
+            <FormItem className="flex flex-row items-center md:grid-cols-[max-content_auto] gap-2">
+              <FormLabel className="font-bold">
                 Sản phẩm nổi bật <span className="text-destructive"></span>
               </FormLabel>
               <FormControl>
@@ -581,8 +581,8 @@ export default function ProductBasicInfo() {
           control={form.control}
           name="isBestSeller"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center gap-3">
-              <FormLabel>
+            <FormItem className="flex flex-row items-center md:grid-cols-[max-content_auto] gap-2">
+              <FormLabel className="font-bold">
                 Sản phẩm bán chạy <span className="text-destructive"></span>
               </FormLabel>
               <FormControl>

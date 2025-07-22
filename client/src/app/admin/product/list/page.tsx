@@ -176,8 +176,8 @@ export default async function ProductList({
           </BreadcrumbLink>
         </BreadcrumbItem>
       </Breadcrumb>
-      <div className="space-y-4 p-8">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 p-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <h2 className="text-2xl font-bold">Tất cả sản phẩm</h2>
           <Link href={routePath.admin.product.add}>
             <Button className="bg-orange-500 hover:bg-orange-600 text-white">

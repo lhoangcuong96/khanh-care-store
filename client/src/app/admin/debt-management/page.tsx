@@ -13,7 +13,7 @@ import { RecentSales } from "./debt-overview/recent-sales";
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-4 p-8">
+    <div className="space-y-4 p-2">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight">

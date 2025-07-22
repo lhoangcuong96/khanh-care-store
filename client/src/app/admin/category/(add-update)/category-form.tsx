@@ -286,7 +286,7 @@ const CategoryForm = ({ category }: { category?: any }) => {
 
   return (
     <div className="mx-auto">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col-reverse items-start gap-2 sm:flex-row sm:items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold">
             {category ? "Chỉnh sửa" : "Tạo mới"} danh mục
@@ -858,7 +858,7 @@ const CategoryForm = ({ category }: { category?: any }) => {
             </TabsContent>
           </Tabs>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 py-4 px-2 sm:px-3 sticky bottom-0 bg-white shadow-xl w-full mx-auto z-10">
             <Button
               type="button"
               variant="outline"

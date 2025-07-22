@@ -18,7 +18,7 @@ export default function CartPage() {
         ]}
       ></AppBreadcrumb>
       <div className="w-screen p-8 flex items-center justify-center h-full">
-        <div className="max-w-7xl mx-auto p-4 md:p-6 w-full">
+        <div className="max-w-7xl mx-auto w-full">
           {/* Server-side rendered section */}
           {/* <Promotions /> */}
 

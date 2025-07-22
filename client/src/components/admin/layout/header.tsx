@@ -1,20 +1,13 @@
 "use client";
-import {
-  Bell,
-  HelpCircle,
-  ChevronDown,
-  User,
-  Settings,
-  LogOut,
-  Search,
-  Menu,
-} from "lucide-react";
+import { Sidebar } from "@/app/admin/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import Image from "next/image";
-import { routePath } from "@/constants/routes";
-import { useAppContext } from "@/provider/app-provider";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,15 +17,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { routePath } from "@/constants/routes";
+import { useAppContext } from "@/provider/app-provider";
+import {
+  Bell,
+  ChevronDown,
+  LogOut,
+  Menu,
+  Search,
+  Settings,
+  User,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Sidebar } from "@/app/admin/sidebar";
 
 export function Header() {
   const { account } = useAppContext();
@@ -116,9 +115,9 @@ export function Header() {
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon">
+            {/* <Button variant="ghost" size="icon">
               <HelpCircle className="h-5 w-5" />
-            </Button>
+            </Button> */}
           </div>
 
           {/* User Dropdown */}
