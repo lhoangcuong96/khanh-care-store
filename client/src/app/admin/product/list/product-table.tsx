@@ -440,9 +440,9 @@ export function ProductTable({ products }: { products: ProductInListType }) {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{product.name}</div>
-                  <div className="text-xs text-muted-foreground truncate">
+                  {/* <div className="text-xs text-muted-foreground truncate">
                     SKU: {product.sku}
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 text-xs mt-1">

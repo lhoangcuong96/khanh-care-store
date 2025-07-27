@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="ERD" id="prisma-erd">
+    <!-- Account Model -->
+    <mxCell id="account" value="Account\n-------------------\nid (PK)\nemail (U)\nfullname\nphoneNumber (U)\npassword\naddress\ngender\ndateOfBirth\ncreatedAt\nupdatedAt\navatar\nrole\nproviders (SocialAccount[])\ncart (Cart)\nshippingAddress (ShippingAddress)\norders (Order[])\nfavoriteProducts (Product[])\nfavoriteProductIds (String[])" style="shape=swimlane;fillColor=#dae8fc;" vertex="1" parent="1">
+      <mxGeometry x="20" y="20" width="220" height="420" as="geometry"/>
+    </mxCell>
+    <!-- Product Model -->
+    <mxCell id="product" value="Product\n-------------------\nid (PK)\nname\ntitle\ndescription\nslug (U)\nimage (ProductImage)\nrating\nreviewCount\ncreatedAt\nupdatedAt\ntags\nisPublished\ncategoryId (FK)\ncategory (Category)\nattributes (ProductAttributeValue[])\nvariants (ProductVariant[])\nstock\nprice\nsold\nisFeatured\nisBestSeller\nisPromotion\npromotionPercent\npromotionStart\npromotionEnd\nfavoritedBy (Account[])\nfavoritedByIds (String[])" style="shape=swimlane;fillColor=#e1d5e7;" vertex="1" parent="1">
+      <mxGeometry x="270" y="20" width="240" height="520" as="geometry"/>
+    </mxCell>
+    <!-- Category Model -->
+    <mxCell id="category" value="Category\n-------------------\nid (PK)\nname\nslug (U)\ndescription\nimage (CategoryImage)\nparentId (FK)\nparent (Category)\nchildren (Category[])\nisFeatured\nisShowOnHomePage\nstatus\nattributes (CategoryAttribute[])\nproducts (Product[])\ncreatedAt\nupdatedAt\ndeletedAt" style="shape=swimlane;fillColor=#fff2cc;" vertex="1" parent="1">
+      <mxGeometry x="540" y="20" width="240" height="480" as="geometry"/>
+    </mxCell>
+    <!-- Order Model -->
+    <mxCell id="order" value="Order\n-------------------\nid (PK)\norderCode (U)\naccountId (FK)\naccount (Account)\nitems (OrderItem[])\nsubtotal\ntotalAmount\ndeliveryInformation (DeliveryInformation)\nstatus\ncreatedAt\nupdatedAt" style="shape=swimlane;fillColor=#f8cecc;" vertex="1" parent="1">
+      <mxGeometry x="820" y="20" width="220" height="340" as="geometry"/>
+    </mxCell>
+    <!-- News Model -->
+    <mxCell id="news" value="News\n-------------------\nid (PK)\ntitle\nslug (U)\nsummary\ncontent\nimage (NewsImage)\nauthor\ntags\nisPublished\nisFeatured\nviewCount\ncreatedAt\nupdatedAt\npublishedAt\nmetaTitle\nmetaDescription\nmetaKeywords" style="shape=swimlane;fillColor=#d5e8d4;" vertex="1" parent="1">
+      <mxGeometry x="1070" y="20" width="220" height="400" as="geometry"/>
+    </mxCell>
+    <!-- Partner Model -->
+    <mxCell id="partner" value="Partner\n-------------------\nid (PK)\nname (U)\nphone (U)\nemail (U)\naddress (U)\ntype\nnotes\ntotalDebt\npaidAmount\nremainingDebt\nstatus\ncontactPerson\ncontactPosition\ncontactPhone\ncreatedAt\nupdatedAt\ntransactions (Transaction[])\ndebtHistory (DeptHistory[])" style="shape=swimlane;fillColor=#f5f5f5;" vertex="1" parent="1">
+      <mxGeometry x="20" y="480" width="240" height="420" as="geometry"/>
+    </mxCell>
+    <!-- Transaction Model -->
+    <mxCell id="transaction" value="Transaction\n-------------------\nid (PK)\ntransactionCode (U)\npartnerId (FK)\npartner (Partner)\ntype\namount\ndate\npaymentMethod\nreferenceCode\nnotes\nitems (TransactionItem[])\nDeptHistory (DeptHistory[])\nstatus\npaidAmount" style="shape=swimlane;fillColor=#f5f5f5;" vertex="1" parent="1">
+      <mxGeometry x="270" y="560" width="240" height="340" as="geometry"/>
+    </mxCell>
+    <!-- DeptHistory Model -->
+    <mxCell id="deptHistory" value="DeptHistory\n-------------------\nid (PK)\npartnerId (FK)\npartner (Partner)\ntransactionId (FK)\ntransaction (Transaction)\npreviousDebt\ndebtChange\ncurrentDebt\ndate\nnotes\ncreatedAt\nupdatedAt" style="shape=swimlane;fillColor=#f5f5f5;" vertex="1" parent="1">
+      <mxGeometry x="540" y="560" width="240" height="320" as="geometry"/>
+    </mxCell>
+    <!-- Session Model -->
+    <mxCell id="session" value="Session\n-------------------\nid (PK)\naccessToken\nrefreshToken\ncreatedAt\naccountId (FK)\naccount (Account)" style="shape=swimlane;fillColor=#e1d5e7;" vertex="1" parent="1">
+      <mxGeometry x="820" y="380" width="220" height="180" as="geometry"/>
+    </mxCell>
+    <!-- Enums and Types (as separate boxes) -->
+    <mxCell id="enums" value="Enums & Types\n-------------------\nGenderType\nRoleType\nSocialEnum\nPartnerType\nPartnerStatus\nTransactionType\nPaymentMethod\nTransactionStatus\nOrderStatus\nCategoryStatus\nAttributeType\nFilterType" style="shape=swimlane;fillColor=#ffffff;" vertex="1" parent="1">
+      <mxGeometry x="1070" y="440" width="220" height="320" as="geometry"/>
+    </mxCell>
+    <!-- Embedded Types (as separate boxes) -->
+    <mxCell id="types" value="Embedded Types\n-------------------\nSocialAccount\nCart\nCartItem\nShippingAddress\nProductImage\nCategoryImage\nDeliveryInformation\nProductVariantInfo\nOrderItem\nNewsImage\nTransactionItem" style="shape=swimlane;fillColor=#ffffff;" vertex="1" parent="1">
+      <mxGeometry x="1320" y="20" width="220" height="520" as="geometry"/>
+    </mxCell>
+    <!-- Relationships (arrows) -->
+    <mxCell id="rel1" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="account" target="order"/>
+    <mxCell id="rel2" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="order" target="account"/>
+    <mxCell id="rel3" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="account" target="session"/>
+    <mxCell id="rel4" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="product" target="category"/>
+    <mxCell id="rel5" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="category" target="product"/>
+    <mxCell id="rel6" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="partner" target="transaction"/>
+    <mxCell id="rel7" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="transaction" target="deptHistory"/>
+    <mxCell id="rel8" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="deptHistory" target="partner"/>
+    <mxCell id="rel9" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="deptHistory" target="transaction"/>
+  </diagram>
+</mxfile> 

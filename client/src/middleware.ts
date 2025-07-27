@@ -83,11 +83,11 @@ function isIndex(pathname: string) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const cookieStore = await cookies();
+  const headers = new Headers(request.headers);
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
   let account: PayloadJWT["account"] | undefined;
-
-  const response = NextResponse.next();
+  headers.set("x-pathname", request.nextUrl.pathname);
 
   if (accessToken) {
     const tokenPayload = jwtDecode<PayloadJWT>(accessToken);
@@ -95,27 +95,44 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isIndex(pathname)) {
-    return NextResponse.redirect(new URL(routePath.customer.home, request.url));
+    return NextResponse.redirect(
+      new URL(routePath.customer.home, request.url),
+      {
+        headers,
+      }
+    );
   }
 
   if (accessToken && isTokenExpired(accessToken)) {
+    console.log("accessToken expired");
     return await handleRefreshToken(accessToken, refreshToken, request);
   }
 
   if (accessToken && isAuthRoute(pathname)) {
     const previousUrl = request.headers.get("referer") || "/";
-    return NextResponse.redirect(new URL(previousUrl));
+    return NextResponse.redirect(new URL(previousUrl), {
+      headers,
+    });
   }
 
   if (accessToken && isAdminRoute(pathname) && !isAdminRole(account)) {
-    return NextResponse.redirect(new URL(routePath.customer.home, request.url));
+    return NextResponse.redirect(
+      new URL(routePath.customer.home, request.url),
+      {
+        headers,
+      }
+    );
   }
 
   // unauthorized
   if (!accessToken && isPrivateRoute(pathname)) {
-    return NextResponse.redirect(new URL(routePath.signIn, request.url));
+    return NextResponse.redirect(new URL(routePath.signIn, request.url), {
+      headers,
+    });
   }
-  return response;
+  return NextResponse.next({
+    headers,
+  });
 }
 
 export const config = {
@@ -131,5 +148,6 @@ export const config = {
     "/",
     "/home",
     "/home/:path*",
+    "/sign-out",
   ],
 };

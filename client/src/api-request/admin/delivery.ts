@@ -67,7 +67,7 @@ const AdminDeliveryRequestApis = {
 
   // Update delivery status
   updateStatus: (id: string, status: string) => {
-    return http.patch<UpdateDeliveryResponseType>(
+    return http.put<UpdateDeliveryResponseType>(
       `/admin/delivery/${id}/status`,
       { status },
       {

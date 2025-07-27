@@ -1,0 +1,200 @@
+erDiagram
+  Account {
+    String id PK
+    String email
+    String fullname
+    String phoneNumber
+    String password
+    String address
+    GenderType gender
+    DateTime dateOfBirth
+    DateTime createdAt
+    DateTime updatedAt
+    String avatar
+    RoleType role
+    Cart cart
+    ShippingAddress shippingAddress
+  }
+  Session {
+    String id PK
+    String accessToken
+    String refreshToken
+    DateTime createdAt
+    String accountId FK
+  }
+  Product {
+    String id PK
+    String name
+    String slug
+    ProductImage image
+    Float rating
+    Int reviewCount
+    DateTime createdAt
+    DateTime updatedAt
+    String[] tags
+    Boolean isPublished
+    String categoryId FK
+    Int stock
+    Float price
+    Int sold
+    Boolean isFeatured
+    Boolean isBestSeller
+    Boolean isPromotion
+    Int promotionPercent
+    DateTime promotionStart
+    DateTime promotionEnd
+  }
+  ProductVariant {
+    String id PK
+    String productId FK
+    String sku
+    String name
+    Float price
+    Int stock
+    Int sold
+    ProductImage image
+    Boolean isPromotion
+    Int promotionPercent
+    DateTime promotionStart
+    DateTime promotionEnd
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  Category {
+    String id PK
+    String name
+    String slug
+    String description
+    CategoryImage image
+    String parentId FK
+    Boolean isFeatured
+    Boolean isShowOnHomePage
+    CategoryStatus status
+    DateTime createdAt
+    DateTime updatedAt
+    DateTime deletedAt
+  }
+  Attribute {
+    String id PK
+    String name
+    String code
+    String description
+    AttributeType type
+    String unit
+    Json options
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  CategoryAttribute {
+    String id PK
+    String categoryId FK
+    String attributeId FK
+    Boolean filterable
+    Boolean required
+    Int displayOrder
+    FilterType filterType
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  ProductAttributeValue {
+    String id PK
+    String productId FK
+    String attributeId FK
+    String variantId FK
+    Json value
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  Order {
+    String id PK
+    String orderCode
+    String accountId FK
+    Float subtotal
+    Float totalAmount
+    DeliveryInformation deliveryInformation
+    OrderStatus status
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  News {
+    String id PK
+    String title
+    String slug
+    String summary
+    String content
+    NewsImage image
+    String author
+    String[] tags
+    Boolean isPublished
+    Boolean isFeatured
+    Int viewCount
+    DateTime createdAt
+    DateTime updatedAt
+    DateTime publishedAt
+    String metaTitle
+    String metaDescription
+    String[] metaKeywords
+  }
+  Partner {
+    String id PK
+    String name
+    String phone
+    String email
+    String address
+    PartnerType type
+    String notes
+    Float totalDebt
+    Float paidAmount
+    Float remainingDebt
+    PartnerStatus status
+    String contactPerson
+    String contactPosition
+    String contactPhone
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  Transaction {
+    String id PK
+    String transactionCode
+    String partnerId FK
+    TransactionType type
+    Float amount
+    DateTime date
+    PaymentMethod paymentMethod
+    String referenceCode
+    String notes
+    TransactionItem[] items
+    TransactionStatus status
+    Float paidAmount
+  }
+  DeptHistory {
+    String id PK
+    String partnerId FK
+    String transactionId FK
+    Float previousDebt
+    Float debtChange
+    Float currentDebt
+    DateTime date
+    String notes
+    DateTime createdAt
+    DateTime updatedAt
+  }
+
+  Account ||--o{ Session : "has"
+  Account ||--o{ Order : "places"
+  Account ||--o{ Product : "favorites"
+  Product ||--o{ ProductVariant : "has"
+  Product ||--o{ ProductAttributeValue : "has"
+  Product }o--|| Category : "belongs to"
+  Category ||--o{ Product : "has"
+  Category ||--o{ CategoryAttribute : "has"
+  Attribute ||--o{ CategoryAttribute : "used in"
+  Attribute ||--o{ ProductAttributeValue : "used in"
+  ProductVariant ||--o{ ProductAttributeValue : "has"
+  Order ||--o{ Account : "belongs to"
+  Partner ||--o{ Transaction : "has"
+  Partner ||--o{ DeptHistory : "has"
+  Transaction ||--o{ DeptHistory : "has"
+  Transaction }o--|| Partner : "belongs to"
+  DeptHistory }o--|| Partner : "belongs to"
+  DeptHistory }o--|| Transaction : "belongs to" 
